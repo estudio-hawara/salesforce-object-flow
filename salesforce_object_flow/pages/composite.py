@@ -183,6 +183,7 @@ class CompositeTemplatesPage:
         content_header.set_show_title(False)
         content_header.set_show_start_title_buttons(False)
         content_header.set_show_end_title_buttons(False)
+        self._content_header = content_header
 
         self._preview_btn = Gtk.Button(
             label="Preview payload",
@@ -203,6 +204,16 @@ class CompositeTemplatesPage:
         self._run_btn.connect("clicked", self._on_run_clicked)
         content_header.pack_start(self._run_btn)
 
+        # "Back to editor" lives at the same pack_start slot as Preview
+        # so the results pane's exit button visually replaces it.
+        self._results_back_btn = Gtk.Button(
+            label="Back to editor", icon_name="go-previous-symbolic"
+        )
+        self._results_back_btn.add_css_class("flat")
+        self._results_back_btn.set_visible(False)
+        self._results_back_btn.connect("clicked", self._on_back_to_editor)
+        content_header.pack_start(self._results_back_btn)
+
         self._save_btn = Gtk.Button(label="Save")
         self._save_btn.add_css_class("suggested-action")
         self._save_btn.set_sensitive(False)
@@ -214,6 +225,15 @@ class CompositeTemplatesPage:
         self._delete_btn.set_sensitive(False)
         self._delete_btn.connect("clicked", self._on_delete_clicked)
         content_header.pack_end(self._delete_btn)
+
+        # "Export failures CSV…" lives at the same pack_end slot as Save.
+        self._export_btn = Gtk.Button(
+            label="Export failures CSV…", icon_name="document-save-as-symbolic"
+        )
+        self._export_btn.add_css_class("flat")
+        self._export_btn.set_visible(False)
+        self._export_btn.connect("clicked", self._on_export_failures_clicked)
+        content_header.pack_end(self._export_btn)
 
         content_toolbar.add_top_bar(content_header)
 
@@ -405,25 +425,6 @@ class CompositeTemplatesPage:
         outer.set_margin_start(18)
         outer.set_margin_end(18)
 
-        top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        back_btn = Gtk.Button(label="Back to editor", icon_name="go-previous-symbolic")
-        back_btn.add_css_class("flat")
-        back_btn.connect("clicked", self._on_back_to_editor)
-        top.append(back_btn)
-
-        spacer = Gtk.Box()
-        spacer.set_hexpand(True)
-        top.append(spacer)
-
-        self._export_btn = Gtk.Button(
-            label="Export failures CSV…", icon_name="document-save-as-symbolic"
-        )
-        self._export_btn.add_css_class("flat")
-        self._export_btn.set_sensitive(False)
-        self._export_btn.connect("clicked", self._on_export_failures_clicked)
-        top.append(self._export_btn)
-        outer.append(top)
-
         self._results_banner = Adw.Banner(title="")
         self._results_banner.set_revealed(True)
         outer.append(self._results_banner)
@@ -553,6 +554,7 @@ class CompositeTemplatesPage:
         self._populate_editor()
         self._select_row_by_filename(filename)
         self._detail_stack.set_visible_child_name("editor")
+        self._update_editor_chrome_visibility()
         self._delete_btn.set_sensitive(True)
         self._update_dirty_state()
 
@@ -566,6 +568,7 @@ class CompositeTemplatesPage:
         self._unsaved_banner.set_revealed(False)
         self._missing_banner.set_revealed(False)
         self._detail_stack.set_visible_child_name("empty")
+        self._update_editor_chrome_visibility()
 
     # ------------------------------------------------------------ New template
     def _on_new_clicked(self, _btn: Gtk.Button) -> None:
@@ -1498,6 +1501,8 @@ class CompositeTemplatesPage:
 
     def _on_back_to_editor(self, _btn: Gtk.Button) -> None:
         self._detail_stack.set_visible_child_name("editor")
+        self._update_editor_chrome_visibility()
+        self._update_dirty_state()
 
     def _on_sample_changed(self, *_args: object) -> None:
         if self._sample_dropdown.get_selected() == 0:
@@ -1729,6 +1734,34 @@ class CompositeTemplatesPage:
         self._run_cancel_btn.set_label("Cancel")
         self._run_spinner.start()
         self._detail_stack.set_visible_child_name("running")
+        self._update_editor_chrome_visibility()
+
+    def _update_editor_chrome_visibility(self) -> None:
+        """Swap header buttons + banners depending on the visible pane.
+
+        The HeaderBar itself is always visible so nothing jumps around; we
+        toggle individual button visibility so "Back to editor" lands in the
+        same slot Preview occupies, and "Export failures CSV…" lands in
+        Save's slot.
+        """
+        current = self._detail_stack.get_visible_child_name()
+        is_results = current == "results"
+        is_running = current == "running"
+        editor_chrome = not (is_results or is_running)
+
+        # Editor-side controls: visible everywhere except running/results.
+        self._preview_btn.set_visible(editor_chrome)
+        self._run_btn.set_visible(editor_chrome)
+        self._save_btn.set_visible(editor_chrome)
+        self._delete_btn.set_visible(editor_chrome)
+
+        # Results-side controls: visible only on the results pane.
+        self._results_back_btn.set_visible(is_results)
+        self._export_btn.set_visible(is_results)
+
+        if not editor_chrome:
+            self._unsaved_banner.set_revealed(False)
+            self._missing_banner.set_revealed(False)
 
     def _on_progress(self, event: ProgressEvent) -> bool:
         self._run_progress_label.set_label(f"Processing row {event.processed} of {event.total}…")
@@ -1762,6 +1795,7 @@ class CompositeTemplatesPage:
         self._last_report_template_name = tpl_name
         self._render_results(report)
         self._detail_stack.set_visible_child_name("results")
+        self._update_editor_chrome_visibility()
         self._update_dirty_state()
         return False
 
@@ -1770,6 +1804,7 @@ class CompositeTemplatesPage:
         self._run_spinner.stop()
         self._window.show_toast(message, timeout=8)
         self._detail_stack.set_visible_child_name("editor")
+        self._update_editor_chrome_visibility()
         self._update_dirty_state()
         return False
 
