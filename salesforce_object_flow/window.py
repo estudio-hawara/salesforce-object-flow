@@ -13,9 +13,11 @@ from salesforce_object_flow.core.cache import default_cache
 from salesforce_object_flow.core.config import Config, OrgEntry
 from salesforce_object_flow.core.state import AppState
 from salesforce_object_flow.pages.connections import ConnectionsPage
+from salesforce_object_flow.pages.formats import FileFormatsPage
 from salesforce_object_flow.pages.objects import ObjectExplorerPage
 from salesforce_object_flow.pages.welcome import WelcomePage
 from salesforce_object_flow.services.connections import ConnectionsService
+from salesforce_object_flow.services.formats import FileFormatStore, FileFormatValidator
 from salesforce_object_flow.services.sobjects import SObjectService
 
 log = logging.getLogger(__name__)
@@ -46,7 +48,10 @@ class MainWindow(Adw.ApplicationWindow):
             config_save=self._config.save,
         )
         self._sobjects_service = SObjectService(self._service, default_cache())
+        self._formats_store = FileFormatStore()
+        self._formats_validator = FileFormatValidator()
         self._connections_page: ConnectionsPage | None = None
+        self._formats_page: FileFormatsPage | None = None
         self._objects_page: ObjectExplorerPage | None = None
         self._active_org_button: Gtk.MenuButton | None = None
         self._active_org_subscribers: list[Callable[[], None]] = []
@@ -106,6 +111,12 @@ class MainWindow(Adw.ApplicationWindow):
             on_active_org_changed=self._notify_active_org_changed,
         )
         self._add_page(self._connections_page)
+        self._formats_page = FileFormatsPage(
+            window=self,
+            store=self._formats_store,
+            validator=self._formats_validator,
+        )
+        self._add_page(self._formats_page)
         self._objects_page = ObjectExplorerPage(
             window=self,
             sobjects=self._sobjects_service,

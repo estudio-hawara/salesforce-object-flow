@@ -46,3 +46,10 @@ def fake_keyring(monkeypatch: pytest.MonkeyPatch) -> FakeKeyring:
 @pytest.fixture
 def tmp_cache(tmp_path: Path) -> JsonCache:
     return JsonCache(root=tmp_path / "cache")
+
+
+@pytest.fixture
+def tmp_formats_dir(tmp_path: Path) -> Path:
+    root = tmp_path / "formats"
+    root.mkdir()
+    return root
