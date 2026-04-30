@@ -1,0 +1,38 @@
+/* Salesforce Object Flow — application-level styling.
+ *
+ * Built on top of libadwaita semantic tokens (@accent_bg_color,
+ * @warning_bg_color, @error_bg_color) so light/dark themes track the
+ * system automatically.
+ *
+ * Vocabulary inherited from Hyprmod:
+ *   .option-managed  — field is bound to a remote source
+ *   .option-dirty    — field has unsaved changes
+ *   .option-error    — transient flash on validation failure
+ *   .field-error     — persistent invalid state on a row's subtitle
+ *   banner.confirm-warning / banner.confirm-urgent — banner colour variants
+ */
+
+.option-managed {
+    border-left: 3px solid @accent_bg_color;
+}
+
+.option-dirty {
+    border-left: 3px solid @warning_bg_color;
+}
+
+.option-error {
+    background-color: alpha(@error_bg_color, 0.18);
+    transition: background-color 300ms ease-out;
+}
+
+.field-error .subtitle {
+    color: @error_color;
+}
+
+banner.confirm-warning > revealer > widget {
+    background-color: alpha(@warning_bg_color, 0.3);
+}
+
+banner.confirm-urgent > revealer > widget {
+    background-color: alpha(@error_bg_color, 0.3);
+}

@@ -1,0 +1,74 @@
+[project]
+name = "salesforce-object-flow"
+version = "0.0.1"
+description = "A GTK4/libadwaita desktop GUI for the Salesforce Composite REST API"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+authors = [{ name = "Carlos Capote", email = "carlos.capote@hawara.es" }]
+readme = "README.md"
+keywords = ["salesforce", "gtk4", "libadwaita", "composite-api", "gui"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: X11 Applications :: GTK",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "pygobject>=3.56.2",
+    "pygobject-stubs>=2.17.0",
+    "platformdirs>=4.3",
+    "keyring>=25.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0",
+    "pyright>=1.1",
+    "ruff>=0.15.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/estudio-hawara/salesforce-object-flow"
+Repository = "https://github.com/estudio-hawara/salesforce-object-flow"
+Issues = "https://github.com/estudio-hawara/salesforce-object-flow/issues"
+
+[project.scripts]
+salesforce-object-flow = "salesforce_object_flow.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["salesforce_object_flow"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"data/icons" = "salesforce_object_flow/_data/icons"
+
+[tool.pyright]
+include = ["salesforce_object_flow", "tests"]
+strict = ["salesforce_object_flow"]
+pythonVersion = "3.12"
+# pygobject-stubs ships .pyi files only; the real source lives in C extensions.
+reportMissingModuleSource = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.isort]
+known-third-party = ["gi", "platformdirs", "keyring"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

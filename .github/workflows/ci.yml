@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# macOS / Windows jobs are deferred until users land on those platforms.
+# When they do, add matrix legs that install GTK4/libadwaita via Homebrew /
+# MSYS2 and run a logic-only test slice that doesn't import gi.repository.
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install GTK4 / libadwaita system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcairo2-dev libgirepository-2.0-dev \
+            libgtk-4-dev libadwaita-1-dev
+      - run: uv sync
+      - run: uv run ruff check salesforce_object_flow/ tests/
+      - run: uv run ruff format --check salesforce_object_flow/ tests/
+      - run: uv run pyright salesforce_object_flow/ tests/
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install GTK4 / libadwaita system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcairo2-dev libgirepository-2.0-dev \
+            libgtk-4-dev libadwaita-1-dev xvfb
+      - run: uv python install ${{ matrix.python-version }}
+      - run: uv sync --python ${{ matrix.python-version }}
+      - run: xvfb-run -a uv run pytest tests/ -v

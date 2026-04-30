@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Salesforce Object Flow
+GenericName=Salesforce Composite API GUI
+Comment=Compose multi-object, transactional creates against the Salesforce REST Composite API
+Exec=salesforce-object-flow
+Icon=es.hawara.SalesforceObjectFlow
+Terminal=false
+Categories=Development;Office;Network;
+Keywords=salesforce;crm;composite;api;
+StartupNotify=true
+StartupWMClass=es.hawara.SalesforceObjectFlow

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <title>Salesforce Object Flow</title>
+  <rect x="8" y="8" width="112" height="112" rx="20" fill="#1a73e8"/>
+  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="36" cy="36" r="10"/>
+    <circle cx="92" cy="36" r="10"/>
+    <circle cx="64" cy="92" r="10"/>
+    <path d="M 36 46 L 64 82"/>
+    <path d="M 92 46 L 64 82"/>
+    <path d="M 36 36 L 92 36"/>
+  </g>
+</svg>
