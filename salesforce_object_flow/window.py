@@ -143,8 +143,11 @@ class MainWindow(Adw.ApplicationWindow):
             validator=self._templates_validator,
             renderer=self._templates_renderer,
             formats_store=self._formats_store,
+            service=self._service,
+            get_active_alias=self._get_active_alias,
         )
         self._add_page(self._composite_page)
+        self._active_org_subscribers.append(self._composite_page.on_active_org_changed)
 
         sidebar_scroll = Gtk.ScrolledWindow()
         sidebar_scroll.set_child(self._sidebar_list)

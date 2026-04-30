@@ -23,6 +23,7 @@ import copy
 import csv
 import json
 import logging
+import threading
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
@@ -38,13 +39,20 @@ from salesforce_object_flow.core.composite import (
 )
 from salesforce_object_flow.core.formats import FileFormat, slugify
 from salesforce_object_flow.services.composite import (
+    CompositeExecutor,
     CompositePayloadRenderer,
     CompositeTemplateError,
     CompositeTemplateStore,
     CompositeTemplateValidator,
+    ExecutionError,
+    ExecutionReport,
     LoadedTemplate,
+    ProgressEvent,
     RenderRow,
+    RowResult,
+    export_failures_csv,
 )
+from salesforce_object_flow.services.connections import ConnectionsError, ConnectionsService
 from salesforce_object_flow.services.formats import FileFormatStore
 from salesforce_object_flow.ui.helpers import confirm
 
@@ -66,12 +74,17 @@ class CompositeTemplatesPage:
         validator: CompositeTemplateValidator,
         renderer: CompositePayloadRenderer,
         formats_store: FileFormatStore,
+        service: ConnectionsService,
+        get_active_alias: Callable[[], str | None],
     ) -> None:
         self._window = window
         self._store = store
         self._validator = validator
         self._renderer = renderer
         self._formats_store = formats_store
+        self._service = service
+        self._get_active_alias = get_active_alias
+        self._executor = CompositeExecutor(renderer=renderer)
 
         self._loaded: list[LoadedTemplate] = []
         self._selected_filename: str | None = None
@@ -83,6 +96,13 @@ class CompositeTemplatesPage:
         self._subrequest_expanders: dict[int, Adw.ExpanderRow] = {}
         self._body_sections: dict[int, Gtk.ListBoxRow] = {}
         self._headers_sections: dict[int, Gtk.ListBoxRow] = {}
+
+        # Run state.
+        self._cancelled: threading.Event | None = None
+        self._last_report: ExecutionReport | None = None
+        self._last_report_csv_path: Path | None = None
+        self._last_report_fmt: FileFormat | None = None
+        self._last_report_template_name: str = ""
 
     # ---------------------------------------------------------------- Build
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView:
@@ -173,6 +193,16 @@ class CompositeTemplatesPage:
         self._preview_btn.connect("clicked", self._on_preview_clicked)
         content_header.pack_start(self._preview_btn)
 
+        self._run_btn = Gtk.Button(
+            label="Run…",
+            icon_name="media-playback-start-symbolic",
+        )
+        self._run_btn.add_css_class("flat")
+        self._run_btn.set_sensitive(False)
+        self._run_btn.set_tooltip_text("Execute against active connection")
+        self._run_btn.connect("clicked", self._on_run_clicked)
+        content_header.pack_start(self._run_btn)
+
         self._save_btn = Gtk.Button(label="Save")
         self._save_btn.add_css_class("suggested-action")
         self._save_btn.set_sensitive(False)
@@ -217,6 +247,8 @@ class CompositeTemplatesPage:
         self._detail_stack.add_named(editor_scroll, "editor")
 
         self._detail_stack.add_named(self._build_preview_pane(), "preview")
+        self._detail_stack.add_named(self._build_running_pane(), "running")
+        self._detail_stack.add_named(self._build_results_pane(), "results")
 
         content_toolbar.set_content(self._detail_stack)
         page = Adw.NavigationPage(title="Detail")
@@ -325,6 +357,91 @@ class CompositeTemplatesPage:
 
         return outer
 
+    def _build_running_pane(self) -> Gtk.Widget:
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        outer.set_margin_top(24)
+        outer.set_margin_bottom(24)
+        outer.set_margin_start(24)
+        outer.set_margin_end(24)
+        outer.set_valign(Gtk.Align.CENTER)
+        outer.set_halign(Gtk.Align.CENTER)
+
+        spinner = Gtk.Spinner()
+        spinner.set_size_request(48, 48)
+        spinner.start()
+        outer.append(spinner)
+        self._run_spinner = spinner
+
+        title = Gtk.Label(xalign=0)
+        title.add_css_class("title-2")
+        outer.append(title)
+        self._run_title_label = title
+
+        self._run_progress_label = Gtk.Label(xalign=0)
+        self._run_progress_label.add_css_class("dim-label")
+        outer.append(self._run_progress_label)
+
+        self._run_progress_bar = Gtk.ProgressBar()
+        self._run_progress_bar.set_size_request(360, -1)
+        outer.append(self._run_progress_bar)
+
+        self._run_last_error = Gtk.Label(xalign=0, wrap=True)
+        self._run_last_error.add_css_class("error")
+        self._run_last_error.set_visible(False)
+        outer.append(self._run_last_error)
+
+        self._run_cancel_btn = Gtk.Button(label="Cancel")
+        self._run_cancel_btn.add_css_class("destructive-action")
+        self._run_cancel_btn.set_halign(Gtk.Align.CENTER)
+        self._run_cancel_btn.connect("clicked", self._on_cancel_clicked)
+        outer.append(self._run_cancel_btn)
+
+        return outer
+
+    def _build_results_pane(self) -> Gtk.Widget:
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        outer.set_margin_top(18)
+        outer.set_margin_bottom(18)
+        outer.set_margin_start(18)
+        outer.set_margin_end(18)
+
+        top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        back_btn = Gtk.Button(label="Back to editor", icon_name="go-previous-symbolic")
+        back_btn.add_css_class("flat")
+        back_btn.connect("clicked", self._on_back_to_editor)
+        top.append(back_btn)
+
+        spacer = Gtk.Box()
+        spacer.set_hexpand(True)
+        top.append(spacer)
+
+        self._export_btn = Gtk.Button(
+            label="Export failures CSV…", icon_name="document-save-as-symbolic"
+        )
+        self._export_btn.add_css_class("flat")
+        self._export_btn.set_sensitive(False)
+        self._export_btn.connect("clicked", self._on_export_failures_clicked)
+        top.append(self._export_btn)
+        outer.append(top)
+
+        self._results_banner = Adw.Banner(title="")
+        self._results_banner.set_revealed(True)
+        outer.append(self._results_banner)
+
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_vexpand(True)
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        clamp = Adw.Clamp()
+        clamp.set_maximum_size(900)
+        self._results_listbox = Gtk.ListBox()
+        self._results_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        self._results_listbox.add_css_class("boxed-list")
+        clamp.set_child(self._results_listbox)
+        scroll.set_child(clamp)
+        outer.append(scroll)
+
+        return outer
+
     # ------------------------------------------------------------- Sidebar list
     def _refresh_list(self) -> None:
         try:
@@ -400,6 +517,19 @@ class CompositeTemplatesPage:
         if loaded.filename == self._selected_filename:
             return
 
+        if self._is_run_in_progress():
+            previous = self._selected_filename
+            self._suppress_dirty = True
+            try:
+                self._list_box.select_row(self._row_for_filename(previous))
+            finally:
+                self._suppress_dirty = False
+            self._window.show_toast(
+                "A run is in progress — cancel it before switching templates.",
+                timeout=6,
+            )
+            return
+
         if self._is_dirty():
             previous = self._selected_filename
             self._suppress_dirty = True
@@ -432,6 +562,7 @@ class CompositeTemplatesPage:
         self._delete_btn.set_sensitive(False)
         self._save_btn.set_sensitive(False)
         self._preview_btn.set_sensitive(False)
+        self._run_btn.set_sensitive(False)
         self._unsaved_banner.set_revealed(False)
         self._missing_banner.set_revealed(False)
         self._detail_stack.set_visible_child_name("empty")
@@ -1127,9 +1258,7 @@ class CompositeTemplatesPage:
                 headers_list.remove(child)
             sub = self._editing.subrequests[sub_index]
             for header_index, (key, value) in enumerate(sub.headers.items()):
-                headers_list.append(
-                    self._build_header_row(sub_index, header_index, key, value)
-                )
+                headers_list.append(self._build_header_row(sub_index, header_index, key, value))
         finally:
             self._suppress_dirty = False
 
@@ -1227,12 +1356,38 @@ class CompositeTemplatesPage:
         self._save_btn.set_sensitive(save_ok)
         self._preview_btn.set_sensitive(preview_ok)
 
+        run_ok, run_reason = self._run_sensitivity(is_valid, dirty, missing)
+        self._run_btn.set_sensitive(run_ok)
+        self._run_btn.set_tooltip_text(
+            "Execute against active connection" if run_ok else (run_reason or "")
+        )
+
         if save_ok or not dirty:
             self._save_btn.set_tooltip_text("")
         elif error:
             self._save_btn.set_tooltip_text(error)
         else:
             self._save_btn.set_tooltip_text("")
+
+    def _run_sensitivity(
+        self, is_valid: bool, dirty: bool, missing: bool
+    ) -> tuple[bool, str | None]:
+        if self._editing is None:
+            return False, None
+        if missing:
+            return False, "Linked format is missing — pick one first."
+        if not is_valid:
+            return False, "Fix validation errors first."
+        if dirty:
+            return False, "Save the template before running."
+        if self._get_active_alias() is None:
+            return False, "No active connection — pick one in the sidebar."
+        if self._is_run_in_progress():
+            return False, "A run is in progress."
+        return True, None
+
+    def _is_run_in_progress(self) -> bool:
+        return self._cancelled is not None and not self._cancelled.is_set()
 
     # ------------------------------------------------------------ Save flow
     def _on_save_clicked(self, _btn: Gtk.Button) -> None:
@@ -1423,7 +1578,7 @@ class CompositeTemplatesPage:
             values[column.name] = raw
         return RenderRow(values=values)
 
-    # ---------------------------------------------------- External hook
+    # ---------------------------------------------------- External hooks
     def on_formats_changed(self) -> None:
         """Re-resolve the linked format and refresh the orphan banner."""
         if self._editing is None:
@@ -1434,6 +1589,285 @@ class CompositeTemplatesPage:
         finally:
             self._suppress_dirty = False
         self._update_dirty_state()
+
+    def on_active_org_changed(self) -> None:
+        """Refresh Run button sensitivity when the active connection changes."""
+        if self._editing is None:
+            return
+        self._update_dirty_state()
+
+    # ============================================================== Run flow
+    def _on_run_clicked(self, _btn: Gtk.Button) -> None:
+        if self._editing is None:
+            return
+        alias = self._get_active_alias()
+        fmt = self._resolve_linked_format()
+        if alias is None or fmt is None:
+            self._window.show_toast(
+                "Cannot run — pick an active connection and a linked format.",
+                timeout=6,
+            )
+            return
+
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Pick the CSV file to run against")
+        home = Gio.File.new_for_path(str(Path.home()))
+        dialog.set_initial_folder(home)
+
+        # Capture state for use in the picker callback.
+        editing_snapshot = copy.deepcopy(self._editing)
+        captured_alias = alias
+        captured_fmt = fmt
+
+        def on_picked(d: Gtk.FileDialog, result: Gio.AsyncResult) -> None:
+            try:
+                file = d.open_finish(result)
+            except GLib.Error:
+                return
+            path_str = file.get_path()
+            if not path_str:
+                return
+            csv_path = Path(path_str)
+            self._on_run_csv_picked(csv_path, editing_snapshot, captured_fmt, captured_alias)
+
+        dialog.open(self._window, None, on_picked)
+
+    def _on_run_csv_picked(
+        self,
+        csv_path: Path,
+        tpl: CompositeTemplate,
+        fmt: FileFormat,
+        alias: str,
+    ) -> None:
+        # Pre-count rows so we can both validate readability and show N in the
+        # confirmation dialog.
+        try:
+            text = csv_path.read_text(encoding=fmt.encoding)
+        except (OSError, UnicodeDecodeError) as exc:
+            self._window.show_toast(
+                f"Could not read CSV with the linked format settings — {exc}",
+                timeout=6,
+            )
+            return
+        reader = csv.reader(
+            text.splitlines(),
+            delimiter=fmt.delimiter,
+            quotechar=fmt.quote_char,
+        )
+        all_rows = list(reader)
+        data_count = len(all_rows) - (1 if fmt.has_header and all_rows else 0)
+        if data_count <= 0:
+            self._window.show_toast("CSV has no data rows.", timeout=6)
+            return
+
+        body = (
+            f"This will write data to “{alias}” using {data_count} CSV row(s).\n\n"
+            f"All-or-none: {'on' if tpl.all_or_none else 'off'}\n"
+            f"Collate:     {'on' if tpl.collate_subrequests else 'off'}\n"
+            f"Source:      {csv_path.name}"
+        )
+        dialog = Adw.AlertDialog(heading=f"Run “{tpl.name}”?", body=body)
+        dialog.add_response("cancel", "Cancel")
+        dialog.add_response("run", "Run")
+        dialog.set_response_appearance("run", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.set_close_response("cancel")
+
+        def on_response(_d: Adw.AlertDialog, response: str) -> None:
+            if response != "run":
+                return
+            self._start_execution(tpl=tpl, fmt=fmt, csv_path=csv_path, alias=alias)
+
+        dialog.connect("response", on_response)
+        dialog.present(self._window)
+
+    def _start_execution(
+        self,
+        *,
+        tpl: CompositeTemplate,
+        fmt: FileFormat,
+        csv_path: Path,
+        alias: str,
+    ) -> None:
+        self._cancelled = threading.Event()
+        self._show_running_pane(tpl_name=tpl.name, alias=alias)
+        self._update_dirty_state()
+
+        def progress(event: ProgressEvent) -> None:
+            GLib.idle_add(self._on_progress, event)
+
+        def worker() -> None:
+            try:
+                with self._service.get_authenticated_client(alias) as sf_client:
+                    report = self._executor.run(
+                        tpl,
+                        fmt,
+                        csv_path,
+                        sf_client,
+                        on_progress=progress,
+                        cancelled=self._cancelled
+                        if self._cancelled is not None
+                        else threading.Event(),
+                    )
+                GLib.idle_add(self._on_run_done, report, csv_path, fmt, tpl.name)
+            except ExecutionError as exc:
+                GLib.idle_add(self._on_run_fatal, str(exc))
+            except ConnectionsError as exc:
+                GLib.idle_add(self._on_run_fatal, f"Connection error: {exc}")
+            except Exception as exc:
+                log.exception("Unexpected execution failure")
+                GLib.idle_add(self._on_run_fatal, f"Unexpected error: {exc}")
+
+        threading.Thread(target=worker, daemon=True, name=f"composite-run-{alias}").start()
+
+    def _show_running_pane(self, *, tpl_name: str, alias: str) -> None:
+        self._run_title_label.set_label(f"Running “{tpl_name}” on {alias}")
+        self._run_progress_label.set_label("Preparing…")
+        self._run_progress_bar.set_fraction(0.0)
+        self._run_last_error.set_visible(False)
+        self._run_cancel_btn.set_sensitive(True)
+        self._run_cancel_btn.set_label("Cancel")
+        self._run_spinner.start()
+        self._detail_stack.set_visible_child_name("running")
+
+    def _on_progress(self, event: ProgressEvent) -> bool:
+        self._run_progress_label.set_label(f"Processing row {event.processed} of {event.total}…")
+        if event.total > 0:
+            self._run_progress_bar.set_fraction(event.processed / event.total)
+        if event.last_result is not None and event.last_result.status == "failure":
+            summary = event.last_result.error_summary or "Failure"
+            self._run_last_error.set_label(f"Last error: {summary}")
+            self._run_last_error.set_visible(True)
+        return False
+
+    def _on_cancel_clicked(self, _btn: Gtk.Button) -> None:
+        if self._cancelled is None:
+            return
+        self._cancelled.set()
+        self._run_cancel_btn.set_sensitive(False)
+        self._run_progress_label.set_label("Cancelling — finishing current row…")
+
+    def _on_run_done(
+        self,
+        report: ExecutionReport,
+        csv_path: Path,
+        fmt: FileFormat,
+        tpl_name: str,
+    ) -> bool:
+        self._cancelled = None
+        self._run_spinner.stop()
+        self._last_report = report
+        self._last_report_csv_path = csv_path
+        self._last_report_fmt = fmt
+        self._last_report_template_name = tpl_name
+        self._render_results(report)
+        self._detail_stack.set_visible_child_name("results")
+        self._update_dirty_state()
+        return False
+
+    def _on_run_fatal(self, message: str) -> bool:
+        self._cancelled = None
+        self._run_spinner.stop()
+        self._window.show_toast(message, timeout=8)
+        self._detail_stack.set_visible_child_name("editor")
+        self._update_dirty_state()
+        return False
+
+    def _render_results(self, report: ExecutionReport) -> None:
+        # Build banner.
+        suffix = ", cancelled" if report.cancelled else ""
+        title = (
+            f"Run completed: {report.succeeded}/{report.total} succeeded, "
+            f"{report.failed} failed{suffix}."
+        )
+        self._results_banner.set_title(title)
+        self._results_banner.remove_css_class("confirm-warning")
+        self._results_banner.remove_css_class("confirm-urgent")
+        if report.cancelled and report.failed > 0:
+            self._results_banner.add_css_class("confirm-urgent")
+        elif report.failed > 0:
+            self._results_banner.add_css_class("confirm-warning")
+        self._results_banner.set_revealed(True)
+
+        # Drain previous rows.
+        while True:
+            child = self._results_listbox.get_first_child()
+            if child is None:
+                break
+            self._results_listbox.remove(child)
+
+        for row in report.rows:
+            self._results_listbox.append(self._build_result_row(row))
+
+        self._export_btn.set_sensitive(report.failed > 0)
+
+    @staticmethod
+    def _result_icon(status: str) -> str:
+        if status == "success":
+            return "object-select-symbolic"
+        if status == "cancelled":
+            return "process-stop-symbolic"
+        return "dialog-error-symbolic"
+
+    def _build_result_row(self, row: RowResult) -> Adw.ExpanderRow:
+        expander = Adw.ExpanderRow()
+        expander.set_title(f"Row #{row.row_index + 1} — {row.status}")
+        if row.error_summary:
+            subtitle = row.error_summary
+            if len(subtitle) > 200:
+                subtitle = subtitle[:197] + "…"
+            expander.set_subtitle(subtitle)
+        icon = Gtk.Image.new_from_icon_name(self._result_icon(row.status))
+        icon.set_valign(Gtk.Align.CENTER)
+        expander.add_prefix(icon)
+
+        for sub in row.subrequest_results:
+            sub_row = Adw.ActionRow()
+            sub_row.set_title(f"{sub.reference_id} — HTTP {sub.http_status}")
+            if sub.errors:
+                err = sub.errors[0]
+                sub_row.set_subtitle(f"{err.error_code}: {err.message}")
+            elif sub.body is not None:
+                try:
+                    snippet = json.dumps(sub.body)
+                except (TypeError, ValueError):
+                    snippet = repr(sub.body)
+                if len(snippet) > 200:
+                    snippet = snippet[:197] + "…"
+                sub_row.set_subtitle(snippet)
+            expander.add_row(sub_row)
+        return expander
+
+    def _on_export_failures_clicked(self, _btn: Gtk.Button) -> None:
+        if (
+            self._last_report is None
+            or self._last_report_fmt is None
+            or self._last_report.failed == 0
+        ):
+            return
+        report = self._last_report
+        fmt = self._last_report_fmt
+        suggested = f"{slugify(self._last_report_template_name)}-failures.csv"
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Export failures CSV")
+        dialog.set_initial_name(suggested)
+
+        def on_saved(d: Gtk.FileDialog, result: Gio.AsyncResult) -> None:
+            try:
+                file = d.save_finish(result)
+            except GLib.Error:
+                return
+            path_str = file.get_path()
+            if not path_str:
+                return
+            try:
+                count = export_failures_csv(report, fmt, Path(path_str))
+            except OSError as exc:
+                self._window.show_toast(f"Could not export — {exc}", timeout=6)
+                return
+            self._window.show_toast(f"Exported {count} failed row(s) to {Path(path_str).name}.")
+
+        dialog.save(self._window, None, on_saved)
 
 
 __all__ = ["CompositeTemplatesPage"]
