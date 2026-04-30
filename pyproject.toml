@@ -26,6 +26,7 @@ dependencies = [
     "pygobject-stubs>=2.17.0",
     "platformdirs>=4.3",
     "keyring>=25.0",
+    "httpx>=0.27",
 ]
 
 [dependency-groups]
@@ -68,7 +69,7 @@ line-length = 100
 select = ["E", "F", "W", "I"]
 
 [tool.ruff.lint.isort]
-known-third-party = ["gi", "platformdirs", "keyring"]
+known-third-party = ["gi", "httpx", "keyring", "platformdirs"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

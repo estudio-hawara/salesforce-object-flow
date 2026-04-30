@@ -1,5 +1,7 @@
 """Placeholder welcome page shown until the Composite API form lands."""
 
+from typing import ClassVar
+
 from gi.repository import Adw, Gtk
 
 from salesforce_object_flow.ui.layout import make_page_layout
@@ -8,7 +10,7 @@ from salesforce_object_flow.ui.layout import make_page_layout
 class WelcomePage:
     """Trivial first page: explain what the app is and what's coming."""
 
-    TITLE = "Welcome"
+    TITLE: ClassVar[str] = "Welcome"
 
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView:
         toolbar_view, _page_box, content_box, _scrolled = make_page_layout(header)
