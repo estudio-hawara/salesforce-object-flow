@@ -6,7 +6,7 @@ import logging
 import re
 import threading
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, ClassVar, Final, cast
+from typing import TYPE_CHECKING, ClassVar, Final
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
@@ -300,7 +300,7 @@ class ConnectionsPage:
 
     # ---------------------------------------------------------- Re-auth
     def _on_reauth(self, alias: str) -> None:
-        progress = OAuthProgressDialog(alias=alias, heading=f"Re-authenticating “{alias}”")
+        progress = OAuthProgressDialog(alias=alias, heading=f"Re-authenticating {alias}")
         progress.present(self._window)
         cancelled = threading.Event()
         progress.connect_cancel(lambda: cancelled.set())
@@ -322,7 +322,7 @@ class ConnectionsPage:
 
     def _on_reauth_success(self, alias: str, progress: OAuthProgressDialog) -> bool:
         progress.dismiss()
-        self._window.show_toast(f"Re-authenticated “{alias}”.")
+        self._window.show_toast(f"Re-authenticated {alias}.")
         self.refresh_org_list()
         self._on_orgs_changed()
         return False
@@ -338,21 +338,12 @@ class ConnectionsPage:
 
         threading.Thread(target=worker, daemon=True, name=f"oauth-test-{alias}").start()
 
-    def _on_test_success(self, alias: str, limits: dict[str, object]) -> bool:
-        daily = limits.get("DailyApiRequests")
-        if isinstance(daily, dict):
-            details = cast(dict[str, Any], daily)
-            remaining = details.get("Remaining")
-            maximum = details.get("Max")
-            self._window.show_toast(
-                f"“{alias}”: API limits OK ({remaining} / {maximum} daily calls remaining)."
-            )
-        else:
-            self._window.show_toast(f"“{alias}”: connection OK.")
+    def _on_test_success(self, alias: str, _limits: dict[str, object]) -> bool:
+        self._window.show_toast(f"{alias}: connection OK.")
         return False
 
     def _on_test_error(self, alias: str, message: str) -> bool:
-        self._window.show_toast(f"“{alias}”: {message}", timeout=6)
+        self._window.show_toast(f"{alias}: {message}", timeout=6)
         return False
 
     # ----------------------------------------------------------- Remove
@@ -360,7 +351,7 @@ class ConnectionsPage:
         """Public entry called from the window-scoped ``remove-org`` action."""
         confirm(
             self._window,
-            heading=f"Remove “{alias}”?",
+            heading=f"Remove {alias}?",
             body=(
                 "Salesforce Object Flow will revoke the access token and delete the "
                 "stored credentials for this org. You can connect it again later."
@@ -380,13 +371,13 @@ class ConnectionsPage:
         threading.Thread(target=worker, daemon=True, name=f"oauth-remove-{alias}").start()
 
     def _on_remove_success(self, alias: str) -> bool:
-        self._window.show_toast(f"“{alias}” removed.")
+        self._window.show_toast(f"{alias} removed.")
         self.refresh_org_list()
         self._on_orgs_changed()
         return False
 
     def _on_remove_error(self, alias: str, message: str) -> bool:
-        self._window.show_toast(f"Could not remove “{alias}” — {message}", timeout=6)
+        self._window.show_toast(f"Could not remove {alias} — {message}", timeout=6)
         # Refresh anyway in case the local cleanup partially succeeded.
         self.refresh_org_list()
         self._on_orgs_changed()
@@ -551,7 +542,7 @@ class OAuthProgressDialog(Adw.Dialog):
 
     def __init__(self, *, alias: str, heading: str | None = None) -> None:
         super().__init__()
-        self.set_title(heading or f"Connecting to “{alias}”")
+        self.set_title(heading or f"Connecting to {alias}")
         self.set_can_close(False)
         self.set_content_width(420)
 
@@ -564,7 +555,7 @@ class OAuthProgressDialog(Adw.Dialog):
         header_bar = Adw.HeaderBar()
         header_bar.set_show_start_title_buttons(False)
         header_bar.set_show_end_title_buttons(False)
-        header_bar.set_title_widget(Adw.WindowTitle(title=heading or f"Connecting to “{alias}”"))
+        header_bar.set_title_widget(Adw.WindowTitle(title=heading or f"Connecting to {alias}"))
 
         spinner_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         self._spinner = Gtk.Spinner()
