@@ -65,10 +65,12 @@ class ConnectionsPage:
         window: MainWindow,
         service: ConnectionsService,
         on_orgs_changed: Callable[[], None],
+        on_active_org_changed: Callable[[], None] = lambda: None,
     ) -> None:
         self._window = window
         self._service = service
         self._on_orgs_changed = on_orgs_changed
+        self._on_active_org_changed = on_active_org_changed
         self._orgs_group: Adw.PreferencesGroup | None = None
 
     # ----------------------------------------------------------- Page build
@@ -291,6 +293,9 @@ class ConnectionsPage:
         self._window.show_toast(f"Connected as “{entry.alias}”.")
         self.refresh_org_list()
         self._on_orgs_changed()
+        # First org auto-becomes the active one in ConnectionsService.add_org;
+        # downstream pages need to re-render against the new active alias.
+        self._on_active_org_changed()
         return False
 
     def _on_oauth_error(self, message: str, progress: OAuthProgressDialog) -> bool:
@@ -325,6 +330,8 @@ class ConnectionsPage:
         self._window.show_toast(f"Re-authenticated {alias}.")
         self.refresh_org_list()
         self._on_orgs_changed()
+        # Re-auth may have rotated the access token; let listeners react.
+        self._on_active_org_changed()
         return False
 
     # ----------------------------------------------------------- Test
@@ -374,6 +381,9 @@ class ConnectionsPage:
         self._window.show_toast(f"{alias} removed.")
         self.refresh_org_list()
         self._on_orgs_changed()
+        # If the removed org was active, downstream pages need to re-render
+        # their empty-states.
+        self._on_active_org_changed()
         return False
 
     def _on_remove_error(self, alias: str, message: str) -> bool:
@@ -381,6 +391,7 @@ class ConnectionsPage:
         # Refresh anyway in case the local cleanup partially succeeded.
         self.refresh_org_list()
         self._on_orgs_changed()
+        self._on_active_org_changed()
         return False
 
     # ------------------------------------------------------------ Helpers

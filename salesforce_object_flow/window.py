@@ -3,16 +3,20 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
 from typing import ClassVar, Protocol
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
-from salesforce_object_flow.core.config import Config
+from salesforce_object_flow.core.cache import default_cache
+from salesforce_object_flow.core.config import Config, OrgEntry
 from salesforce_object_flow.core.state import AppState
 from salesforce_object_flow.pages.connections import ConnectionsPage
+from salesforce_object_flow.pages.objects import ObjectExplorerPage
 from salesforce_object_flow.pages.welcome import WelcomePage
 from salesforce_object_flow.services.connections import ConnectionsService
+from salesforce_object_flow.services.sobjects import SObjectService
 
 log = logging.getLogger(__name__)
 
@@ -41,8 +45,11 @@ class MainWindow(Adw.ApplicationWindow):
             config=self._config,
             config_save=self._config.save,
         )
+        self._sobjects_service = SObjectService(self._service, default_cache())
         self._connections_page: ConnectionsPage | None = None
+        self._objects_page: ObjectExplorerPage | None = None
         self._active_org_button: Gtk.MenuButton | None = None
+        self._active_org_subscribers: list[Callable[[], None]] = []
 
         self._load_css()
         self._build_ui()
@@ -96,8 +103,17 @@ class MainWindow(Adw.ApplicationWindow):
             window=self,
             service=self._service,
             on_orgs_changed=self._refresh_active_org_menu,
+            on_active_org_changed=self._notify_active_org_changed,
         )
         self._add_page(self._connections_page)
+        self._objects_page = ObjectExplorerPage(
+            window=self,
+            sobjects=self._sobjects_service,
+            get_active_alias=self._get_active_alias,
+            get_active_entry=self._get_active_entry,
+        )
+        self._add_page(self._objects_page)
+        self._active_org_subscribers.append(self._objects_page.on_active_org_changed)
 
         sidebar_scroll = Gtk.ScrolledWindow()
         sidebar_scroll.set_child(self._sidebar_list)
@@ -191,6 +207,7 @@ class MainWindow(Adw.ApplicationWindow):
         self._refresh_active_org_menu()
         if self._connections_page is not None:
             self._connections_page.refresh_org_list()
+        self._notify_active_org_changed()
 
     def _on_action_remove_org(
         self, _action: Gio.SimpleAction, parameter: GLib.Variant | None
@@ -226,3 +243,19 @@ class MainWindow(Adw.ApplicationWindow):
         active = self._config.active_org_alias
         self._active_org_button.set_label(active or "No active org")
         self._active_org_button.set_always_show_arrow(True)
+
+    def _get_active_alias(self) -> str | None:
+        return self._config.active_org_alias
+
+    def _get_active_entry(self) -> OrgEntry | None:
+        alias = self._config.active_org_alias
+        if alias is None:
+            return None
+        return self._config.find_org(alias)
+
+    def _notify_active_org_changed(self) -> None:
+        for cb in self._active_org_subscribers:
+            try:
+                cb()
+            except Exception:
+                log.exception("Active-org subscriber raised")

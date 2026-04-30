@@ -27,33 +27,7 @@ from salesforce_object_flow.services.connections import (
     ProgressEvent,
 )
 from salesforce_object_flow.services.loopback import CallbackResult, LoopbackError
-
-
-class FakeKeyring:
-    """In-memory stand-in for the ``keyring`` module."""
-
-    def __init__(self) -> None:
-        self.store: dict[tuple[str, str], str] = {}
-
-    def get_password(self, service: str, key: str) -> str | None:
-        return self.store.get((service, key))
-
-    def set_password(self, service: str, key: str, value: str) -> None:
-        self.store[(service, key)] = value
-
-    def delete_password(self, service: str, key: str) -> None:
-        if (service, key) not in self.store:
-            from keyring.errors import PasswordDeleteError
-
-            raise PasswordDeleteError("not found")
-        del self.store[(service, key)]
-
-
-@pytest.fixture
-def fake_keyring(monkeypatch: pytest.MonkeyPatch) -> FakeKeyring:
-    fake = FakeKeyring()
-    monkeypatch.setattr(credentials_module, "keyring", fake)
-    return fake
+from tests.conftest import FakeKeyring
 
 
 class FakeLoopback:
@@ -442,3 +416,117 @@ def test_set_active_clears(fake_keyring: FakeKeyring) -> None:
     service.set_active(None)
 
     assert config.active_org_alias is None
+
+
+# ====================================================================
+# get_authenticated_client
+# ====================================================================
+
+
+def test_get_authenticated_client_yields_client_with_refresh_wired(
+    fake_keyring: FakeKeyring,
+) -> None:
+    config = Config(
+        orgs=[
+            OrgEntry(
+                "prod",
+                "https://acme.my.salesforce.com",
+                "https://acme.my.salesforce.com",
+                "cid",
+            )
+        ]
+    )
+    seen_headers: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen_headers.append(request.headers.get("Authorization", ""))
+        if request.url.path.endswith("/limits"):
+            return httpx.Response(200, json={"DailyApiRequests": {"Max": 1, "Remaining": 1}})
+        return httpx.Response(404)
+
+    service, _, _ = _make_service(config=config, transport_handler=handler)
+    credentials_module.set(
+        "prod",
+        credentials_module.OrgCredentials(
+            instance_url="https://acme.my.salesforce.com",
+            access_token="MY_AT",
+            refresh_token="RT",
+        ),
+    )
+
+    with service.get_authenticated_client("prod") as sf:
+        sf.limits()
+
+    assert seen_headers == ["Bearer MY_AT"]
+
+
+def test_get_authenticated_client_refresh_on_401(fake_keyring: FakeKeyring) -> None:
+    config = Config(
+        orgs=[
+            OrgEntry(
+                "prod",
+                "https://acme.my.salesforce.com",
+                "https://acme.my.salesforce.com",
+                "cid",
+            )
+        ]
+    )
+    headers_seen: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path.endswith("/limits"):
+            headers_seen.append(request.headers["Authorization"])
+            if len(headers_seen) == 1:
+                return httpx.Response(
+                    401,
+                    json={"errorCode": "INVALID_SESSION_ID", "message": "Session expired"},
+                )
+            return httpx.Response(200, json={"DailyApiRequests": {"Max": 1, "Remaining": 1}})
+        if path.endswith("/services/oauth2/token"):
+            return httpx.Response(
+                200,
+                json={
+                    "access_token": "AT_NEW",
+                    "instance_url": "https://acme.my.salesforce.com",
+                },
+            )
+        return httpx.Response(404)
+
+    service, _, _ = _make_service(config=config, transport_handler=handler)
+    credentials_module.set(
+        "prod",
+        credentials_module.OrgCredentials(
+            instance_url="https://acme.my.salesforce.com",
+            access_token="AT_OLD",
+            refresh_token="RT",
+        ),
+    )
+
+    with service.get_authenticated_client("prod") as sf:
+        result = sf.limits()
+
+    assert result["DailyApiRequests"]["Remaining"] == 1
+    assert headers_seen == ["Bearer AT_OLD", "Bearer AT_NEW"]
+    stored = credentials_module.get("prod")
+    assert stored is not None
+    assert stored.access_token == "AT_NEW"
+
+
+def test_get_authenticated_client_raises_when_no_creds(fake_keyring: FakeKeyring) -> None:
+    config = Config(
+        orgs=[
+            OrgEntry(
+                "prod",
+                "https://acme.my.salesforce.com",
+                "https://acme.my.salesforce.com",
+                "cid",
+            )
+        ]
+    )
+    service, _, _ = _make_service(config=config, transport_handler=_token_handler())
+    # No keyring entry seeded.
+
+    with pytest.raises(ConnectionsError, match="Re-authenticate"):
+        with service.get_authenticated_client("prod"):
+            pass

@@ -15,7 +15,8 @@ import logging
 import threading
 import time
 import webbrowser
-from collections.abc import Callable
+from collections.abc import Callable, Generator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
@@ -338,6 +339,17 @@ class ConnectionsService:
         self._config_save()
 
     def test_connection(self, alias: str) -> dict[str, Any]:
+        with self.get_authenticated_client(alias) as sf_client:
+            return sf_client.limits()
+
+    @contextmanager
+    def get_authenticated_client(self, alias: str) -> Generator[SalesforceClient]:
+        """Yield a ``SalesforceClient`` wired for *alias*.
+
+        The yielded client owns the underlying ``httpx.Client`` only for the
+        duration of the ``with`` block. The 401-refresh path is wired to
+        :meth:`refresh` and persists rotated credentials to the keyring.
+        """
         entry = self._require_entry(alias)
         creds = credentials.get(alias)
         if creds is None:
@@ -345,15 +357,14 @@ class ConnectionsService:
                 f"No stored credentials for '{alias}'. Re-authenticate to continue."
             )
 
-        with self._client_factory() as client:
-            sf_client = SalesforceClient(
+        with self._client_factory() as http_client:
+            yield SalesforceClient(
                 creds=creds,
                 api_version=entry.api_version,
-                client=client,
+                client=http_client,
                 refresh_fn=lambda: self.refresh(alias),
                 on_token_refresh=lambda new: credentials.set(alias, new),
             )
-            return sf_client.limits()
 
     # ----------------------------------------------------------------- Util
     def _require_entry(self, alias: str) -> OrgEntry:
