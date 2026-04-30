@@ -34,6 +34,8 @@ _SEARCH_DEBOUNCE_MS = 150
 
 class ObjectExplorerPage:
     TITLE: ClassVar[str] = "Object Explorer"
+    ICON_NAME: ClassVar[str] = "loupe-large-symbolic"
+    GROUP: ClassVar[str] = "Data model"
 
     # ----- Lifecycle ------------------------------------------------------
     def __init__(

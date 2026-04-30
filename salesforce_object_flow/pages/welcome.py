@@ -11,6 +11,8 @@ class WelcomePage:
     """Trivial first page: explain what the app is and what's coming."""
 
     TITLE: ClassVar[str] = "Welcome"
+    ICON_NAME: ClassVar[str] = "hand-openyay-symbolic"
+    GROUP: ClassVar[str] = "Setup"
 
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView:
         toolbar_view, _page_box, content_box, _scrolled = make_page_layout(header)

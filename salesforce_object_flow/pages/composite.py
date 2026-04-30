@@ -65,7 +65,9 @@ _HTTP_METHODS: tuple[HttpMethod, ...] = tuple(HttpMethod)
 
 
 class CompositeTemplatesPage:
-    TITLE: ClassVar[str] = "Composite Templates"
+    TITLE: ClassVar[str] = "Composite Requests"
+    ICON_NAME: ClassVar[str] = "build-symbolic"
+    GROUP: ClassVar[str] = "Run"
 
     def __init__(
         self,

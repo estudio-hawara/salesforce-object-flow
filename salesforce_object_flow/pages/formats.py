@@ -36,6 +36,8 @@ log = logging.getLogger(__name__)
 
 class FileFormatsPage:
     TITLE: ClassVar[str] = "File Formats"
+    ICON_NAME: ClassVar[str] = "document-text-symbolic"
+    GROUP: ClassVar[str] = "Data model"
 
     def __init__(
         self,

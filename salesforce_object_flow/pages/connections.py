@@ -59,6 +59,8 @@ class ConnectionsPage:
     """The Connections page object expected by ``MainWindow._add_page``."""
 
     TITLE: ClassVar[str] = "Connections"
+    ICON_NAME: ClassVar[str] = "interlinked-rectangles-symbolic"
+    GROUP: ClassVar[str] = "Setup"
 
     def __init__(
         self,

@@ -33,6 +33,8 @@ CSS_PATH = Path(__file__).resolve().parent / "style.css"
 
 class _Page(Protocol):
     TITLE: ClassVar[str]
+    ICON_NAME: ClassVar[str]
+    GROUP: ClassVar[str]
 
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView: ...
 
@@ -101,6 +103,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.set_content(self._toast_overlay)
 
         split_view = Adw.NavigationSplitView()
+        split_view.set_min_sidebar_width(220)
+        split_view.set_max_sidebar_width(320)
         self._toast_overlay.set_child(split_view)
 
         self._stack = Gtk.Stack()
@@ -112,6 +116,7 @@ class MainWindow(Adw.ApplicationWindow):
         self._sidebar_list.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self._sidebar_list.add_css_class("navigation-sidebar")
         self._sidebar_list.connect("row-selected", self._on_sidebar_selected)
+        self._sidebar_list.set_header_func(self._sidebar_header_func)
 
         self._add_page(WelcomePage())
         self._connections_page = ConnectionsPage(
@@ -190,12 +195,50 @@ class MainWindow(Adw.ApplicationWindow):
         toolbar_view = page.build(header)
         self._stack.add_titled(toolbar_view, page.TITLE, page.TITLE)
 
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        box.set_margin_top(8)
+        box.set_margin_bottom(8)
+        box.set_margin_start(12)
+        box.set_margin_end(12)
+
+        icon = Gtk.Image.new_from_icon_name(page.ICON_NAME)
+        icon.set_valign(Gtk.Align.CENTER)
+        box.append(icon)
+
+        label = Gtk.Label(label=page.TITLE, xalign=0)
+        label.set_hexpand(True)
+        box.append(label)
+
         row = Gtk.ListBoxRow()
-        row.set_child(
-            Gtk.Label(label=page.TITLE, xalign=0, margin_top=8, margin_bottom=8, margin_start=12)
-        )
+        row.set_child(box)
         row.set_name(page.TITLE)
+        row._group = page.GROUP  # type: ignore[attr-defined]  # noqa: SLF001
         self._sidebar_list.append(row)
+
+    @staticmethod
+    def _sidebar_header_func(
+        row: Gtk.ListBoxRow, before: Gtk.ListBoxRow | None
+    ) -> None:
+        group: str | None = getattr(row, "_group", None)
+        prev_group: str | None = getattr(before, "_group", None) if before else None
+        if group is None or group == prev_group:
+            row.set_header(None)
+            return
+        header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        # Top spacer: smaller for the very first group, generous between
+        # subsequent groups so they breathe.
+        spacer = Gtk.Box()
+        spacer.set_size_request(-1, 4 if before is None else 12)
+        header_box.append(spacer)
+
+        label = Gtk.Label(label=group, xalign=0)
+        label.add_css_class("heading")
+        label.add_css_class("dim-label")
+        label.set_margin_start(12)
+        label.set_margin_end(12)
+        label.set_margin_bottom(4)
+        header_box.append(label)
+        row.set_header(header_box)
 
     def _on_sidebar_selected(self, _list: Gtk.ListBox, row: Gtk.ListBoxRow | None) -> None:
         if row is None:
