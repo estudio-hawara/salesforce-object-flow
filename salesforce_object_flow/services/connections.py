@@ -125,7 +125,9 @@ class ConnectionsService:
         is not modified.
         """
         if self._config.find_org(request.alias) is not None:
-            raise ConnectionsError(f"An org with alias '{request.alias}' already exists.")
+            raise ConnectionsError(
+                f"A connection with alias '{request.alias}' already exists."
+            )
 
         challenge = generate_pkce()
         server = self._loopback_factory(challenge.state)
@@ -370,5 +372,5 @@ class ConnectionsService:
     def _require_entry(self, alias: str) -> OrgEntry:
         entry = self._config.find_org(alias)
         if entry is None:
-            raise ConnectionsError(f"No org with alias '{alias}' is registered.")
+            raise ConnectionsError(f"No connection with alias '{alias}' is registered.")
         return entry

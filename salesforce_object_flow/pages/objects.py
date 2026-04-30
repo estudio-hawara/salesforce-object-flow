@@ -67,7 +67,7 @@ class ObjectExplorerPage:
         # Refresh button on the right of the header.
         self._refresh_btn = Gtk.Button(icon_name="view-refresh-symbolic")
         self._refresh_btn.add_css_class("flat")
-        self._refresh_btn.set_tooltip_text("Refresh SObject list from the org")
+        self._refresh_btn.set_tooltip_text("Refresh SObject list from the active connection")
         self._refresh_btn.connect("clicked", self._on_refresh_clicked)
         actual_header.pack_end(self._refresh_btn)
 
@@ -154,28 +154,30 @@ class ObjectExplorerPage:
         self._sidebar_stack.add_named(
             self._make_status_page(
                 title="Loading SObjects…",
-                description="Fetching metadata from your org.",
+                description="Fetching metadata from the active connection.",
                 icon_name="view-refresh-symbolic",
             ),
             "loading",
         )
         self._sidebar_stack.add_named(
             self._make_status_page(
-                title="No active org",
-                description="Activate an org from the sidebar menu, or add one in Connections.",
+                title="No active connection",
+                description=(
+                    "Activate a connection from the sidebar menu, or add one in Connections."
+                ),
                 icon_name="network-offline-symbolic",
             ),
             "no_active",
         )
         self._sidebar_stack.add_named(
             self._make_status_page(
-                title="No connected orgs",
-                description="Connect a Salesforce org from the Connections page to begin.",
+                title="No connections yet",
+                description="Add a Salesforce connection from the Connections page to begin.",
                 icon_name="network-offline-symbolic",
                 action_label="Go to Connections",
                 action_name="win.go-to-connections",
             ),
-            "no_orgs",
+            "no_connections",
         )
         self._list_error_status = self._make_status_page(
             title="Could not load objects",
@@ -281,9 +283,11 @@ class ObjectExplorerPage:
         if not hasattr(self, "_sidebar_stack"):
             return
         if self._current_alias is None:
-            # Distinguish "no orgs at all" from "orgs exist, none active".
+            # Distinguish "no connections at all" from "some exist, none active".
             has_any = self._has_any_orgs()
-            self._sidebar_stack.set_visible_child_name("no_orgs" if not has_any else "no_active")
+            self._sidebar_stack.set_visible_child_name(
+                "no_connections" if not has_any else "no_active"
+            )
             self._refresh_btn.set_sensitive(False)
             return
         self._refresh_btn.set_sensitive(True)

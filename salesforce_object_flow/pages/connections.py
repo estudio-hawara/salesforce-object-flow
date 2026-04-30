@@ -1,4 +1,4 @@
-"""Connections page — list, add, re-auth, test, and remove Salesforce orgs."""
+"""Connections page — list, add, re-auth, test, and remove Salesforce connections."""
 
 from __future__ import annotations
 
@@ -76,9 +76,9 @@ class ConnectionsPage:
     # ----------------------------------------------------------- Page build
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView:
         actual_header = header or Adw.HeaderBar()
-        add_button = Gtk.Button(label="Add org", icon_name="list-add-symbolic")
+        add_button = Gtk.Button(label="Add connection", icon_name="list-add-symbolic")
         add_button.add_css_class("suggested-action")
-        add_button.set_tooltip_text("Connect a new Salesforce org")
+        add_button.set_tooltip_text("Add a new Salesforce connection")
 
         def _on_add_clicked(_button: Gtk.Button) -> None:
             self._open_add_dialog()
@@ -99,7 +99,7 @@ class ConnectionsPage:
         group.set_title("Set up an External Client App")
         group.set_description(
             "Salesforce Object Flow uses your own External Client App so tokens stay "
-            "scoped to your org. Follow these one-time steps in Salesforce Setup."
+            "scoped to your connection. Follow these one-time steps in Salesforce Setup."
         )
 
         expander = Gtk.Expander(label="Show step-by-step instructions")
@@ -142,7 +142,7 @@ class ConnectionsPage:
 
     def _build_orgs_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup()
-        group.set_title("Connected orgs")
+        group.set_title("Connections")
         self._populate_orgs_group(group)
         return group
 
@@ -164,8 +164,8 @@ class ConnectionsPage:
 
     def _build_empty_state(self) -> Adw.ActionRow:
         row = Adw.ActionRow()
-        row.set_title("No connected orgs")
-        row.set_subtitle("Click “Add org” above to connect your first Salesforce org.")
+        row.set_title("No connections yet")
+        row.set_subtitle("Click “Add connection” above to add your first Salesforce connection.")
         return row
 
     def _build_org_row(self, entry: OrgEntry, *, is_active: bool) -> Adw.ActionRow:
@@ -216,11 +216,11 @@ class ConnectionsPage:
 
     # ----------------------------------------------------------- Public API
     def refresh_org_list(self) -> None:
-        """Rebuild the “Connected orgs” group in place after a config change."""
+        """Rebuild the “Connections” group in place after a config change."""
         if self._orgs_group is None:
             return
         new_group = Adw.PreferencesGroup()
-        new_group.set_title("Connected orgs")
+        new_group.set_title("Connections")
         self._populate_orgs_group(new_group)
 
         parent = self._orgs_group.get_parent()
@@ -361,7 +361,7 @@ class ConnectionsPage:
             heading=f"Remove {alias}?",
             body=(
                 "Salesforce Object Flow will revoke the access token and delete the "
-                "stored credentials for this org. You can connect it again later."
+                "stored credentials for this connection. You can add it again later."
             ),
             label="Remove",
             on_confirm=lambda: self._do_remove(alias),
@@ -421,8 +421,10 @@ class AddOrgDialog(Adw.AlertDialog):
         on_submit: Callable[[AddOrgRequest], None],
     ) -> None:
         super().__init__()
-        self.set_heading("Add Salesforce org")
-        self.set_body("Connect a Salesforce org by pointing this app at your External Client App.")
+        self.set_heading("Add Salesforce connection")
+        self.set_body(
+            "Add a Salesforce connection by pointing this app at your External Client App."
+        )
         self._existing_aliases = existing_aliases
         self._on_submit = on_submit
 
@@ -438,7 +440,7 @@ class AddOrgDialog(Adw.AlertDialog):
         self._sandbox_row = Adw.SwitchRow()
         self._sandbox_row.set_title("Sandbox")
         self._sandbox_row.set_subtitle(
-            "Tag this org as a sandbox in the UI (does not affect routing)."
+            "Tag this connection as a sandbox in the UI (does not affect routing)."
         )
 
         self._api_row = Adw.EntryRow()

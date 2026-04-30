@@ -135,7 +135,7 @@ class SObjectService:
         for entry in self._connections.list_orgs():
             if entry.alias == alias:
                 return entry
-        raise ConnectionsError(f"No org with alias '{alias}' is registered.")
+        raise ConnectionsError(f"No connection with alias '{alias}' is registered.")
 
     def _key_list(self, entry: OrgEntry) -> CacheKey:
         return CacheKey(

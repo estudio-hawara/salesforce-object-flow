@@ -121,13 +121,6 @@ class MainWindow(Adw.ApplicationWindow):
             on_active_org_changed=self._notify_active_org_changed,
         )
         self._add_page(self._connections_page)
-        self._formats_page = FileFormatsPage(
-            window=self,
-            store=self._formats_store,
-            validator=self._formats_validator,
-            on_formats_changed=self._notify_formats_changed,
-        )
-        self._add_page(self._formats_page)
         self._objects_page = ObjectExplorerPage(
             window=self,
             sobjects=self._sobjects_service,
@@ -136,6 +129,13 @@ class MainWindow(Adw.ApplicationWindow):
         )
         self._add_page(self._objects_page)
         self._active_org_subscribers.append(self._objects_page.on_active_org_changed)
+        self._formats_page = FileFormatsPage(
+            window=self,
+            store=self._formats_store,
+            validator=self._formats_validator,
+            on_formats_changed=self._notify_formats_changed,
+        )
+        self._add_page(self._formats_page)
 
         self._composite_page = CompositeTemplatesPage(
             window=self,
@@ -153,13 +153,25 @@ class MainWindow(Adw.ApplicationWindow):
         sidebar_toolbar = Adw.ToolbarView()
         sidebar_header = Adw.HeaderBar()
         sidebar_header.set_title_widget(Adw.WindowTitle(title="Salesforce Object Flow"))
+        sidebar_toolbar.add_top_bar(sidebar_header)
+
+        sidebar_body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        sidebar_body.append(sidebar_scroll)
+
+        active_org_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        active_org_bar.set_margin_top(6)
+        active_org_bar.set_margin_bottom(8)
+        active_org_bar.set_margin_start(8)
+        active_org_bar.set_margin_end(8)
         self._active_org_button = Gtk.MenuButton()
         self._active_org_button.set_icon_name("network-server-symbolic")
-        self._active_org_button.set_tooltip_text("Active Salesforce org")
+        self._active_org_button.set_tooltip_text("Active connection")
         self._active_org_button.add_css_class("flat")
-        sidebar_header.pack_end(self._active_org_button)
-        sidebar_toolbar.add_top_bar(sidebar_header)
-        sidebar_toolbar.set_content(sidebar_scroll)
+        self._active_org_button.set_hexpand(True)
+        active_org_bar.append(self._active_org_button)
+        sidebar_body.append(active_org_bar)
+
+        sidebar_toolbar.set_content(sidebar_body)
 
         sidebar_page = Adw.NavigationPage(title="Salesforce Object Flow")
         sidebar_page.set_child(sidebar_toolbar)
@@ -234,7 +246,7 @@ class MainWindow(Adw.ApplicationWindow):
         except Exception as exc:
             self.show_toast(str(exc), timeout=5)
             return
-        self.show_toast(f"Active org: “{alias}”.")
+        self.show_toast(f"Active connection: “{alias}”.")
         self._refresh_active_org_menu()
         if self._connections_page is not None:
             self._connections_page.refresh_org_list()
@@ -267,12 +279,12 @@ class MainWindow(Adw.ApplicationWindow):
                 orgs_section.append_item(item)
             menu.append_section(None, orgs_section)
         actions_section = Gio.Menu()
-        actions_section.append("Add org…", "win.go-to-connections")
+        actions_section.append("Add connection", "win.go-to-connections")
         menu.append_section(None, actions_section)
         self._active_org_button.set_menu_model(menu)
 
         active = self._config.active_org_alias
-        self._active_org_button.set_label(active or "No active org")
+        self._active_org_button.set_label(active or "No active connection")
         self._active_org_button.set_always_show_arrow(True)
 
     def _get_active_alias(self) -> str | None:
@@ -289,7 +301,7 @@ class MainWindow(Adw.ApplicationWindow):
             try:
                 cb()
             except Exception:
-                log.exception("Active-org subscriber raised")
+                log.exception("Active connection subscriber raised")
 
     def _notify_formats_changed(self) -> None:
         if self._composite_page is not None:
