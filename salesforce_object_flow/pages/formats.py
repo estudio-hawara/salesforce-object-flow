@@ -42,10 +42,12 @@ class FileFormatsPage:
         window: MainWindow,
         store: FileFormatStore,
         validator: FileFormatValidator,
+        on_formats_changed: Callable[[], None] | None = None,
     ) -> None:
         self._window = window
         self._store = store
         self._validator = validator
+        self._on_formats_changed = on_formats_changed
 
         self._loaded: list[LoadedFormat] = []
         self._selected_filename: str | None = None
@@ -693,6 +695,8 @@ class FileFormatsPage:
         self._refresh_list()
         self._window.show_toast(f"Saved “{self._editing.name}”.")
         self._update_dirty_state()
+        if self._on_formats_changed is not None:
+            self._on_formats_changed()
 
     def _refresh_list_after_local_change(self, *, select_filename: str | None) -> None:
         # Rebuild rows from self._loaded without re-reading disk (used after
@@ -733,6 +737,8 @@ class FileFormatsPage:
             self._refresh_list()
             self._show_empty_detail()
             self._window.show_toast(f"Deleted “{name}”.")
+            if self._on_formats_changed is not None:
+                self._on_formats_changed()
 
         confirm(
             self._window,

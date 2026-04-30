@@ -12,10 +12,16 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 from salesforce_object_flow.core.cache import default_cache
 from salesforce_object_flow.core.config import Config, OrgEntry
 from salesforce_object_flow.core.state import AppState
+from salesforce_object_flow.pages.composite import CompositeTemplatesPage
 from salesforce_object_flow.pages.connections import ConnectionsPage
 from salesforce_object_flow.pages.formats import FileFormatsPage
 from salesforce_object_flow.pages.objects import ObjectExplorerPage
 from salesforce_object_flow.pages.welcome import WelcomePage
+from salesforce_object_flow.services.composite import (
+    CompositePayloadRenderer,
+    CompositeTemplateStore,
+    CompositeTemplateValidator,
+)
 from salesforce_object_flow.services.connections import ConnectionsService
 from salesforce_object_flow.services.formats import FileFormatStore, FileFormatValidator
 from salesforce_object_flow.services.sobjects import SObjectService
@@ -50,9 +56,13 @@ class MainWindow(Adw.ApplicationWindow):
         self._sobjects_service = SObjectService(self._service, default_cache())
         self._formats_store = FileFormatStore()
         self._formats_validator = FileFormatValidator()
+        self._templates_store = CompositeTemplateStore()
+        self._templates_validator = CompositeTemplateValidator()
+        self._templates_renderer = CompositePayloadRenderer()
         self._connections_page: ConnectionsPage | None = None
         self._formats_page: FileFormatsPage | None = None
         self._objects_page: ObjectExplorerPage | None = None
+        self._composite_page: CompositeTemplatesPage | None = None
         self._active_org_button: Gtk.MenuButton | None = None
         self._active_org_subscribers: list[Callable[[], None]] = []
 
@@ -115,6 +125,7 @@ class MainWindow(Adw.ApplicationWindow):
             window=self,
             store=self._formats_store,
             validator=self._formats_validator,
+            on_formats_changed=self._notify_formats_changed,
         )
         self._add_page(self._formats_page)
         self._objects_page = ObjectExplorerPage(
@@ -125,6 +136,15 @@ class MainWindow(Adw.ApplicationWindow):
         )
         self._add_page(self._objects_page)
         self._active_org_subscribers.append(self._objects_page.on_active_org_changed)
+
+        self._composite_page = CompositeTemplatesPage(
+            window=self,
+            store=self._templates_store,
+            validator=self._templates_validator,
+            renderer=self._templates_renderer,
+            formats_store=self._formats_store,
+        )
+        self._add_page(self._composite_page)
 
         sidebar_scroll = Gtk.ScrolledWindow()
         sidebar_scroll.set_child(self._sidebar_list)
@@ -270,3 +290,10 @@ class MainWindow(Adw.ApplicationWindow):
                 cb()
             except Exception:
                 log.exception("Active-org subscriber raised")
+
+    def _notify_formats_changed(self) -> None:
+        if self._composite_page is not None:
+            try:
+                self._composite_page.on_formats_changed()
+            except Exception:
+                log.exception("Composite page raised on_formats_changed")

@@ -53,3 +53,10 @@ def tmp_formats_dir(tmp_path: Path) -> Path:
     root = tmp_path / "formats"
     root.mkdir()
     return root
+
+
+@pytest.fixture
+def tmp_templates_dir(tmp_path: Path) -> Path:
+    root = tmp_path / "templates"
+    root.mkdir()
+    return root
