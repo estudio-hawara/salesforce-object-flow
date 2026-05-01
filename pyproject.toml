@@ -1,6 +1,6 @@
 [project]
 name = "salesforce-object-flow"
-version = "0.0.1"
+version = "0.1.0a1"
 description = "A GTK4/libadwaita desktop GUI for the Salesforce Composite REST API"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -9,7 +9,7 @@ authors = [{ name = "Carlos Capote", email = "carlos.capote@hawara.es" }]
 readme = "README.md"
 keywords = ["salesforce", "gtk4", "libadwaita", "composite-api", "gui"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Environment :: X11 Applications :: GTK",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
