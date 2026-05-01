@@ -216,9 +216,7 @@ class MainWindow(Adw.ApplicationWindow):
         self._sidebar_list.append(row)
 
     @staticmethod
-    def _sidebar_header_func(
-        row: Gtk.ListBoxRow, before: Gtk.ListBoxRow | None
-    ) -> None:
+    def _sidebar_header_func(row: Gtk.ListBoxRow, before: Gtk.ListBoxRow | None) -> None:
         group: str | None = getattr(row, "_group", None)
         prev_group: str | None = getattr(before, "_group", None) if before else None
         if group is None or group == prev_group:
