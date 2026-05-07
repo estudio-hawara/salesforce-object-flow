@@ -74,12 +74,18 @@ pacman -S mingw-w64-ucrt-x86_64-gtk4 \
           mingw-w64-ucrt-x86_64-libadwaita \
           mingw-w64-ucrt-x86_64-python \
           mingw-w64-ucrt-x86_64-python-gobject \
-          mingw-w64-ucrt-x86_64-python-pip
+          mingw-w64-ucrt-x86_64-python-pip \
+          git
 git clone https://github.com/estudio-hawara/salesforce-object-flow.git
 cd salesforce-object-flow
-uv sync
-uv run salesforce-object-flow
+python -m venv --system-site-packages .venv
+source .venv/bin/activate
+pip install httpx keyring platformdirs pygobject-stubs
+pip install --no-deps -e .
+salesforce-object-flow
 ```
+
+uv is not used on Windows: the MSYS2 Python reports its platform as `mingw_x86_64_ucrt_gnu`, which uv does not recognize. The pure-Python deps are installed explicitly and the project itself is installed with `--no-deps` so pip does not try to rebuild PyGObject (and its pycairo / gobject-introspection build chain) from PyPI — the venv reuses the PyGObject that `pacman` already installed, linked against the MSYS2-shipped GTK4 DLLs.
 
 The app must be launched from the UCRT64 shell so that GTK4 typelibs and libadwaita are visible to PyGObject.
 
