@@ -78,6 +78,49 @@ uv run ruff check --fix salesforce_object_flow/ tests/
 - **Logging**: one logger per module via
   `import logging; log = logging.getLogger(__name__)`.
 
+## Translations
+
+The app uses Python's `gettext` at runtime and `babel` (`pybabel`) at
+development time. The source language is English; translations live in
+`po/<lang>.po`.
+
+- **Marking strings**:
+  - Inside functions / methods: wrap with `_()`.
+  - At module or class scope (constants, `ClassVar`, `Enum` values):
+    wrap with `N_()` so extraction picks them up, then call `_()` at the
+    use-site. The `tests/test_i18n.py` regression guard fails the build
+    if a `_()` call sneaks into module / class scope.
+  - For runtime values, prefer `_("Hello {name}").format(name=...)` over
+    f-strings so the `msgid` stays stable.
+
+- **Workflow**:
+
+  ```bash
+  uv run python scripts/i18n.py extract     # source/.py → po/salesforce-object-flow.pot
+  uv run python scripts/i18n.py update      # merge .pot into each po/<lang>.po
+  uv run python scripts/i18n.py compile     # po/<lang>.po → locale/<lang>/LC_MESSAGES/<domain>.mo
+  ```
+
+- **Adding a new language**: append the locale code (e.g. `fr`, `de_DE`)
+  to `po/LINGUAS`, run `extract` then `update` — pybabel will create
+  `po/<lang>.po` populated with the empty `msgstr ""` skeleton. Translate
+  and `compile`. A first run can also use `pybabel init -l <lang>` if you
+  prefer to seed the file manually.
+
+- **Verifying locally**: `LANGUAGE=es uv run salesforce-object-flow` (or
+  any other locale code that has a compiled catalog under `locale/`).
+
+- **Service errors**: errors carry an `ErrorCode` and are translated at
+  the toast boundary by `i18n_errors.format_error`. To add a new
+  user-facing error, add a value to `ErrorCode`, register a formatter in
+  `i18n_errors._TEMPLATES`, and pass `code=ErrorCode.X` + `params={…}`
+  on the `raise`. The English message you pass positionally still
+  surfaces in logs and bug reports.
+
+The `locale/` directory is git-ignored — `.mo` artifacts are regenerated
+from `.po` (the source of truth). Translators only need to touch
+`po/<lang>.po`.
+
 ## Scope notes
 
 Version 1 focuses on the Composite REST API: building, validating, and

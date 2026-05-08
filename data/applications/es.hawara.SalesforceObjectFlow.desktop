@@ -2,11 +2,14 @@
 Type=Application
 Name=Salesforce Object Flow
 GenericName=Salesforce Composite API GUI
+GenericName[es]=GUI de la API Composite de Salesforce
 Comment=Compose multi-object, transactional creates against the Salesforce REST Composite API
+Comment[es]=Compón creaciones multiobjeto y transaccionales contra la API REST Composite de Salesforce
 Exec=salesforce-object-flow
 Icon=es.hawara.SalesforceObjectFlow
 Terminal=false
 Categories=Development;Office;Network;
 Keywords=salesforce;crm;composite;api;
+Keywords[es]=salesforce;crm;compuesta;api;peticiones;
 StartupNotify=true
 StartupWMClass=es.hawara.SalesforceObjectFlow
