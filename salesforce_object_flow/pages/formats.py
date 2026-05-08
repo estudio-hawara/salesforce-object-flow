@@ -18,7 +18,7 @@ from salesforce_object_flow.core.formats import (
     FileFormat,
     slugify,
 )
-from salesforce_object_flow.i18n import N_
+from salesforce_object_flow.i18n import N_, _, ngettext
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.formats import (
     CellError,
@@ -84,19 +84,19 @@ class FileFormatsPage:
     def _build_sidebar_page(self) -> Adw.NavigationPage:
         sidebar_toolbar = Adw.ToolbarView()
         sidebar_header = Adw.HeaderBar()
-        sidebar_header.set_title_widget(Adw.WindowTitle(title="Formats"))
+        sidebar_header.set_title_widget(Adw.WindowTitle(title=_("Formats")))
         sidebar_header.set_show_start_title_buttons(False)
         sidebar_header.set_show_end_title_buttons(False)
 
         new_btn = Gtk.Button(icon_name="list-add-symbolic")
         new_btn.add_css_class("flat")
-        new_btn.set_tooltip_text("Create a new format")
+        new_btn.set_tooltip_text(_("Create a new format"))
         new_btn.connect("clicked", self._on_new_clicked)
         sidebar_header.pack_end(new_btn)
 
         refresh_btn = Gtk.Button(icon_name="view-refresh-symbolic")
         refresh_btn.add_css_class("flat")
-        refresh_btn.set_tooltip_text("Reload formats from disk")
+        refresh_btn.set_tooltip_text(_("Reload formats from disk"))
         refresh_btn.connect("clicked", self._on_refresh_clicked)
         sidebar_header.pack_end(refresh_btn)
 
@@ -116,11 +116,11 @@ class FileFormatsPage:
         self._sidebar_stack.add_named(list_holder, "list")
 
         empty = Adw.StatusPage(
-            title="No formats yet",
-            description="Create your first file format to describe a CSV shape.",
+            title=_("No formats yet"),
+            description=_("Create your first file format to describe a CSV shape."),
             icon_name="document-properties-symbolic",
         )
-        empty_btn = Gtk.Button(label="New format")
+        empty_btn = Gtk.Button(label=_("New format"))
         empty_btn.add_css_class("pill")
         empty_btn.add_css_class("suggested-action")
         empty_btn.set_halign(Gtk.Align.CENTER)
@@ -129,7 +129,7 @@ class FileFormatsPage:
         self._sidebar_stack.add_named(empty, "empty")
 
         sidebar_toolbar.set_content(self._sidebar_stack)
-        page = Adw.NavigationPage(title="Formats")
+        page = Adw.NavigationPage(title=_("Formats"))
         page.set_child(sidebar_toolbar)
         return page
 
@@ -142,7 +142,7 @@ class FileFormatsPage:
         content_header.set_show_end_title_buttons(False)
 
         self._test_btn = Gtk.Button(
-            label="Test against file…",
+            label=_("Test against file…"),
             icon_name="document-open-symbolic",
         )
         self._test_btn.add_css_class("flat")
@@ -150,13 +150,13 @@ class FileFormatsPage:
         self._test_btn.connect("clicked", self._on_test_clicked)
         content_header.pack_start(self._test_btn)
 
-        self._save_btn = Gtk.Button(label="Save")
+        self._save_btn = Gtk.Button(label=_("Save"))
         self._save_btn.add_css_class("suggested-action")
         self._save_btn.set_sensitive(False)
         self._save_btn.connect("clicked", self._on_save_clicked)
         content_header.pack_end(self._save_btn)
 
-        self._delete_btn = Gtk.Button(label="Delete")
+        self._delete_btn = Gtk.Button(label=_("Delete"))
         self._delete_btn.add_css_class("destructive-action")
         self._delete_btn.set_sensitive(False)
         self._delete_btn.connect("clicked", self._on_delete_clicked)
@@ -164,7 +164,7 @@ class FileFormatsPage:
 
         content_toolbar.add_top_bar(content_header)
 
-        self._unsaved_banner = Adw.Banner(title="Unsaved changes")
+        self._unsaved_banner = Adw.Banner(title=_("Unsaved changes"))
         self._unsaved_banner.add_css_class("confirm-warning")
         content_toolbar.add_top_bar(self._unsaved_banner)
 
@@ -173,8 +173,8 @@ class FileFormatsPage:
 
         self._detail_stack.add_named(
             self._make_status_page(
-                title="Select or create a format",
-                description="Pick a format from the left, or click + to create a new one.",
+                title=_("Select or create a format"),
+                description=_("Pick a format from the left, or click + to create a new one."),
                 icon_name="document-properties-symbolic",
             ),
             "empty",
@@ -192,7 +192,7 @@ class FileFormatsPage:
         self._detail_stack.add_named(self._build_test_results_pane(), "test_results")
 
         content_toolbar.set_content(self._detail_stack)
-        page = Adw.NavigationPage(title="Detail")
+        page = Adw.NavigationPage(title=_("Detail"))
         page.set_child(content_toolbar)
         return page
 
@@ -209,40 +209,40 @@ class FileFormatsPage:
         body.set_margin_end(18)
 
         general = Adw.PreferencesGroup()
-        general.set_title("General")
+        general.set_title(_("General"))
         self._name_row = Adw.EntryRow()
-        self._name_row.set_title("Name")
+        self._name_row.set_title(_("Name"))
         self._name_row.connect("notify::text", self._on_name_changed)
         general.add(self._name_row)
 
         self._description_row = Adw.EntryRow()
-        self._description_row.set_title("Description")
+        self._description_row.set_title(_("Description"))
         self._description_row.connect("notify::text", self._on_description_changed)
         general.add(self._description_row)
 
         body.append(general)
 
         parsing = Adw.PreferencesGroup()
-        parsing.set_title("Parsing")
+        parsing.set_title(_("Parsing"))
 
         self._delimiter_row = Adw.EntryRow()
-        self._delimiter_row.set_title("Delimiter")
+        self._delimiter_row.set_title(_("Delimiter"))
         self._delimiter_row.connect("notify::text", self._on_delimiter_changed)
         parsing.add(self._delimiter_row)
 
         self._quote_row = Adw.EntryRow()
-        self._quote_row.set_title("Quote character")
+        self._quote_row.set_title(_("Quote character"))
         self._quote_row.connect("notify::text", self._on_quote_changed)
         parsing.add(self._quote_row)
 
         self._has_header_row = Adw.SwitchRow()
-        self._has_header_row.set_title("Has header")
-        self._has_header_row.set_subtitle("First row contains column names.")
+        self._has_header_row.set_title(_("Has header"))
+        self._has_header_row.set_subtitle(_("First row contains column names."))
         self._has_header_row.connect("notify::active", self._on_has_header_changed)
         parsing.add(self._has_header_row)
 
         self._encoding_row = Adw.ComboRow()
-        self._encoding_row.set_title("Encoding")
+        self._encoding_row.set_title(_("Encoding"))
         self._encoding_model = Gtk.StringList.new(list(SUPPORTED_ENCODINGS))
         self._encoding_row.set_model(self._encoding_model)
         self._encoding_row.connect("notify::selected", self._on_encoding_changed)
@@ -251,8 +251,8 @@ class FileFormatsPage:
         body.append(parsing)
 
         columns_group = Adw.PreferencesGroup()
-        columns_group.set_title("Columns")
-        add_column_btn = Gtk.Button(label="Add column", icon_name="list-add-symbolic")
+        columns_group.set_title(_("Columns"))
+        add_column_btn = Gtk.Button(label=_("Add column"), icon_name="list-add-symbolic")
         add_column_btn.add_css_class("flat")
         add_column_btn.connect("clicked", self._on_add_column_clicked)
         columns_group.set_header_suffix(add_column_btn)
@@ -276,7 +276,7 @@ class FileFormatsPage:
         outer.set_margin_end(18)
 
         top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        back_btn = Gtk.Button(label="Back to editor", icon_name="go-previous-symbolic")
+        back_btn = Gtk.Button(label=_("Back to editor"), icon_name="go-previous-symbolic")
         back_btn.add_css_class("flat")
         back_btn.connect("clicked", self._on_back_to_editor)
         top.append(back_btn)
@@ -304,7 +304,9 @@ class FileFormatsPage:
             self._loaded = self._store.list_formats()
         except Exception as exc:
             log.exception("Could not list formats")
-            self._window.show_toast(f"Could not list formats — {exc}", timeout=6)
+            self._window.show_toast(
+                _("Could not list formats — {error}").format(error=exc), timeout=6
+            )
             self._loaded = []
 
         # Clear and rebuild rows.
@@ -415,7 +417,7 @@ class FileFormatsPage:
         def proceed() -> None:
             existing = {lf.filename for lf in self._loaded}
             new_name = self._unique_display_name(
-                "Untitled format", {lf.format.name for lf in self._loaded}
+                _("Untitled format"), {lf.format.name for lf in self._loaded}
             )
             new_filename = self._store.unique_filename_for(new_name, existing=existing)
             self._editing = FileFormat(name=new_name)
@@ -487,7 +489,7 @@ class FileFormatsPage:
         name_entry = Gtk.Entry()
         name_entry.set_text(column.name)
         name_entry.set_hexpand(True)
-        name_entry.set_placeholder_text("Column name")
+        name_entry.set_placeholder_text(_("Column name"))
 
         def _on_name_changed(entry: Gtk.Entry) -> None:
             self._on_column_name_changed(index, entry)
@@ -504,7 +506,7 @@ class FileFormatsPage:
         type_dropdown.connect("notify::selected", _on_type_changed)
         box.append(type_dropdown)
 
-        nullable_label = Gtk.Label(label="Nullable")
+        nullable_label = Gtk.Label(label=_("Nullable"))
         nullable_label.add_css_class("dim-label")
         box.append(nullable_label)
         nullable_switch = Gtk.Switch()
@@ -519,7 +521,7 @@ class FileFormatsPage:
 
         remove_btn = Gtk.Button(icon_name="user-trash-symbolic")
         remove_btn.add_css_class("flat")
-        remove_btn.set_tooltip_text("Remove column")
+        remove_btn.set_tooltip_text(_("Remove column"))
 
         def _on_remove(_button: Gtk.Button) -> None:
             self._on_remove_column_clicked(index)
@@ -632,25 +634,27 @@ class FileFormatsPage:
     def _validate_form(self) -> str | None:
         """Return an error message, or None if the form is valid."""
         if self._editing is None:
-            return "No format selected."
+            return _("No format selected.")
         if not self._editing.name.strip():
-            return "Name is required."
+            return _("Name is required.")
         if len(self._editing.delimiter) != 1:
-            return "Delimiter must be a single character."
+            return _("Delimiter must be a single character.")
         if len(self._editing.quote_char) != 1:
-            return "Quote character must be a single character."
+            return _("Quote character must be a single character.")
         if self._editing.delimiter == self._editing.quote_char:
-            return "Delimiter and quote character must differ."
+            return _("Delimiter and quote character must differ.")
         if self._editing.encoding not in SUPPORTED_ENCODINGS:
-            return "Encoding must be one of: " + ", ".join(SUPPORTED_ENCODINGS) + "."
+            return _("Encoding must be one of: {encodings}.").format(
+                encodings=", ".join(SUPPORTED_ENCODINGS)
+            )
         if not self._editing.columns:
-            return "At least one column is required."
+            return _("At least one column is required.")
         names: set[str] = set()
         for column in self._editing.columns:
             if not column.name.strip():
-                return "All columns must have a name."
+                return _("All columns must have a name.")
             if column.name in names:
-                return f"Duplicate column name: {column.name}."
+                return _("Duplicate column name: {name}.").format(name=column.name)
             names.add(column.name)
         # Slug uniqueness against other formats.
         my_filename = self._selected_filename
@@ -659,7 +663,9 @@ class FileFormatsPage:
             if loaded.filename == my_filename:
                 continue
             if loaded.filename == new_slug_filename:
-                return f"Name conflicts with another format: {loaded.format.name}."
+                return _("Name conflicts with another format: {name}.").format(
+                    name=loaded.format.name
+                )
         return None
 
     def _update_dirty_state(self, *, force_dirty: bool = False) -> None:
@@ -698,7 +704,7 @@ class FileFormatsPage:
         self._original = copy.deepcopy(self._editing)
         self._delete_btn.set_sensitive(True)
         self._refresh_list()
-        self._window.show_toast(f"Saved “{self._editing.name}”.")
+        self._window.show_toast(_("Saved “{name}”.").format(name=self._editing.name))
         self._update_dirty_state()
         if self._on_formats_changed is not None:
             self._on_formats_changed()
@@ -741,15 +747,15 @@ class FileFormatsPage:
             self._original = None
             self._refresh_list()
             self._show_empty_detail()
-            self._window.show_toast(f"Deleted “{name}”.")
+            self._window.show_toast(_("Deleted “{name}”.").format(name=name))
             if self._on_formats_changed is not None:
                 self._on_formats_changed()
 
         confirm(
             self._window,
-            heading=f"Delete “{name}”?",
-            body="The format definition will be removed permanently from disk.",
-            label="Delete",
+            heading=_("Delete “{name}”?").format(name=name),
+            body=_("The format definition will be removed permanently from disk."),
+            label=_("Delete"),
             on_confirm=do_delete,
         )
 
@@ -767,12 +773,12 @@ class FileFormatsPage:
         proceed: Callable[[], None],
     ) -> None:
         dialog = Adw.AlertDialog(
-            heading="Unsaved changes",
-            body="The current format has unsaved edits. Save them before continuing?",
+            heading=_("Unsaved changes"),
+            body=_("The current format has unsaved edits. Save them before continuing?"),
         )
-        dialog.add_response("cancel", "Cancel")
-        dialog.add_response("discard", "Discard")
-        dialog.add_response("save", "Save")
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("discard", _("Discard"))
+        dialog.add_response("save", _("Save"))
         dialog.set_response_appearance("discard", Adw.ResponseAppearance.DESTRUCTIVE)
         dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
         dialog.set_default_response("save")
@@ -802,7 +808,7 @@ class FileFormatsPage:
         if self._editing is None:
             return
         dialog = Gtk.FileDialog()
-        dialog.set_title("Pick a CSV file to validate")
+        dialog.set_title(_("Pick a CSV file to validate"))
         home = Gio.File.new_for_path(str(Path.home()))
         dialog.set_initial_folder(home)
 
@@ -825,7 +831,9 @@ class FileFormatsPage:
         snapshot = copy.deepcopy(self._editing)
 
         # Switch to test pane with a placeholder.
-        self._test_summary_label.set_label(f"Validating {path.name}…")
+        self._test_summary_label.set_label(
+            _("Validating {filename}…").format(filename=path.name)
+        )
         self._clear_test_results()
         self._detail_stack.set_visible_child_name("test_results")
 
@@ -858,36 +866,62 @@ class FileFormatsPage:
     def _render_test_results(self, path: Path, report: ValidationReport) -> None:
         self._clear_test_results()
         if report.fatal is not None:
-            self._test_summary_label.set_label(f"Could not read {path.name}")
+            self._test_summary_label.set_label(
+                _("Could not read {filename}").format(filename=path.name)
+            )
             row = Adw.ActionRow()
-            row.set_title("Fatal error")
+            row.set_title(_("Fatal error"))
             row.set_subtitle(report.fatal)
             row.add_css_class("field-error")
             self._test_results_group.add(row)
             return
 
-        suffix = " (capped)" if report.truncated else ""
+        n_rows = report.rows_examined
         if not report.errors:
-            self._test_summary_label.set_label(
-                f"All {report.rows_examined} row(s) of {path.name} valid{suffix}."
-            )
+            if report.truncated:
+                template = ngettext(
+                    "All {rows} row of {filename} valid (capped).",
+                    "All {rows} rows of {filename} valid (capped).",
+                    n_rows,
+                )
+            else:
+                template = ngettext(
+                    "All {rows} row of {filename} valid.",
+                    "All {rows} rows of {filename} valid.",
+                    n_rows,
+                )
+            self._test_summary_label.set_label(template.format(rows=n_rows, filename=path.name))
             return
 
+        n_errors = len(report.errors)
+        if report.truncated:
+            template = ngettext(
+                "{errors} error in first {rows} rows of {filename} (capped)",
+                "{errors} errors in first {rows} rows of {filename} (capped)",
+                n_errors,
+            )
+        else:
+            template = ngettext(
+                "{errors} error in first {rows} rows of {filename}",
+                "{errors} errors in first {rows} rows of {filename}",
+                n_errors,
+            )
         self._test_summary_label.set_label(
-            f"{len(report.errors)} error(s) in first "
-            f"{report.rows_examined} row(s) of {path.name}{suffix}"
+            template.format(errors=n_errors, rows=n_rows, filename=path.name)
         )
         for err in report.errors:
             self._test_results_group.add(self._build_error_row(err))
 
     def _build_error_row(self, err: CellError) -> Adw.ActionRow:
         row = Adw.ActionRow()
-        prefix = f"Row {err.row}"
+        prefix = _("Row {row}").format(row=err.row)
         if err.column:
             prefix += f" · {err.column}"
         row.set_title(prefix)
         if err.value:
-            row.set_subtitle(f"Value “{err.value}” — {err.message}")
+            row.set_subtitle(
+                _("Value “{value}” — {message}").format(value=err.value, message=err.message)
+            )
         else:
             row.set_subtitle(err.message)
         return row

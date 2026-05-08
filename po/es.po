@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: salesforce-object-flow 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 11:15+0100\n"
+"POT-Creation-Date: 2026-05-08 11:28+0100\n"
 "PO-Revision-Date: 2026-05-08 00:00+0000\n"
 "Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
 "Language: es\n"
@@ -321,6 +321,7 @@ msgstr "Versión de API"
 
 #: salesforce_object_flow/pages/connections.py:496
 #: salesforce_object_flow/pages/connections.py:637
+#: salesforce_object_flow/pages/formats.py:779
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -370,6 +371,7 @@ msgstr "Explorador de objetos"
 msgid "Refresh SObject list from the active connection"
 msgstr "Actualizar la lista de SObjects desde la conexión activa"
 
+#: salesforce_object_flow/pages/formats.py:195
 #: salesforce_object_flow/pages/objects.py:121
 msgid "Detail"
 msgstr "Detalle"
@@ -477,6 +479,253 @@ msgstr[1] "picklist · {count} valores"
 #: salesforce_object_flow/pages/formats.py:41
 msgid "File Formats"
 msgstr "Formatos de archivo"
+
+#: salesforce_object_flow/pages/formats.py:87
+#: salesforce_object_flow/pages/formats.py:132
+msgid "Formats"
+msgstr "Formatos"
+
+#: salesforce_object_flow/pages/formats.py:93
+msgid "Create a new format"
+msgstr "Crear un nuevo formato"
+
+#: salesforce_object_flow/pages/formats.py:99
+msgid "Reload formats from disk"
+msgstr "Recargar formatos desde disco"
+
+#: salesforce_object_flow/pages/formats.py:119
+msgid "No formats yet"
+msgstr "Aún no hay formatos"
+
+#: salesforce_object_flow/pages/formats.py:120
+msgid "Create your first file format to describe a CSV shape."
+msgstr "Crea tu primer formato de archivo para describir la estructura de un CSV."
+
+#: salesforce_object_flow/pages/formats.py:123
+msgid "New format"
+msgstr "Nuevo formato"
+
+#: salesforce_object_flow/pages/formats.py:145
+msgid "Test against file…"
+msgstr "Probar contra archivo…"
+
+#: salesforce_object_flow/pages/formats.py:153
+#: salesforce_object_flow/pages/formats.py:781
+msgid "Save"
+msgstr "Guardar"
+
+#: salesforce_object_flow/pages/formats.py:159
+#: salesforce_object_flow/pages/formats.py:758
+msgid "Delete"
+msgstr "Eliminar"
+
+#: salesforce_object_flow/pages/formats.py:167
+#: salesforce_object_flow/pages/formats.py:776
+msgid "Unsaved changes"
+msgstr "Cambios sin guardar"
+
+#: salesforce_object_flow/pages/formats.py:176
+msgid "Select or create a format"
+msgstr "Selecciona o crea un formato"
+
+#: salesforce_object_flow/pages/formats.py:177
+msgid "Pick a format from the left, or click + to create a new one."
+msgstr "Elige un formato a la izquierda, o pulsa + para crear uno nuevo."
+
+#: salesforce_object_flow/pages/formats.py:212
+msgid "General"
+msgstr "General"
+
+#: salesforce_object_flow/pages/formats.py:214
+msgid "Name"
+msgstr "Nombre"
+
+#: salesforce_object_flow/pages/formats.py:219
+msgid "Description"
+msgstr "Descripción"
+
+#: salesforce_object_flow/pages/formats.py:226
+msgid "Parsing"
+msgstr "Parseo"
+
+#: salesforce_object_flow/pages/formats.py:229
+msgid "Delimiter"
+msgstr "Delimitador"
+
+#: salesforce_object_flow/pages/formats.py:234
+msgid "Quote character"
+msgstr "Carácter de comillas"
+
+#: salesforce_object_flow/pages/formats.py:239
+msgid "Has header"
+msgstr "Tiene cabecera"
+
+#: salesforce_object_flow/pages/formats.py:240
+msgid "First row contains column names."
+msgstr "La primera fila contiene los nombres de las columnas."
+
+#: salesforce_object_flow/pages/formats.py:245
+msgid "Encoding"
+msgstr "Codificación"
+
+#: salesforce_object_flow/pages/formats.py:254
+msgid "Columns"
+msgstr "Columnas"
+
+#: salesforce_object_flow/pages/formats.py:255
+msgid "Add column"
+msgstr "Añadir columna"
+
+#: salesforce_object_flow/pages/formats.py:279
+msgid "Back to editor"
+msgstr "Volver al editor"
+
+#: salesforce_object_flow/pages/formats.py:308
+#, python-brace-format
+msgid "Could not list formats — {error}"
+msgstr "No se pudieron listar los formatos — {error}"
+
+#: salesforce_object_flow/pages/formats.py:420
+msgid "Untitled format"
+msgstr "Formato sin título"
+
+#: salesforce_object_flow/pages/formats.py:492
+msgid "Column name"
+msgstr "Nombre de columna"
+
+#: salesforce_object_flow/pages/formats.py:509
+msgid "Nullable"
+msgstr "Anulable"
+
+#: salesforce_object_flow/pages/formats.py:524
+msgid "Remove column"
+msgstr "Eliminar columna"
+
+#: salesforce_object_flow/pages/formats.py:637
+msgid "No format selected."
+msgstr "No hay ningún formato seleccionado."
+
+#: salesforce_object_flow/pages/formats.py:639
+msgid "Name is required."
+msgstr "El nombre es obligatorio."
+
+#: salesforce_object_flow/pages/formats.py:641
+msgid "Delimiter must be a single character."
+msgstr "El delimitador debe ser un único carácter."
+
+#: salesforce_object_flow/pages/formats.py:643
+msgid "Quote character must be a single character."
+msgstr "El carácter de comillas debe ser un único carácter."
+
+#: salesforce_object_flow/pages/formats.py:645
+msgid "Delimiter and quote character must differ."
+msgstr "El delimitador y el carácter de comillas deben ser distintos."
+
+#: salesforce_object_flow/pages/formats.py:647
+#, python-brace-format
+msgid "Encoding must be one of: {encodings}."
+msgstr "La codificación debe ser una de: {encodings}."
+
+#: salesforce_object_flow/pages/formats.py:651
+msgid "At least one column is required."
+msgstr "Se requiere al menos una columna."
+
+#: salesforce_object_flow/pages/formats.py:655
+msgid "All columns must have a name."
+msgstr "Todas las columnas deben tener un nombre."
+
+#: salesforce_object_flow/pages/formats.py:657
+#, python-brace-format
+msgid "Duplicate column name: {name}."
+msgstr "Nombre de columna duplicado: {name}."
+
+#: salesforce_object_flow/pages/formats.py:666
+#, python-brace-format
+msgid "Name conflicts with another format: {name}."
+msgstr "El nombre entra en conflicto con otro formato: {name}."
+
+#: salesforce_object_flow/pages/formats.py:707
+#, python-brace-format
+msgid "Saved “{name}”."
+msgstr "«{name}» guardado."
+
+#: salesforce_object_flow/pages/formats.py:750
+#, python-brace-format
+msgid "Deleted “{name}”."
+msgstr "«{name}» eliminado."
+
+#: salesforce_object_flow/pages/formats.py:756
+#, python-brace-format
+msgid "Delete “{name}”?"
+msgstr "¿Eliminar «{name}»?"
+
+#: salesforce_object_flow/pages/formats.py:757
+msgid "The format definition will be removed permanently from disk."
+msgstr "La definición del formato se eliminará permanentemente del disco."
+
+#: salesforce_object_flow/pages/formats.py:777
+msgid "The current format has unsaved edits. Save them before continuing?"
+msgstr "El formato actual tiene cambios sin guardar. ¿Guardarlos antes de continuar?"
+
+#: salesforce_object_flow/pages/formats.py:780
+msgid "Discard"
+msgstr "Descartar"
+
+#: salesforce_object_flow/pages/formats.py:811
+msgid "Pick a CSV file to validate"
+msgstr "Elige un archivo CSV para validar"
+
+#: salesforce_object_flow/pages/formats.py:835
+#, python-brace-format
+msgid "Validating {filename}…"
+msgstr "Validando {filename}…"
+
+#: salesforce_object_flow/pages/formats.py:870
+#, python-brace-format
+msgid "Could not read {filename}"
+msgstr "No se pudo leer {filename}"
+
+#: salesforce_object_flow/pages/formats.py:873
+msgid "Fatal error"
+msgstr "Error fatal"
+
+#: salesforce_object_flow/pages/formats.py:883
+#, python-brace-format
+msgid "All {rows} row of {filename} valid (capped)."
+msgid_plural "All {rows} rows of {filename} valid (capped)."
+msgstr[0] "{rows} fila de {filename} válida (limitado)."
+msgstr[1] "Las {rows} filas de {filename} son válidas (limitado)."
+
+#: salesforce_object_flow/pages/formats.py:889
+#, python-brace-format
+msgid "All {rows} row of {filename} valid."
+msgid_plural "All {rows} rows of {filename} valid."
+msgstr[0] "{rows} fila de {filename} válida."
+msgstr[1] "Las {rows} filas de {filename} son válidas."
+
+#: salesforce_object_flow/pages/formats.py:899
+#, python-brace-format
+msgid "{errors} error in first {rows} rows of {filename} (capped)"
+msgid_plural "{errors} errors in first {rows} rows of {filename} (capped)"
+msgstr[0] "{errors} error en las primeras {rows} filas de {filename} (limitado)"
+msgstr[1] "{errors} errores en las primeras {rows} filas de {filename} (limitado)"
+
+#: salesforce_object_flow/pages/formats.py:905
+#, python-brace-format
+msgid "{errors} error in first {rows} rows of {filename}"
+msgid_plural "{errors} errors in first {rows} rows of {filename}"
+msgstr[0] "{errors} error en las primeras {rows} filas de {filename}"
+msgstr[1] "{errors} errores en las primeras {rows} filas de {filename}"
+
+#: salesforce_object_flow/pages/formats.py:917
+#, python-brace-format
+msgid "Row {row}"
+msgstr "Fila {row}"
+
+#: salesforce_object_flow/pages/formats.py:923
+#, python-brace-format
+msgid "Value “{value}” — {message}"
+msgstr "Valor «{value}» — {message}"
 
 #: salesforce_object_flow/pages/composite.py:71
 msgid "Composite Requests"
