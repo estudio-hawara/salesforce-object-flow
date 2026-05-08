@@ -186,9 +186,7 @@ class ConnectionsPage:
     def _build_empty_state(self) -> Adw.ActionRow:
         row = Adw.ActionRow()
         row.set_title(_("No connections yet"))
-        row.set_subtitle(
-            _("Click “Add connection” above to add your first Salesforce connection.")
-        )
+        row.set_subtitle(_("Click “Add connection” above to add your first Salesforce connection."))
         return row
 
     def _build_org_row(self, entry: OrgEntry, *, is_active: bool) -> Adw.ActionRow:
@@ -459,10 +457,7 @@ class AddOrgDialog(Adw.AlertDialog):
         super().__init__()
         self.set_heading(_("Add Salesforce connection"))
         self.set_body(
-            _(
-                "Add a Salesforce connection by pointing this app at your External "
-                "Client App."
-            )
+            _("Add a Salesforce connection by pointing this app at your External Client App.")
         )
         self._existing_aliases = existing_aliases
         self._on_submit = on_submit
@@ -626,8 +621,7 @@ class OAuthProgressDialog(Adw.Dialog):
 
         body_label = Gtk.Label(
             label=_(
-                "Complete the authorization in your browser. This dialog will close "
-                "automatically."
+                "Complete the authorization in your browser. This dialog will close automatically."
             ),
             xalign=0,
             wrap=True,

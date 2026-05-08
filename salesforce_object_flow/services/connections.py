@@ -167,10 +167,10 @@ class ConnectionsService:
                     )
                 except OAuthError as exc:
                     raise ConnectionsError(
-                    str(exc),
-                    code=getattr(exc, "code", None),
-                    params=getattr(exc, "params", None) or {},
-                ) from exc
+                        str(exc),
+                        code=getattr(exc, "code", None),
+                        params=getattr(exc, "params", None) or {},
+                    ) from exc
                 except httpx.RequestError as exc:
                     raise ConnectionsError(
                         f"Could not exchange authorization code: {exc}",
@@ -283,10 +283,10 @@ class ConnectionsService:
                     )
                 except OAuthError as exc:
                     raise ConnectionsError(
-                    str(exc),
-                    code=getattr(exc, "code", None),
-                    params=getattr(exc, "params", None) or {},
-                ) from exc
+                        str(exc),
+                        code=getattr(exc, "code", None),
+                        params=getattr(exc, "params", None) or {},
+                    ) from exc
                 except httpx.RequestError as exc:
                     raise ConnectionsError(
                         f"Could not exchange authorization code: {exc}",

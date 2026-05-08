@@ -68,9 +68,7 @@ def init() -> None:
         _translation = gettext.NullTranslations()
         return
 
-    _translation = gettext.translation(
-        TEXTDOMAIN, localedir=str(locale_dir), fallback=True
-    )
+    _translation = gettext.translation(TEXTDOMAIN, localedir=str(locale_dir), fallback=True)
 
     # libintl wiring: covers strings GTK/GLib emit themselves
     # (default dialog buttons, future .ui/Blueprint files). Best-effort —

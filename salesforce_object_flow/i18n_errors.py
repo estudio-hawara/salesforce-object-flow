@@ -71,8 +71,7 @@ def _auth_failed(_p: dict[str, object]) -> str:
 
 def _port_in_use(p: dict[str, object]) -> str:
     return _(
-        "Port {port} is already in use. Close any other process bound to it "
-        "and try again."
+        "Port {port} is already in use. Close any other process bound to it and try again."
     ).format(**p)
 
 

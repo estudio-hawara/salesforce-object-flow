@@ -832,9 +832,7 @@ class FileFormatsPage:
         snapshot = copy.deepcopy(self._editing)
 
         # Switch to test pane with a placeholder.
-        self._test_summary_label.set_label(
-            _("Validating {filename}…").format(filename=path.name)
-        )
+        self._test_summary_label.set_label(_("Validating {filename}…").format(filename=path.name))
         self._clear_test_results()
         self._detail_stack.set_visible_child_name("test_results")
 

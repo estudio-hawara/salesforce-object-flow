@@ -1565,9 +1565,7 @@ class CompositeTemplatesPage:
                 row = CompositePayloadRenderer.synthetic_row(fmt)
                 source_label = _("synthetic sample row (CSV unreadable)")
             else:
-                source_label = _("first data row of {filename}").format(
-                    filename=use_csv_path.name
-                )
+                source_label = _("first data row of {filename}").format(filename=use_csv_path.name)
 
         payload = self._renderer.render(self._editing, fmt, row)
         rendered = json.dumps(payload, indent=2)
@@ -1673,9 +1671,7 @@ class CompositeTemplatesPage:
             text = csv_path.read_text(encoding=fmt.encoding)
         except (OSError, UnicodeDecodeError) as exc:
             self._window.show_toast(
-                _("Could not read CSV with the linked format settings — {error}").format(
-                    error=exc
-                ),
+                _("Could not read CSV with the linked format settings — {error}").format(error=exc),
                 timeout=6,
             )
             return
@@ -1699,19 +1695,13 @@ class CompositeTemplatesPage:
         ).format(alias=alias, count=data_count)
         body = (
             f"{intro}\n\n"
-            + _("All-or-none: {value}").format(
-                value=on_text if tpl.all_or_none else off_text
-            )
+            + _("All-or-none: {value}").format(value=on_text if tpl.all_or_none else off_text)
             + "\n"
-            + _("Collate: {value}").format(
-                value=on_text if tpl.collate_subrequests else off_text
-            )
+            + _("Collate: {value}").format(value=on_text if tpl.collate_subrequests else off_text)
             + "\n"
             + _("Source: {filename}").format(filename=csv_path.name)
         )
-        dialog = Adw.AlertDialog(
-            heading=_("Run “{name}”?").format(name=tpl.name), body=body
-        )
+        dialog = Adw.AlertDialog(heading=_("Run “{name}”?").format(name=tpl.name), body=body)
         dialog.add_response("cancel", _("Cancel"))
         dialog.add_response("run", _("Run"))
         dialog.set_response_appearance("run", Adw.ResponseAppearance.DESTRUCTIVE)
@@ -1818,9 +1808,7 @@ class CompositeTemplatesPage:
             self._run_progress_bar.set_fraction(event.processed / event.total)
         if event.last_result is not None and event.last_result.status == "failure":
             summary = event.last_result.error_summary or _("Failure")
-            self._run_last_error.set_label(
-                _("Last error: {summary}").format(summary=summary)
-            )
+            self._run_last_error.set_label(_("Last error: {summary}").format(summary=summary))
             self._run_last_error.set_visible(True)
         return False
 
@@ -1864,13 +1852,9 @@ class CompositeTemplatesPage:
         if report.cancelled:
             title = _(
                 "Run completed: {succeeded}/{total} succeeded, {failed} failed, cancelled."
-            ).format(
-                succeeded=report.succeeded, total=report.total, failed=report.failed
-            )
+            ).format(succeeded=report.succeeded, total=report.total, failed=report.failed)
         else:
-            title = _(
-                "Run completed: {succeeded}/{total} succeeded, {failed} failed."
-            ).format(
+            title = _("Run completed: {succeeded}/{total} succeeded, {failed} failed.").format(
                 succeeded=report.succeeded, total=report.total, failed=report.failed
             )
         self._results_banner.set_title(title)

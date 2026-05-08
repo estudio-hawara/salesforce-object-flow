@@ -178,9 +178,7 @@ class ObjectExplorerPage:
         self._sidebar_stack.add_named(
             self._make_status_page(
                 title=_("No connections yet"),
-                description=_(
-                    "Add a Salesforce connection from the Connections page to begin."
-                ),
+                description=_("Add a Salesforce connection from the Connections page to begin."),
                 icon_name="network-offline-symbolic",
                 action_label=_("Go to Connections"),
                 action_name="win.go-to-connections",
@@ -565,9 +563,9 @@ class ObjectExplorerPage:
             return _("reference → {targets}").format(targets=", ".join(field.reference_to))
         if field.type == "picklist":
             count = len(field.picklist_values)
-            return ngettext(
-                "picklist · {count} value", "picklist · {count} values", count
-            ).format(count=count)
+            return ngettext("picklist · {count} value", "picklist · {count} values", count).format(
+                count=count
+            )
         if field.length and field.length > 0 and field.type in {"string", "textarea"}:
             return f"{field.type}({field.length})"
         return field.type
