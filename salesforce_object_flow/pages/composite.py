@@ -38,7 +38,7 @@ from salesforce_object_flow.core.composite import (
     Subrequest,
 )
 from salesforce_object_flow.core.formats import FileFormat, slugify
-from salesforce_object_flow.i18n import N_
+from salesforce_object_flow.i18n import N_, _, ngettext
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.composite import (
     CompositeExecutor,
@@ -132,19 +132,19 @@ class CompositeTemplatesPage:
     def _build_sidebar_page(self) -> Adw.NavigationPage:
         sidebar_toolbar = Adw.ToolbarView()
         sidebar_header = Adw.HeaderBar()
-        sidebar_header.set_title_widget(Adw.WindowTitle(title="Templates"))
+        sidebar_header.set_title_widget(Adw.WindowTitle(title=_("Templates")))
         sidebar_header.set_show_start_title_buttons(False)
         sidebar_header.set_show_end_title_buttons(False)
 
         new_btn = Gtk.Button(icon_name="list-add-symbolic")
         new_btn.add_css_class("flat")
-        new_btn.set_tooltip_text("Create a new template")
+        new_btn.set_tooltip_text(_("Create a new template"))
         new_btn.connect("clicked", self._on_new_clicked)
         sidebar_header.pack_end(new_btn)
 
         refresh_btn = Gtk.Button(icon_name="view-refresh-symbolic")
         refresh_btn.add_css_class("flat")
-        refresh_btn.set_tooltip_text("Reload templates from disk")
+        refresh_btn.set_tooltip_text(_("Reload templates from disk"))
         refresh_btn.connect("clicked", self._on_refresh_clicked)
         sidebar_header.pack_end(refresh_btn)
 
@@ -164,11 +164,11 @@ class CompositeTemplatesPage:
         self._sidebar_stack.add_named(list_holder, "list")
 
         empty = Adw.StatusPage(
-            title="No templates yet",
-            description="Create your first Composite template to start composing.",
+            title=_("No templates yet"),
+            description=_("Create your first Composite template to start composing."),
             icon_name="document-properties-symbolic",
         )
-        empty_btn = Gtk.Button(label="New template")
+        empty_btn = Gtk.Button(label=_("New template"))
         empty_btn.add_css_class("pill")
         empty_btn.add_css_class("suggested-action")
         empty_btn.set_halign(Gtk.Align.CENTER)
@@ -177,7 +177,7 @@ class CompositeTemplatesPage:
         self._sidebar_stack.add_named(empty, "empty")
 
         sidebar_toolbar.set_content(self._sidebar_stack)
-        page = Adw.NavigationPage(title="Templates")
+        page = Adw.NavigationPage(title=_("Templates"))
         page.set_child(sidebar_toolbar)
         return page
 
@@ -191,7 +191,7 @@ class CompositeTemplatesPage:
         self._content_header = content_header
 
         self._preview_btn = Gtk.Button(
-            label="Preview payload",
+            label=_("Preview payload"),
             icon_name="view-reveal-symbolic",
         )
         self._preview_btn.add_css_class("flat")
@@ -200,32 +200,32 @@ class CompositeTemplatesPage:
         content_header.pack_start(self._preview_btn)
 
         self._run_btn = Gtk.Button(
-            label="Run…",
+            label=_("Run…"),
             icon_name="media-playback-start-symbolic",
         )
         self._run_btn.add_css_class("flat")
         self._run_btn.set_sensitive(False)
-        self._run_btn.set_tooltip_text("Execute against active connection")
+        self._run_btn.set_tooltip_text(_("Execute against active connection"))
         self._run_btn.connect("clicked", self._on_run_clicked)
         content_header.pack_start(self._run_btn)
 
         # "Back to editor" lives at the same pack_start slot as Preview
         # so the results pane's exit button visually replaces it.
         self._results_back_btn = Gtk.Button(
-            label="Back to editor", icon_name="go-previous-symbolic"
+            label=_("Back to editor"), icon_name="go-previous-symbolic"
         )
         self._results_back_btn.add_css_class("flat")
         self._results_back_btn.set_visible(False)
         self._results_back_btn.connect("clicked", self._on_back_to_editor)
         content_header.pack_start(self._results_back_btn)
 
-        self._save_btn = Gtk.Button(label="Save")
+        self._save_btn = Gtk.Button(label=_("Save"))
         self._save_btn.add_css_class("suggested-action")
         self._save_btn.set_sensitive(False)
         self._save_btn.connect("clicked", self._on_save_clicked)
         content_header.pack_end(self._save_btn)
 
-        self._delete_btn = Gtk.Button(label="Delete")
+        self._delete_btn = Gtk.Button(label=_("Delete"))
         self._delete_btn.add_css_class("destructive-action")
         self._delete_btn.set_sensitive(False)
         self._delete_btn.connect("clicked", self._on_delete_clicked)
@@ -233,7 +233,7 @@ class CompositeTemplatesPage:
 
         # "Export failures CSV…" lives at the same pack_end slot as Save.
         self._export_btn = Gtk.Button(
-            label="Export failures CSV…", icon_name="document-save-as-symbolic"
+            label=_("Export failures CSV…"), icon_name="document-save-as-symbolic"
         )
         self._export_btn.add_css_class("flat")
         self._export_btn.set_visible(False)
@@ -242,13 +242,13 @@ class CompositeTemplatesPage:
 
         content_toolbar.add_top_bar(content_header)
 
-        self._missing_banner = Adw.Banner(title="Linked format not found")
+        self._missing_banner = Adw.Banner(title=_("Linked format not found"))
         self._missing_banner.add_css_class("confirm-urgent")
-        self._missing_banner.set_button_label("Pick another format")
+        self._missing_banner.set_button_label(_("Pick another format"))
         self._missing_banner.connect("button-clicked", self._on_pick_another_format)
         content_toolbar.add_top_bar(self._missing_banner)
 
-        self._unsaved_banner = Adw.Banner(title="Unsaved changes")
+        self._unsaved_banner = Adw.Banner(title=_("Unsaved changes"))
         self._unsaved_banner.add_css_class("confirm-warning")
         content_toolbar.add_top_bar(self._unsaved_banner)
 
@@ -256,8 +256,8 @@ class CompositeTemplatesPage:
         self._detail_stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
 
         empty_status = Adw.StatusPage(
-            title="Select or create a template",
-            description=("Pick a template from the left, or click + to create a new one."),
+            title=_("Select or create a template"),
+            description=_("Pick a template from the left, or click + to create a new one."),
             icon_name="document-properties-symbolic",
         )
         self._detail_stack.add_named(empty_status, "empty")
@@ -276,7 +276,7 @@ class CompositeTemplatesPage:
         self._detail_stack.add_named(self._build_results_pane(), "results")
 
         content_toolbar.set_content(self._detail_stack)
-        page = Adw.NavigationPage(title="Detail")
+        page = Adw.NavigationPage(title=_("Detail"))
         page.set_child(content_toolbar)
         return page
 
@@ -289,23 +289,25 @@ class CompositeTemplatesPage:
         body.set_margin_end(18)
 
         general = Adw.PreferencesGroup()
-        general.set_title("General")
+        general.set_title(_("General"))
         self._name_row = Adw.EntryRow()
-        self._name_row.set_title("Name")
+        self._name_row.set_title(_("Name"))
         self._name_row.connect("notify::text", self._on_name_changed)
         general.add(self._name_row)
 
         self._description_row = Adw.EntryRow()
-        self._description_row.set_title("Description")
+        self._description_row.set_title(_("Description"))
         self._description_row.connect("notify::text", self._on_description_changed)
         general.add(self._description_row)
         body.append(general)
 
         linkage = Adw.PreferencesGroup()
-        linkage.set_title("Linkage")
+        linkage.set_title(_("Linkage"))
         self._format_row = Adw.ComboRow()
-        self._format_row.set_title("File format")
-        self._format_row.set_subtitle("Columns of this format drive {{placeholder}} substitution.")
+        self._format_row.set_title(_("File format"))
+        self._format_row.set_subtitle(
+            _("Columns of this format drive {{placeholder}} substitution.")
+        )
         self._format_model = Gtk.StringList()
         self._format_row.set_model(self._format_model)
         self._format_row.connect("notify::selected", self._on_format_changed)
@@ -313,25 +315,25 @@ class CompositeTemplatesPage:
         body.append(linkage)
 
         behavior = Adw.PreferencesGroup()
-        behavior.set_title("Behavior")
+        behavior.set_title(_("Behavior"))
         self._all_or_none_row = Adw.SwitchRow()
-        self._all_or_none_row.set_title("All or none")
-        self._all_or_none_row.set_subtitle("Roll back the whole batch if any subrequest fails.")
+        self._all_or_none_row.set_title(_("All or none"))
+        self._all_or_none_row.set_subtitle(_("Roll back the whole batch if any subrequest fails."))
         self._all_or_none_row.connect("notify::active", self._on_all_or_none_changed)
         behavior.add(self._all_or_none_row)
 
         self._collate_row = Adw.SwitchRow()
-        self._collate_row.set_title("Collate subrequests")
+        self._collate_row.set_title(_("Collate subrequests"))
         self._collate_row.set_subtitle(
-            "Group consecutive same-method subrequests in one round trip."
+            _("Group consecutive same-method subrequests in one round trip.")
         )
         self._collate_row.connect("notify::active", self._on_collate_changed)
         behavior.add(self._collate_row)
         body.append(behavior)
 
         self._subrequests_group = Adw.PreferencesGroup()
-        self._subrequests_group.set_title("Subrequests")
-        self._add_sub_btn = Gtk.Button(label="Add subrequest", icon_name="list-add-symbolic")
+        self._subrequests_group.set_title(_("Subrequests"))
+        self._add_sub_btn = Gtk.Button(label=_("Add subrequest"), icon_name="list-add-symbolic")
         self._add_sub_btn.add_css_class("flat")
         self._add_sub_btn.connect("clicked", self._on_add_subrequest)
         self._subrequests_group.set_header_suffix(self._add_sub_btn)
@@ -348,17 +350,17 @@ class CompositeTemplatesPage:
         outer.set_margin_end(18)
 
         top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        back_btn = Gtk.Button(label="Back to editor", icon_name="go-previous-symbolic")
+        back_btn = Gtk.Button(label=_("Back to editor"), icon_name="go-previous-symbolic")
         back_btn.add_css_class("flat")
         back_btn.connect("clicked", self._on_back_to_editor)
         top.append(back_btn)
 
-        sample_label = Gtk.Label(label="Sample row:")
+        sample_label = Gtk.Label(label=_("Sample row:"))
         sample_label.add_css_class("dim-label")
         sample_label.set_valign(Gtk.Align.CENTER)
         top.append(sample_label)
 
-        self._sample_dropdown = Gtk.DropDown.new_from_strings(["Synthetic", "From CSV…"])
+        self._sample_dropdown = Gtk.DropDown.new_from_strings([_("Synthetic"), _("From CSV…")])
         self._sample_dropdown.connect("notify::selected", self._on_sample_changed)
         top.append(self._sample_dropdown)
         outer.append(top)
@@ -415,7 +417,7 @@ class CompositeTemplatesPage:
         self._run_last_error.set_visible(False)
         outer.append(self._run_last_error)
 
-        self._run_cancel_btn = Gtk.Button(label="Cancel")
+        self._run_cancel_btn = Gtk.Button(label=_("Cancel"))
         self._run_cancel_btn.add_css_class("destructive-action")
         self._run_cancel_btn.set_halign(Gtk.Align.CENTER)
         self._run_cancel_btn.connect("clicked", self._on_cancel_clicked)
@@ -454,7 +456,9 @@ class CompositeTemplatesPage:
             self._loaded = self._store.list_templates()
         except Exception as exc:
             log.exception("Could not list templates")
-            self._window.show_toast(f"Could not list templates — {exc}", timeout=6)
+            self._window.show_toast(
+                _("Could not list templates — {error}").format(error=exc), timeout=6
+            )
             self._loaded = []
 
         while True:
@@ -531,7 +535,7 @@ class CompositeTemplatesPage:
             finally:
                 self._suppress_dirty = False
             self._window.show_toast(
-                "A run is in progress — cancel it before switching templates.",
+                _("A run is in progress — cancel it before switching templates."),
                 timeout=6,
             )
             return
@@ -580,7 +584,7 @@ class CompositeTemplatesPage:
         def proceed() -> None:
             existing = {lt.filename for lt in self._loaded}
             new_name = self._unique_display_name(
-                "Untitled template", {lt.template.name for lt in self._loaded}
+                _("Untitled template"), {lt.template.name for lt in self._loaded}
             )
             new_filename = self._store.unique_filename_for(new_name, existing=existing)
             default_format = self._first_available_format_filename()
@@ -690,7 +694,7 @@ class CompositeTemplatesPage:
             if selected_index == -1:
                 # Insert a leading "missing" entry.
                 missing_model = Gtk.StringList()
-                missing_model.append(f"⚠ Missing: {target}")
+                missing_model.append(_("⚠ Missing: {filename}").format(filename=target))
                 for lf in available:
                     missing_model.append(lf.format.name)
                 self._format_row.set_model(missing_model)
@@ -752,7 +756,9 @@ class CompositeTemplatesPage:
 
     def _update_subrequest_count(self) -> None:
         count = len(self._editing.subrequests) if self._editing is not None else 0
-        self._subrequests_group.set_description(f"{count} of {MAX_SUBREQUESTS} subrequests.")
+        self._subrequests_group.set_description(
+            _("{count} of {max} subrequests.").format(count=count, max=MAX_SUBREQUESTS)
+        )
         self._add_sub_btn.set_sensitive(count < MAX_SUBREQUESTS)
 
     def _build_subrequest_row(self, index: int, sub: Subrequest) -> Adw.ExpanderRow:
@@ -776,26 +782,26 @@ class CompositeTemplatesPage:
 
         up_btn = Gtk.Button(icon_name="go-up-symbolic")
         up_btn.add_css_class("flat")
-        up_btn.set_tooltip_text("Move up")
+        up_btn.set_tooltip_text(_("Move up"))
         up_btn.connect("clicked", _on_up)
         down_btn = Gtk.Button(icon_name="go-down-symbolic")
         down_btn.add_css_class("flat")
-        down_btn.set_tooltip_text("Move down")
+        down_btn.set_tooltip_text(_("Move down"))
         down_btn.connect("clicked", _on_down)
         dup_btn = Gtk.Button(icon_name="edit-copy-symbolic")
         dup_btn.add_css_class("flat")
-        dup_btn.set_tooltip_text("Duplicate")
+        dup_btn.set_tooltip_text(_("Duplicate"))
         dup_btn.connect("clicked", _on_dup)
         del_btn = Gtk.Button(icon_name="user-trash-symbolic")
         del_btn.add_css_class("flat")
-        del_btn.set_tooltip_text("Remove")
+        del_btn.set_tooltip_text(_("Remove"))
         del_btn.connect("clicked", _on_del)
         for btn in (up_btn, down_btn, dup_btn, del_btn):
             expander.add_suffix(btn)
 
         # Reference id row.
         ref_row = Adw.EntryRow()
-        ref_row.set_title("Reference id")
+        ref_row.set_title(_("Reference id"))
         ref_row.set_text(sub.reference_id)
 
         def _on_ref_changed(entry: Adw.EntryRow, _spec: object) -> None:
@@ -806,7 +812,7 @@ class CompositeTemplatesPage:
 
         # Method row.
         method_row = Adw.ComboRow()
-        method_row.set_title("Method")
+        method_row.set_title(_("Method"))
         method_model = Gtk.StringList.new([m.value for m in _HTTP_METHODS])
         method_row.set_model(method_model)
         method_row.set_selected(_HTTP_METHODS.index(sub.method))
@@ -819,7 +825,7 @@ class CompositeTemplatesPage:
 
         # URL row.
         url_row = Adw.EntryRow()
-        url_row.set_title("URL")
+        url_row.set_title(_("URL"))
         url_row.set_text(sub.url)
 
         def _on_url_changed(entry: Adw.EntryRow, _spec: object) -> None:
@@ -843,7 +849,7 @@ class CompositeTemplatesPage:
 
     @staticmethod
     def _subrequest_title(index: int, sub: Subrequest) -> str:
-        ref = sub.reference_id or "(unnamed)"
+        ref = sub.reference_id or _("(unnamed)")
         return f"#{index + 1} {ref} · {sub.method.value}"
 
     def _build_body_section(self, sub_index: int, sub: Subrequest) -> Gtk.ListBoxRow:
@@ -858,12 +864,12 @@ class CompositeTemplatesPage:
         outer.set_margin_end(12)
         outer.set_hexpand(True)
 
-        title_label = Gtk.Label(label="Body", xalign=0)
+        title_label = Gtk.Label(label=_("Body"), xalign=0)
         title_label.add_css_class("heading")
         outer.append(title_label)
 
         subtitle_label = Gtk.Label(
-            label="Field/value pairs. Leave empty for no body.",
+            label=_("Field/value pairs. Leave empty for no body."),
             xalign=0,
             wrap=True,
         )
@@ -881,7 +887,7 @@ class CompositeTemplatesPage:
             body_list.append(self._build_body_field_row(sub_index, entry_index, entry))
         outer.append(body_list)
 
-        add_field_btn = Gtk.Button(label="Add field", icon_name="list-add-symbolic")
+        add_field_btn = Gtk.Button(label=_("Add field"), icon_name="list-add-symbolic")
         add_field_btn.add_css_class("flat")
         add_field_btn.set_halign(Gtk.Align.START)
 
@@ -910,13 +916,13 @@ class CompositeTemplatesPage:
 
         field_entry = Gtk.Entry()
         field_entry.set_text(entry.field)
-        field_entry.set_placeholder_text("Field")
+        field_entry.set_placeholder_text(_("Field"))
         field_entry.set_hexpand(True)
         field_entry.set_size_request(-1, -1)
 
         value_entry = Gtk.Entry()
         value_entry.set_text(entry.value)
-        value_entry.set_placeholder_text("Literal or {{column}}")
+        value_entry.set_placeholder_text(_("Literal or {{column}}"))
         value_entry.set_hexpand(True)
 
         del_btn = Gtk.Button(icon_name="user-trash-symbolic")
@@ -961,7 +967,7 @@ class CompositeTemplatesPage:
         outer.set_margin_end(12)
         outer.set_hexpand(True)
 
-        title_label = Gtk.Label(label="Headers", xalign=0)
+        title_label = Gtk.Label(label=_("Headers"), xalign=0)
         title_label.add_css_class("heading")
         outer.append(title_label)
 
@@ -973,7 +979,7 @@ class CompositeTemplatesPage:
             headers_list.append(self._build_header_row(sub_index, header_index, key, value))
         outer.append(headers_list)
 
-        add_header_btn = Gtk.Button(label="Add header", icon_name="list-add-symbolic")
+        add_header_btn = Gtk.Button(label=_("Add header"), icon_name="list-add-symbolic")
         add_header_btn.add_css_class("flat")
         add_header_btn.set_halign(Gtk.Align.START)
 
@@ -1009,7 +1015,7 @@ class CompositeTemplatesPage:
 
         key_entry = Gtk.Entry()
         key_entry.set_text(key)
-        key_entry.set_placeholder_text("Header name")
+        key_entry.set_placeholder_text(_("Header name"))
         key_entry.set_hexpand(True)
         key_entry.set_width_chars(12)
         key_entry.connect("changed", _on_key_changed)
@@ -1017,7 +1023,7 @@ class CompositeTemplatesPage:
 
         value_entry = Gtk.Entry()
         value_entry.set_text(value)
-        value_entry.set_placeholder_text("Header value")
+        value_entry.set_placeholder_text(_("Header value"))
         value_entry.set_hexpand(True)
         value_entry.set_width_chars(36)
         value_entry.connect("changed", _on_value_changed)
@@ -1328,7 +1334,7 @@ class CompositeTemplatesPage:
     def _validate_template(self) -> tuple[bool, str | None]:
         """Return (is_valid, first_error_message)."""
         if self._editing is None:
-            return False, "No template selected."
+            return False, _("No template selected.")
         fmt = self._resolve_linked_format()
         report = self._validator.validate(self._editing, fmt)
         if not report.ok:
@@ -1342,7 +1348,9 @@ class CompositeTemplatesPage:
             if loaded.filename == new_slug_filename:
                 return (
                     False,
-                    f"Name conflicts with another template: {loaded.template.name}.",
+                    _("Name conflicts with another template: {name}.").format(
+                        name=loaded.template.name
+                    ),
                 )
         return True, None
 
@@ -1367,7 +1375,7 @@ class CompositeTemplatesPage:
         run_ok, run_reason = self._run_sensitivity(is_valid, dirty, missing)
         self._run_btn.set_sensitive(run_ok)
         self._run_btn.set_tooltip_text(
-            "Execute against active connection" if run_ok else (run_reason or "")
+            _("Execute against active connection") if run_ok else (run_reason or "")
         )
 
         if save_ok or not dirty:
@@ -1383,15 +1391,15 @@ class CompositeTemplatesPage:
         if self._editing is None:
             return False, None
         if missing:
-            return False, "Linked format is missing — pick one first."
+            return False, _("Linked format is missing — pick one first.")
         if not is_valid:
-            return False, "Fix validation errors first."
+            return False, _("Fix validation errors first.")
         if dirty:
-            return False, "Save the template before running."
+            return False, _("Save the template before running.")
         if self._get_active_alias() is None:
-            return False, "No active connection — pick one in the sidebar."
+            return False, _("No active connection — pick one in the sidebar.")
         if self._is_run_in_progress():
-            return False, "A run is in progress."
+            return False, _("A run is in progress.")
         return True, None
 
     def _is_run_in_progress(self) -> bool:
@@ -1403,7 +1411,7 @@ class CompositeTemplatesPage:
             return
         is_valid, error = self._validate_template()
         if not is_valid:
-            self._window.show_toast(error or "Invalid template.", timeout=6)
+            self._window.show_toast(error or _("Invalid template."), timeout=6)
             return
         previous_on_disk = self._selected_filename if self._delete_btn.get_sensitive() else None
         try:
@@ -1426,7 +1434,7 @@ class CompositeTemplatesPage:
             self._loaded = []
         self._refresh_list_after_local_change(select_filename=new_filename)
         self._switch_to_template(new_filename)
-        self._window.show_toast(f"Saved “{saved_name}”.")
+        self._window.show_toast(_("Saved “{name}”.").format(name=saved_name))
 
     # ---------------------------------------------------------- Delete flow
     def _on_delete_clicked(self, _btn: Gtk.Button) -> None:
@@ -1446,13 +1454,13 @@ class CompositeTemplatesPage:
             self._original = None
             self._refresh_list()
             self._show_empty_detail()
-            self._window.show_toast(f"Deleted “{name}”.")
+            self._window.show_toast(_("Deleted “{name}”.").format(name=name))
 
         confirm(
             self._window,
-            heading=f"Delete “{name}”?",
-            body="The template will be removed permanently from disk.",
-            label="Delete",
+            heading=_("Delete “{name}”?").format(name=name),
+            body=_("The template will be removed permanently from disk."),
+            label=_("Delete"),
             on_confirm=do_delete,
         )
 
@@ -1465,12 +1473,12 @@ class CompositeTemplatesPage:
 
     def _prompt_unsaved_changes(self, *, proceed: Callable[[], None]) -> None:
         dialog = Adw.AlertDialog(
-            heading="Unsaved changes",
-            body="The current template has unsaved edits. Save them before continuing?",
+            heading=_("Unsaved changes"),
+            body=_("The current template has unsaved edits. Save them before continuing?"),
         )
-        dialog.add_response("cancel", "Cancel")
-        dialog.add_response("discard", "Discard")
-        dialog.add_response("save", "Save")
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("discard", _("Discard"))
+        dialog.add_response("save", _("Save"))
         dialog.set_response_appearance("discard", Adw.ResponseAppearance.DESTRUCTIVE)
         dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
         dialog.set_default_response("save")
@@ -1480,7 +1488,7 @@ class CompositeTemplatesPage:
             if response == "save":
                 is_valid, error = self._validate_template()
                 if not is_valid:
-                    self._window.show_toast(error or "Invalid template.", timeout=6)
+                    self._window.show_toast(error or _("Invalid template."), timeout=6)
                     return
                 self._on_save_clicked(self._save_btn)
                 proceed()
@@ -1516,7 +1524,7 @@ class CompositeTemplatesPage:
         # "From CSV…" was picked.
         self._sample_dropdown.set_selected(0)  # reset to synthetic until file picked
         dialog = Gtk.FileDialog()
-        dialog.set_title("Pick a CSV file for the sample row")
+        dialog.set_title(_("Pick a CSV file for the sample row"))
         home = Gio.File.new_for_path(str(Path.home()))
         dialog.set_initial_folder(home)
 
@@ -1537,29 +1545,38 @@ class CompositeTemplatesPage:
             return
         fmt = self._resolve_linked_format()
         if fmt is None:
-            self._preview_summary.set_label("Linked format missing — pick a format first.")
+            self._preview_summary.set_label(_("Linked format missing — pick a format first."))
             self._preview_textview.get_buffer().set_text("")
             return
 
         if use_csv_path is None:
             row = CompositePayloadRenderer.synthetic_row(fmt)
-            source_label = "synthetic sample row"
+            source_label = _("synthetic sample row")
         else:
             row = self._row_from_csv(fmt, use_csv_path)
             if row is None:
                 self._window.show_toast(
-                    f"Could not read sample row from {use_csv_path.name}", timeout=6
+                    _("Could not read sample row from {filename}").format(
+                        filename=use_csv_path.name
+                    ),
+                    timeout=6,
                 )
                 row = CompositePayloadRenderer.synthetic_row(fmt)
-                source_label = "synthetic sample row (CSV unreadable)"
+                source_label = _("synthetic sample row (CSV unreadable)")
             else:
-                source_label = f"first data row of {use_csv_path.name}"
+                source_label = _("first data row of {filename}").format(
+                    filename=use_csv_path.name
+                )
 
         payload = self._renderer.render(self._editing, fmt, row)
         rendered = json.dumps(payload, indent=2)
         sub_count = len(self._editing.subrequests)
         self._preview_summary.set_label(
-            f"Rendered with {source_label} — {sub_count} subrequest(s)."
+            ngettext(
+                "Rendered with {source} — {count} subrequest.",
+                "Rendered with {source} — {count} subrequests.",
+                sub_count,
+            ).format(source=source_label, count=sub_count)
         )
         self._preview_textview.get_buffer().set_text(rendered)
 
@@ -1614,13 +1631,13 @@ class CompositeTemplatesPage:
         fmt = self._resolve_linked_format()
         if alias is None or fmt is None:
             self._window.show_toast(
-                "Cannot run — pick an active connection and a linked format.",
+                _("Cannot run — pick an active connection and a linked format."),
                 timeout=6,
             )
             return
 
         dialog = Gtk.FileDialog()
-        dialog.set_title("Pick the CSV file to run against")
+        dialog.set_title(_("Pick the CSV file to run against"))
         home = Gio.File.new_for_path(str(Path.home()))
         dialog.set_initial_folder(home)
 
@@ -1655,7 +1672,9 @@ class CompositeTemplatesPage:
             text = csv_path.read_text(encoding=fmt.encoding)
         except (OSError, UnicodeDecodeError) as exc:
             self._window.show_toast(
-                f"Could not read CSV with the linked format settings — {exc}",
+                _("Could not read CSV with the linked format settings — {error}").format(
+                    error=exc
+                ),
                 timeout=6,
             )
             return
@@ -1667,18 +1686,33 @@ class CompositeTemplatesPage:
         all_rows = list(reader)
         data_count = len(all_rows) - (1 if fmt.has_header and all_rows else 0)
         if data_count <= 0:
-            self._window.show_toast("CSV has no data rows.", timeout=6)
+            self._window.show_toast(_("CSV has no data rows."), timeout=6)
             return
 
+        on_text = _("on")
+        off_text = _("off")
+        intro = ngettext(
+            "This will write data to “{alias}” using {count} CSV row.",
+            "This will write data to “{alias}” using {count} CSV rows.",
+            data_count,
+        ).format(alias=alias, count=data_count)
         body = (
-            f"This will write data to “{alias}” using {data_count} CSV row(s).\n\n"
-            f"All-or-none: {'on' if tpl.all_or_none else 'off'}\n"
-            f"Collate:     {'on' if tpl.collate_subrequests else 'off'}\n"
-            f"Source:      {csv_path.name}"
+            f"{intro}\n\n"
+            + _("All-or-none: {value}").format(
+                value=on_text if tpl.all_or_none else off_text
+            )
+            + "\n"
+            + _("Collate: {value}").format(
+                value=on_text if tpl.collate_subrequests else off_text
+            )
+            + "\n"
+            + _("Source: {filename}").format(filename=csv_path.name)
         )
-        dialog = Adw.AlertDialog(heading=f"Run “{tpl.name}”?", body=body)
-        dialog.add_response("cancel", "Cancel")
-        dialog.add_response("run", "Run")
+        dialog = Adw.AlertDialog(
+            heading=_("Run “{name}”?").format(name=tpl.name), body=body
+        )
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("run", _("Run"))
         dialog.set_response_appearance("run", Adw.ResponseAppearance.DESTRUCTIVE)
         dialog.set_default_response("cancel")
         dialog.set_close_response("cancel")
@@ -1723,20 +1757,28 @@ class CompositeTemplatesPage:
             except ExecutionError as exc:
                 GLib.idle_add(self._on_run_fatal, str(exc))
             except ConnectionsError as exc:
-                GLib.idle_add(self._on_run_fatal, f"Connection error: {exc}")
+                GLib.idle_add(
+                    self._on_run_fatal,
+                    _("Connection error: {error}").format(error=exc),
+                )
             except Exception as exc:
                 log.exception("Unexpected execution failure")
-                GLib.idle_add(self._on_run_fatal, f"Unexpected error: {exc}")
+                GLib.idle_add(
+                    self._on_run_fatal,
+                    _("Unexpected error: {error}").format(error=exc),
+                )
 
         threading.Thread(target=worker, daemon=True, name=f"composite-run-{alias}").start()
 
     def _show_running_pane(self, *, tpl_name: str, alias: str) -> None:
-        self._run_title_label.set_label(f"Running “{tpl_name}” on {alias}")
-        self._run_progress_label.set_label("Preparing…")
+        self._run_title_label.set_label(
+            _("Running “{name}” on {alias}").format(name=tpl_name, alias=alias)
+        )
+        self._run_progress_label.set_label(_("Preparing…"))
         self._run_progress_bar.set_fraction(0.0)
         self._run_last_error.set_visible(False)
         self._run_cancel_btn.set_sensitive(True)
-        self._run_cancel_btn.set_label("Cancel")
+        self._run_cancel_btn.set_label(_("Cancel"))
         self._run_spinner.start()
         self._detail_stack.set_visible_child_name("running")
         self._update_editor_chrome_visibility()
@@ -1769,12 +1811,18 @@ class CompositeTemplatesPage:
             self._missing_banner.set_revealed(False)
 
     def _on_progress(self, event: ProgressEvent) -> bool:
-        self._run_progress_label.set_label(f"Processing row {event.processed} of {event.total}…")
+        self._run_progress_label.set_label(
+            _("Processing row {processed} of {total}…").format(
+                processed=event.processed, total=event.total
+            )
+        )
         if event.total > 0:
             self._run_progress_bar.set_fraction(event.processed / event.total)
         if event.last_result is not None and event.last_result.status == "failure":
-            summary = event.last_result.error_summary or "Failure"
-            self._run_last_error.set_label(f"Last error: {summary}")
+            summary = event.last_result.error_summary or _("Failure")
+            self._run_last_error.set_label(
+                _("Last error: {summary}").format(summary=summary)
+            )
             self._run_last_error.set_visible(True)
         return False
 
@@ -1783,7 +1831,7 @@ class CompositeTemplatesPage:
             return
         self._cancelled.set()
         self._run_cancel_btn.set_sensitive(False)
-        self._run_progress_label.set_label("Cancelling — finishing current row…")
+        self._run_progress_label.set_label(_("Cancelling — finishing current row…"))
 
     def _on_run_done(
         self,
@@ -1815,11 +1863,18 @@ class CompositeTemplatesPage:
 
     def _render_results(self, report: ExecutionReport) -> None:
         # Build banner.
-        suffix = ", cancelled" if report.cancelled else ""
-        title = (
-            f"Run completed: {report.succeeded}/{report.total} succeeded, "
-            f"{report.failed} failed{suffix}."
-        )
+        if report.cancelled:
+            title = _(
+                "Run completed: {succeeded}/{total} succeeded, {failed} failed, cancelled."
+            ).format(
+                succeeded=report.succeeded, total=report.total, failed=report.failed
+            )
+        else:
+            title = _(
+                "Run completed: {succeeded}/{total} succeeded, {failed} failed."
+            ).format(
+                succeeded=report.succeeded, total=report.total, failed=report.failed
+            )
         self._results_banner.set_title(title)
         self._results_banner.remove_css_class("confirm-warning")
         self._results_banner.remove_css_class("confirm-urgent")
@@ -1851,7 +1906,9 @@ class CompositeTemplatesPage:
 
     def _build_result_row(self, row: RowResult) -> Adw.ExpanderRow:
         expander = Adw.ExpanderRow()
-        expander.set_title(f"Row #{row.row_index + 1} — {row.status}")
+        expander.set_title(
+            _("Row #{number} — {status}").format(number=row.row_index + 1, status=row.status)
+        )
         if row.error_summary:
             subtitle = row.error_summary
             if len(subtitle) > 200:
@@ -1889,7 +1946,7 @@ class CompositeTemplatesPage:
         fmt = self._last_report_fmt
         suggested = f"{slugify(self._last_report_template_name)}-failures.csv"
         dialog = Gtk.FileDialog()
-        dialog.set_title("Export failures CSV")
+        dialog.set_title(_("Export failures CSV"))
         dialog.set_initial_name(suggested)
 
         def on_saved(d: Gtk.FileDialog, result: Gio.AsyncResult) -> None:
@@ -1903,9 +1960,17 @@ class CompositeTemplatesPage:
             try:
                 count = export_failures_csv(report, fmt, Path(path_str))
             except OSError as exc:
-                self._window.show_toast(f"Could not export — {exc}", timeout=6)
+                self._window.show_toast(
+                    _("Could not export — {error}").format(error=exc), timeout=6
+                )
                 return
-            self._window.show_toast(f"Exported {count} failed row(s) to {Path(path_str).name}.")
+            self._window.show_toast(
+                ngettext(
+                    "Exported {count} failed row to {filename}.",
+                    "Exported {count} failed rows to {filename}.",
+                    count,
+                ).format(count=count, filename=Path(path_str).name)
+            )
 
         dialog.save(self._window, None, on_saved)
 
