@@ -42,7 +42,7 @@ Compose multi-step Composite API templates. A template binds to a File Format (i
 
 Salesforce Object Flow is cross-platform. The polished daily-driver target is **Linux**; macOS and Windows are supported via Homebrew and MSYS2 respectively and may exhibit minor libadwaita theming quirks.
 
-### Linux (Debian / Ubuntu names)
+### Linux (Debian / Ubuntu)
 
 ```bash
 sudo apt install libcairo2-dev libgirepository-2.0-dev libgtk-4-dev libadwaita-1-dev
