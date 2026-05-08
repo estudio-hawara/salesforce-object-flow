@@ -16,6 +16,7 @@ from salesforce_object_flow.i18n import _
 from salesforce_object_flow.pages.composite import CompositeTemplatesPage
 from salesforce_object_flow.pages.connections import ConnectionsPage
 from salesforce_object_flow.pages.formats import FileFormatsPage
+from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.pages.objects import ObjectExplorerPage
 from salesforce_object_flow.pages.welcome import WelcomePage
 from salesforce_object_flow.services.composite import (
@@ -33,9 +34,10 @@ CSS_PATH = Path(__file__).resolve().parent / "style.css"
 
 
 class _Page(Protocol):
+    NAME: ClassVar[str]
     TITLE: ClassVar[str]
     ICON_NAME: ClassVar[str]
-    GROUP: ClassVar[str]
+    GROUP: ClassVar[PageGroup]
 
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView: ...
 
@@ -73,8 +75,8 @@ class MainWindow(Adw.ApplicationWindow):
         self._build_ui()
         self._install_active_org_actions()
 
-        landing_title = "Connections" if self._config.orgs else "Welcome"
-        self._select_sidebar_row_by_title(landing_title)
+        landing_name = ConnectionsPage.NAME if self._config.orgs else WelcomePage.NAME
+        self._select_sidebar_row_by_name(landing_name)
 
     @property
     def config(self) -> Config:
@@ -194,7 +196,7 @@ class MainWindow(Adw.ApplicationWindow):
         header = Adw.HeaderBar()
         header.set_title_widget(Adw.WindowTitle(title=page.TITLE))
         toolbar_view = page.build(header)
-        self._stack.add_titled(toolbar_view, page.TITLE, page.TITLE)
+        self._stack.add_titled(toolbar_view, page.NAME, page.TITLE)
 
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         box.set_margin_top(8)
@@ -212,15 +214,15 @@ class MainWindow(Adw.ApplicationWindow):
 
         row = Gtk.ListBoxRow()
         row.set_child(box)
-        row.set_name(page.TITLE)
+        row.set_name(page.NAME)
         row._group = page.GROUP  # type: ignore[attr-defined]  # noqa: SLF001
         self._sidebar_list.append(row)
 
     @staticmethod
     def _sidebar_header_func(row: Gtk.ListBoxRow, before: Gtk.ListBoxRow | None) -> None:
-        group: str | None = getattr(row, "_group", None)
-        prev_group: str | None = getattr(before, "_group", None) if before else None
-        if group is None or group == prev_group:
+        group: PageGroup | None = getattr(row, "_group", None)
+        prev_group: PageGroup | None = getattr(before, "_group", None) if before else None
+        if group is None or group is prev_group:
             row.set_header(None)
             return
         header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -230,7 +232,7 @@ class MainWindow(Adw.ApplicationWindow):
         spacer.set_size_request(-1, 4 if before is None else 12)
         header_box.append(spacer)
 
-        label = Gtk.Label(label=group, xalign=0)
+        label = Gtk.Label(label=group.value, xalign=0)
         label.add_css_class("heading")
         label.add_css_class("dim-label")
         label.set_margin_start(12)
@@ -244,13 +246,13 @@ class MainWindow(Adw.ApplicationWindow):
             return
         self._stack.set_visible_child_name(row.get_name())
 
-    def _select_sidebar_row_by_title(self, title: str) -> None:
+    def _select_sidebar_row_by_name(self, name: str) -> None:
         index = 0
         while True:
             row = self._sidebar_list.get_row_at_index(index)
             if row is None:
                 return
-            if row.get_name() == title:
+            if row.get_name() == name:
                 self._sidebar_list.select_row(row)
                 return
             index += 1
@@ -307,7 +309,7 @@ class MainWindow(Adw.ApplicationWindow):
     def _on_action_go_to_connections(
         self, _action: Gio.SimpleAction, _parameter: GLib.Variant | None
     ) -> None:
-        self._select_sidebar_row_by_title("Connections")
+        self._select_sidebar_row_by_name(ConnectionsPage.NAME)
 
     def _refresh_active_org_menu(self) -> None:
         if self._active_org_button is None:

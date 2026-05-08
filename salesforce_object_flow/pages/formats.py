@@ -18,6 +18,7 @@ from salesforce_object_flow.core.formats import (
     FileFormat,
     slugify,
 )
+from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.formats import (
     CellError,
     FileFormatError,
@@ -35,9 +36,10 @@ log = logging.getLogger(__name__)
 
 
 class FileFormatsPage:
+    NAME: ClassVar[str] = "formats"
     TITLE: ClassVar[str] = "File Formats"
     ICON_NAME: ClassVar[str] = "document-text-symbolic"
-    GROUP: ClassVar[str] = "Data model"
+    GROUP: ClassVar[PageGroup] = PageGroup.DATA_MODEL
 
     def __init__(
         self,

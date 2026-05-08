@@ -4,15 +4,17 @@ from typing import ClassVar
 
 from gi.repository import Adw, Gtk
 
+from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.ui.layout import make_page_layout
 
 
 class WelcomePage:
     """Trivial first page: explain what the app is and what's coming."""
 
+    NAME: ClassVar[str] = "welcome"
     TITLE: ClassVar[str] = "Welcome"
     ICON_NAME: ClassVar[str] = "hand-openyay-symbolic"
-    GROUP: ClassVar[str] = "Setup"
+    GROUP: ClassVar[PageGroup] = PageGroup.SETUP
 
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView:
         toolbar_view, _page_box, content_box, _scrolled = make_page_layout(header)

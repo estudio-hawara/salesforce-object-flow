@@ -38,6 +38,7 @@ from salesforce_object_flow.core.composite import (
     Subrequest,
 )
 from salesforce_object_flow.core.formats import FileFormat, slugify
+from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.composite import (
     CompositeExecutor,
     CompositePayloadRenderer,
@@ -65,9 +66,10 @@ _HTTP_METHODS: tuple[HttpMethod, ...] = tuple(HttpMethod)
 
 
 class CompositeTemplatesPage:
+    NAME: ClassVar[str] = "composite"
     TITLE: ClassVar[str] = "Composite Requests"
     ICON_NAME: ClassVar[str] = "build-symbolic"
-    GROUP: ClassVar[str] = "Run"
+    GROUP: ClassVar[PageGroup] = PageGroup.RUN
 
     def __init__(
         self,

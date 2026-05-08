@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, ClassVar, Final
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from salesforce_object_flow.core.config import DEFAULT_API_VERSION, OrgEntry
+from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.connections import (
     AddOrgRequest,
     ConnectionsError,
@@ -58,9 +59,10 @@ _INSTRUCTIONS: Final[tuple[str, ...]] = (
 class ConnectionsPage:
     """The Connections page object expected by ``MainWindow._add_page``."""
 
+    NAME: ClassVar[str] = "connections"
     TITLE: ClassVar[str] = "Connections"
     ICON_NAME: ClassVar[str] = "interlinked-rectangles-symbolic"
-    GROUP: ClassVar[str] = "Setup"
+    GROUP: ClassVar[PageGroup] = PageGroup.SETUP
 
     def __init__(
         self,
