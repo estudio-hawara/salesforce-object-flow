@@ -4,7 +4,7 @@ Pure data + JSON. GTK-free. A :class:`CompositeTemplate` describes a
 Salesforce Composite REST API call: a list of subrequests, each with method,
 URL, optional body and headers, plus top-level transactional flags. Stored on
 disk as one JSON file per template under
-``platformdirs.user_data_dir / templates/`` (handled by
+``platformdirs.user_data_dir / composites/`` (handled by
 :class:`services.composite.CompositeTemplateStore`).
 
 Each template links to exactly one :class:`core.formats.FileFormat` by its

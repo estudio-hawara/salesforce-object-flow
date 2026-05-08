@@ -1,7 +1,7 @@
 """Composite template storage + validator + payload renderer + executor.
 
 :class:`CompositeTemplateStore` does CRUD on the user's
-``user_data_dir / templates/`` directory: one JSON file per template,
+``user_data_dir / composites/`` directory: one JSON file per template,
 slugified filenames, atomic writes. Same on-disk discipline as
 :mod:`services.formats`: corruption is tolerated on read (logged and
 skipped), but write failures surface as :class:`CompositeTemplateError`.
@@ -81,7 +81,7 @@ class LoadedTemplate:
 
 
 def _default_root() -> Path:
-    return Path(_DIRS.user_data_dir) / "templates"
+    return Path(_DIRS.user_data_dir) / "composites"
 
 
 class CompositeTemplateStore:

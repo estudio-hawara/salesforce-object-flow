@@ -36,7 +36,7 @@ Compose multi-step Composite API templates. A template binds to a File Format (i
 
 ## Status
 
-`0.1.0a2` — second alpha. The four panes shown above are wired end-to-end: connections persist with secrets stored in the OS keyring, the Object Explorer reads the live SObject catalogue, and File Format and Composite Request templates are saved locally and can be previewed and executed against the selected org. Expect rough edges around error reporting, partial-success handling on the Composite response, and template import/export — feedback and bug reports are very welcome.
+`0.1.0a3` — third alpha. The four panes shown above are wired end-to-end: connections persist with secrets stored in the OS keyring, the Object Explorer reads the live SObject catalogue, and File Format and Composite Request templates are saved locally and can be previewed and executed against the selected org. Expect rough edges around error reporting, partial-success handling on the Composite response, and template import/export — feedback and bug reports are very welcome.
 
 ## Languages
 

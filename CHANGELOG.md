@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0a3] - 2026-05-08
+
+### Changed
+
+- **Breaking:** Composite request templates are now stored in
+  `user_data_dir/composites/` instead of `user_data_dir/templates/`. Existing
+  `0.1.0a2` users must move their JSON files manually to keep their saved
+  templates available.
+
 ## [0.1.0a2] - 2026-05-08
 
 ### Added
