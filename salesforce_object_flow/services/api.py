@@ -19,15 +19,23 @@ from typing import Any, cast
 import httpx
 
 from salesforce_object_flow.core.credentials import OrgCredentials
+from salesforce_object_flow.services.errors import CodedError, ErrorCode
 
 log = logging.getLogger(__name__)
 
 
-class ApiError(RuntimeError):
+class ApiError(CodedError):
     """Generic Salesforce REST failure surfaced to the user."""
 
-    def __init__(self, message: str, status_code: int | None = None) -> None:
-        super().__init__(message)
+    def __init__(
+        self,
+        message: str,
+        status_code: int | None = None,
+        *,
+        code: ErrorCode | None = None,
+        params: dict[str, object] | None = None,
+    ) -> None:
+        super().__init__(message, code=code, params=params)
         self.status_code = status_code
 
 
@@ -70,7 +78,9 @@ class SalesforceClient:
     def limits(self) -> dict[str, Any]:
         payload = self.get(f"/services/data/{self._api_version}/limits")
         if not isinstance(payload, dict):
-            raise ApiError("Unexpected /limits response shape")
+            raise ApiError(
+                "Unexpected /limits response shape", code=ErrorCode.API_UNEXPECTED_RESPONSE
+            )
         return cast(dict[str, Any], payload)
 
     def _request(self, method: str, path: str, *, json: object = None) -> httpx.Response:
@@ -84,7 +94,11 @@ class SalesforceClient:
         try:
             new_creds = self._refresh_fn()
         except Exception as exc:
-            raise ApiError(f"Session expired and refresh failed: {exc}", status_code=401) from exc
+            raise ApiError(
+                f"Session expired and refresh failed: {exc}",
+                status_code=401,
+                code=ErrorCode.SESSION_EXPIRED,
+            ) from exc
 
         self._creds = new_creds
         if self._on_token_refresh is not None:
@@ -93,7 +107,11 @@ class SalesforceClient:
         url = new_creds.instance_url.rstrip("/") + path
         retry = self._send(method, url, json=json)
         if retry.status_code == 401:
-            raise ApiError("Session expired and refresh failed", status_code=401)
+            raise ApiError(
+                "Session expired and refresh failed",
+                status_code=401,
+                code=ErrorCode.SESSION_EXPIRED,
+            )
         self._raise_for_status(retry)
         return retry
 
@@ -105,7 +123,11 @@ class SalesforceClient:
         try:
             return self._client.request(method, url, headers=headers, json=json)
         except httpx.RequestError as exc:
-            raise ApiError(f"HTTP request failed: {exc}") from exc
+            raise ApiError(
+                f"HTTP request failed: {exc}",
+                code=ErrorCode.HTTP_REQUEST_FAILED,
+                params={"error": str(exc)},
+            ) from exc
 
     def _raise_for_status(self, response: httpx.Response) -> None:
         if response.status_code < 400:

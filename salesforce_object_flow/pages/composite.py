@@ -39,6 +39,7 @@ from salesforce_object_flow.core.composite import (
 )
 from salesforce_object_flow.core.formats import FileFormat, slugify
 from salesforce_object_flow.i18n import N_, _, ngettext
+from salesforce_object_flow.i18n_errors import format_error
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.composite import (
     CompositeExecutor,
@@ -1417,7 +1418,7 @@ class CompositeTemplatesPage:
         try:
             new_filename = self._store.save(self._editing, previous_filename=previous_on_disk)
         except CompositeTemplateError as exc:
-            self._window.show_toast(str(exc), timeout=6)
+            self._window.show_toast(format_error(exc), timeout=6)
             return
 
         # Reload from disk so _loaded, _editing and _original all point to
@@ -1447,7 +1448,7 @@ class CompositeTemplatesPage:
             try:
                 self._store.delete(filename)
             except CompositeTemplateError as exc:
-                self._window.show_toast(str(exc), timeout=6)
+                self._window.show_toast(format_error(exc), timeout=6)
                 return
             self._selected_filename = None
             self._editing = None
@@ -1755,12 +1756,9 @@ class CompositeTemplatesPage:
                     )
                 GLib.idle_add(self._on_run_done, report, csv_path, fmt, tpl.name)
             except ExecutionError as exc:
-                GLib.idle_add(self._on_run_fatal, str(exc))
+                GLib.idle_add(self._on_run_fatal, format_error(exc))
             except ConnectionsError as exc:
-                GLib.idle_add(
-                    self._on_run_fatal,
-                    _("Connection error: {error}").format(error=exc),
-                )
+                GLib.idle_add(self._on_run_fatal, format_error(exc))
             except Exception as exc:
                 log.exception("Unexpected execution failure")
                 GLib.idle_add(

@@ -12,6 +12,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from salesforce_object_flow.core.config import DEFAULT_API_VERSION, OrgEntry
 from salesforce_object_flow.i18n import N_, _
+from salesforce_object_flow.i18n_errors import format_error
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.connections import (
     AddOrgRequest,
@@ -303,7 +304,7 @@ class ConnectionsPage:
                 entry = self._service.add_org(request, on_progress, cancelled)
                 GLib.idle_add(self._on_oauth_success, entry, progress)
             except ConnectionsError as exc:
-                GLib.idle_add(self._on_oauth_error, str(exc), progress)
+                GLib.idle_add(self._on_oauth_error, format_error(exc), progress)
             except Exception as exc:  # pragma: no cover - defensive
                 log.exception("Unexpected OAuth failure")
                 GLib.idle_add(
@@ -346,7 +347,7 @@ class ConnectionsPage:
                 self._service.reauth(alias, on_progress, cancelled)
                 GLib.idle_add(self._on_reauth_success, alias, progress)
             except ConnectionsError as exc:
-                GLib.idle_add(self._on_oauth_error, str(exc), progress)
+                GLib.idle_add(self._on_oauth_error, format_error(exc), progress)
             except Exception as exc:  # pragma: no cover
                 log.exception("Unexpected re-auth failure")
                 GLib.idle_add(
@@ -373,7 +374,7 @@ class ConnectionsPage:
                 limits = self._service.test_connection(alias)
                 GLib.idle_add(self._on_test_success, alias, limits)
             except Exception as exc:
-                GLib.idle_add(self._on_test_error, alias, str(exc))
+                GLib.idle_add(self._on_test_error, alias, format_error(exc))
 
         threading.Thread(target=worker, daemon=True, name=f"oauth-test-{alias}").start()
 
@@ -405,7 +406,7 @@ class ConnectionsPage:
                 self._service.revoke(alias)
                 GLib.idle_add(self._on_remove_success, alias)
             except Exception as exc:
-                GLib.idle_add(self._on_remove_error, alias, str(exc))
+                GLib.idle_add(self._on_remove_error, alias, format_error(exc))
 
         threading.Thread(target=worker, daemon=True, name=f"oauth-remove-{alias}").start()
 

@@ -33,13 +33,14 @@ from salesforce_object_flow.core.formats import (
     FileFormat,
     slugify,
 )
+from salesforce_object_flow.services.errors import CodedError, ErrorCode
 
 log = logging.getLogger(__name__)
 
 _DIRS = PlatformDirs(appname="salesforce-object-flow", appauthor="hawara", roaming=True)
 
 
-class FileFormatError(RuntimeError):
+class FileFormatError(CodedError):
     """Save / Delete failures that must surface to the user."""
 
 
@@ -135,7 +136,11 @@ class FileFormatStore:
                 path.with_suffix(path.suffix + ".tmp").unlink(missing_ok=True)
             except OSError:
                 pass
-            raise FileFormatError(f"Could not save format: {exc}") from exc
+            raise FileFormatError(
+                f"Could not save format: {exc}",
+                code=ErrorCode.FORMAT_SAVE_FAILED,
+                params={"error": str(exc)},
+            ) from exc
 
         if previous_filename and previous_filename != target_filename:
             previous = self._root / previous_filename
@@ -153,7 +158,11 @@ class FileFormatStore:
         try:
             path.unlink()
         except OSError as exc:
-            raise FileFormatError(f"Could not delete format: {exc}") from exc
+            raise FileFormatError(
+                f"Could not delete format: {exc}",
+                code=ErrorCode.FORMAT_DELETE_FAILED,
+                params={"error": str(exc)},
+            ) from exc
         return True
 
     def unique_filename_for(self, name: str, *, existing: Iterable[str]) -> str:

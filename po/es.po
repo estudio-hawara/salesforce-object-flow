@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: salesforce-object-flow 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 12:11+0100\n"
+"POT-Creation-Date: 2026-05-08 12:26+0100\n"
 "PO-Revision-Date: 2026-05-08 00:00+0000\n"
 "Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
 "Language: es\n"
@@ -23,15 +23,127 @@ msgstr "Conexión activa"
 msgid "Active connection: “{alias}”."
 msgstr "Conexión activa: «{alias}»."
 
-#: salesforce_object_flow/pages/connections.py:97
+#: salesforce_object_flow/pages/connections.py:98
 #: salesforce_object_flow/window.py:330
 msgid "Add connection"
 msgstr "Añadir conexión"
 
-#: salesforce_object_flow/pages/objects.py:169
+#: salesforce_object_flow/pages/objects.py:170
 #: salesforce_object_flow/window.py:335
 msgid "No active connection"
 msgstr "Sin conexión activa"
+
+#: salesforce_object_flow/i18n_errors.py:17
+#, python-brace-format
+msgid "A connection with alias “{alias}” already exists."
+msgstr "Ya existe una conexión con el alias «{alias}»."
+
+#: salesforce_object_flow/i18n_errors.py:21
+msgid "Cancelled."
+msgstr "Cancelado."
+
+#: salesforce_object_flow/i18n_errors.py:25
+#, python-brace-format
+msgid "Could not exchange authorization code: {error}"
+msgstr "No se pudo intercambiar el código de autorización: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:29
+#, python-brace-format
+msgid "Could not refresh token: {error}"
+msgstr "No se pudo refrescar el token: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:33
+#, python-brace-format
+msgid "No refresh token stored for “{alias}”. Re-authenticate to continue."
+msgstr "No hay refresh token guardado para «{alias}». Re-autentica para continuar."
+
+#: salesforce_object_flow/i18n_errors.py:37
+#, python-brace-format
+msgid "No stored credentials for “{alias}”. Re-authenticate to continue."
+msgstr "No hay credenciales guardadas para «{alias}». Re-autentica para continuar."
+
+#: salesforce_object_flow/i18n_errors.py:41
+#, python-brace-format
+msgid "No connection with alias “{alias}” is registered."
+msgstr "No hay ninguna conexión registrada con el alias «{alias}»."
+
+#: salesforce_object_flow/i18n_errors.py:45
+#, python-brace-format
+msgid "Could not save template: {error}"
+msgstr "No se pudo guardar la plantilla: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:49
+#, python-brace-format
+msgid "Could not delete template: {error}"
+msgstr "No se pudo eliminar la plantilla: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:53
+#, python-brace-format
+msgid "Could not save format: {error}"
+msgstr "No se pudo guardar el formato: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:57
+#, python-brace-format
+msgid "Could not delete format: {error}"
+msgstr "No se pudo eliminar el formato: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:61
+#, python-brace-format
+msgid "CSV unreadable: {error}"
+msgstr "CSV ilegible: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:65
+#, python-brace-format
+msgid "Could not decode {path} as {encoding}: {error}"
+msgstr "No se pudo decodificar {path} como {encoding}: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:69
+msgid "Authentication failed. Re-authenticate the connection and try again."
+msgstr "Falló la autenticación. Re-autentica la conexión e inténtalo de nuevo."
+
+#: salesforce_object_flow/i18n_errors.py:74
+#, python-brace-format
+msgid ""
+"Port {port} is already in use. Close any other process bound to it and "
+"try again."
+msgstr ""
+"El puerto {port} ya está en uso. Cierra cualquier otro proceso que esté "
+"escuchando en él e inténtalo de nuevo."
+
+#: salesforce_object_flow/i18n_errors.py:80
+#, python-brace-format
+msgid "Could not bind loopback server: {error}"
+msgstr "No se pudo iniciar el servidor de loopback: {error}"
+
+#: salesforce_object_flow/i18n_errors.py:84
+msgid "Loopback server is not running."
+msgstr "El servidor de loopback no está en marcha."
+
+#: salesforce_object_flow/i18n_errors.py:88
+msgid "Authorization timed out before the callback arrived."
+msgstr "La autorización caducó antes de que llegara la respuesta."
+
+#: salesforce_object_flow/i18n_errors.py:92
+#, python-brace-format
+msgid "Token response missing required field: {field}"
+msgstr "Falta un campo obligatorio en la respuesta del token: {field}"
+
+#: salesforce_object_flow/i18n_errors.py:96
+msgid "Too many redirects from the Salesforce token endpoint."
+msgstr "Demasiadas redirecciones desde el endpoint de token de Salesforce."
+
+#: salesforce_object_flow/i18n_errors.py:100
+msgid "Unexpected response from Salesforce."
+msgstr "Respuesta inesperada de Salesforce."
+
+#: salesforce_object_flow/i18n_errors.py:104
+msgid "Session expired and refresh failed. Re-authenticate the connection."
+msgstr "La sesión caducó y el refresco falló. Re-autentica la conexión."
+
+#: salesforce_object_flow/i18n_errors.py:108
+#, python-brace-format
+msgid "HTTP request failed: {error}"
+msgstr "La petición HTTP falló: {error}"
 
 #: salesforce_object_flow/pages/groups.py:19
 msgid "Setup"
@@ -41,7 +153,7 @@ msgstr "Configuración"
 msgid "Data model"
 msgstr "Modelo de datos"
 
-#: salesforce_object_flow/pages/composite.py:1715
+#: salesforce_object_flow/pages/composite.py:1716
 #: salesforce_object_flow/pages/groups.py:21
 msgid "Run"
 msgstr "Ejecución"
@@ -80,7 +192,7 @@ msgstr ""
 "ahora, esta ventana confirma que el stack GTK4 + libadwaita está "
 "correctamente cableado."
 
-#: salesforce_object_flow/pages/connections.py:43
+#: salesforce_object_flow/pages/connections.py:44
 msgid ""
 "In Setup, go to Apps → External Client Apps → External Client App "
 "Manager, then click New External Client App."
@@ -88,26 +200,26 @@ msgstr ""
 "En Setup, ve a Apps → External Client Apps → External Client App Manager "
 "y haz clic en New External Client App."
 
-#: salesforce_object_flow/pages/connections.py:46
+#: salesforce_object_flow/pages/connections.py:47
 msgid "External Client App Name: anything (e.g. “Salesforce Object Flow”)."
 msgstr ""
 "External Client App Name: cualquier valor (por ejemplo, «Salesforce "
 "Object Flow»)."
 
-#: salesforce_object_flow/pages/connections.py:47
+#: salesforce_object_flow/pages/connections.py:48
 msgid "Contact Email: your address."
 msgstr "Contact Email: tu dirección de correo."
 
-#: salesforce_object_flow/pages/connections.py:48
+#: salesforce_object_flow/pages/connections.py:49
 msgid "Enable OAuth Settings."
 msgstr "Activa OAuth Settings."
 
-#: salesforce_object_flow/pages/connections.py:49
+#: salesforce_object_flow/pages/connections.py:50
 #, python-brace-format
 msgid "Callback URL — paste exactly: {callback_url}"
 msgstr "Callback URL — pega exactamente: {callback_url}"
 
-#: salesforce_object_flow/pages/connections.py:51
+#: salesforce_object_flow/pages/connections.py:52
 msgid ""
 "Selected OAuth Scopes:\n"
 "  • Manage user data via APIs (api)\n"
@@ -119,7 +231,7 @@ msgstr ""
 "  • Perform requests on your behalf at any time (refresh_token, "
 "offline_access)"
 
-#: salesforce_object_flow/pages/connections.py:57
+#: salesforce_object_flow/pages/connections.py:58
 msgid ""
 "Enable “Require Proof Key for Code Exchange (PKCE) Extension for "
 "Supported Authorization Flows”."
@@ -127,11 +239,11 @@ msgstr ""
 "Activa «Require Proof Key for Code Exchange (PKCE) Extension for "
 "Supported Authorization Flows»."
 
-#: salesforce_object_flow/pages/connections.py:60
+#: salesforce_object_flow/pages/connections.py:61
 msgid "Disable “Require Secret for Web Server Flow”."
 msgstr "Desactiva «Require Secret for Web Server Flow»."
 
-#: salesforce_object_flow/pages/connections.py:62
+#: salesforce_object_flow/pages/connections.py:63
 msgid ""
 "Disable “Require Secret for Refresh Token Flow” (it is enabled by default"
 " — turn it off)."
@@ -139,11 +251,11 @@ msgstr ""
 "Desactiva «Require Secret for Refresh Token Flow» (está activado por "
 "defecto — desactívalo)."
 
-#: salesforce_object_flow/pages/connections.py:65
+#: salesforce_object_flow/pages/connections.py:66
 msgid "Save. Wait 2–10 minutes for activation."
 msgstr "Guarda. Espera de 2 a 10 minutos a que se active."
 
-#: salesforce_object_flow/pages/connections.py:67
+#: salesforce_object_flow/pages/connections.py:68
 msgid ""
 "Open the app's Settings → Consumer Key and Secret. Copy the Consumer Key "
 "— that is your Client ID. The secret is not used by this app (PKCE)."
@@ -151,21 +263,21 @@ msgstr ""
 "Abre los ajustes de la app → Consumer Key and Secret. Copia el Consumer "
 "Key — ese es tu Client ID. El secret no lo usa esta aplicación (PKCE)."
 
-#: salesforce_object_flow/pages/connections.py:77
-#: salesforce_object_flow/pages/connections.py:165
-#: salesforce_object_flow/pages/connections.py:245
+#: salesforce_object_flow/pages/connections.py:78
+#: salesforce_object_flow/pages/connections.py:166
+#: salesforce_object_flow/pages/connections.py:246
 msgid "Connections"
 msgstr "Conexiones"
 
-#: salesforce_object_flow/pages/connections.py:99
+#: salesforce_object_flow/pages/connections.py:100
 msgid "Add a new Salesforce connection"
 msgstr "Añadir una nueva conexión de Salesforce"
 
-#: salesforce_object_flow/pages/connections.py:117
+#: salesforce_object_flow/pages/connections.py:118
 msgid "Set up an External Client App"
 msgstr "Configurar una External Client App"
 
-#: salesforce_object_flow/pages/connections.py:120
+#: salesforce_object_flow/pages/connections.py:121
 msgid ""
 "Salesforce Object Flow uses your own External Client App so tokens stay "
 "scoped to your connection. Follow these one-time steps in Salesforce "
@@ -175,92 +287,92 @@ msgstr ""
 "tokens queden ligados a tu conexión. Sigue estos pasos una sola vez en "
 "Salesforce Setup."
 
-#: salesforce_object_flow/pages/connections.py:125
+#: salesforce_object_flow/pages/connections.py:126
 msgid "Show step-by-step instructions"
 msgstr "Mostrar instrucciones paso a paso"
 
-#: salesforce_object_flow/pages/connections.py:153
+#: salesforce_object_flow/pages/connections.py:154
 msgid "Copy callback URL"
 msgstr "Copiar URL de callback"
 
-#: salesforce_object_flow/pages/connections.py:187
-#: salesforce_object_flow/pages/objects.py:179
+#: salesforce_object_flow/pages/connections.py:188
+#: salesforce_object_flow/pages/objects.py:180
 msgid "No connections yet"
 msgstr "Aún no hay conexiones"
 
-#: salesforce_object_flow/pages/connections.py:189
+#: salesforce_object_flow/pages/connections.py:190
 msgid "Click “Add connection” above to add your first Salesforce connection."
 msgstr ""
 "Pulsa «Añadir conexión» arriba para añadir tu primera conexión de "
 "Salesforce."
 
-#: salesforce_object_flow/pages/connections.py:197
-#: salesforce_object_flow/pages/connections.py:479
-#: salesforce_object_flow/pages/objects.py:67
+#: salesforce_object_flow/pages/connections.py:198
+#: salesforce_object_flow/pages/connections.py:480
+#: salesforce_object_flow/pages/objects.py:68
 msgid "Sandbox"
 msgstr "Sandbox"
 
-#: salesforce_object_flow/pages/connections.py:197
+#: salesforce_object_flow/pages/connections.py:198
 msgid "Production"
 msgstr "Producción"
 
-#: salesforce_object_flow/pages/connections.py:213
+#: salesforce_object_flow/pages/connections.py:214
 msgid "Test"
 msgstr "Probar"
 
-#: salesforce_object_flow/pages/connections.py:215
+#: salesforce_object_flow/pages/connections.py:216
 msgid "Verify the connection by calling /limits"
 msgstr "Verifica la conexión llamando a /limits"
 
-#: salesforce_object_flow/pages/connections.py:219
+#: salesforce_object_flow/pages/connections.py:220
 msgid "Re-auth"
 msgstr "Re-autenticar"
 
-#: salesforce_object_flow/pages/connections.py:221
+#: salesforce_object_flow/pages/connections.py:222
 msgid "Run the OAuth flow again with prompt=login"
 msgstr "Vuelve a ejecutar el flujo OAuth con prompt=login"
 
-#: salesforce_object_flow/pages/connections.py:227
+#: salesforce_object_flow/pages/connections.py:228
 msgid "Activate"
 msgstr "Activar"
 
-#: salesforce_object_flow/pages/connections.py:228
+#: salesforce_object_flow/pages/connections.py:229
 msgid "Remove…"
 msgstr "Eliminar…"
 
-#: salesforce_object_flow/pages/composite.py:1768
-#: salesforce_object_flow/pages/connections.py:311
-#: salesforce_object_flow/pages/connections.py:354
+#: salesforce_object_flow/pages/composite.py:1766
+#: salesforce_object_flow/pages/connections.py:312
+#: salesforce_object_flow/pages/connections.py:355
 #, python-brace-format
 msgid "Unexpected error: {error}"
 msgstr "Error inesperado: {error}"
 
-#: salesforce_object_flow/pages/connections.py:319
+#: salesforce_object_flow/pages/connections.py:320
 #, python-brace-format
 msgid "Connected as “{alias}”."
 msgstr "Conectado como «{alias}»."
 
-#: salesforce_object_flow/pages/connections.py:335
+#: salesforce_object_flow/pages/connections.py:336
 #, python-brace-format
 msgid "Re-authenticating {alias}"
 msgstr "Re-autenticando {alias}"
 
-#: salesforce_object_flow/pages/connections.py:362
+#: salesforce_object_flow/pages/connections.py:363
 #, python-brace-format
 msgid "Re-authenticated {alias}."
 msgstr "{alias} re-autenticada."
 
-#: salesforce_object_flow/pages/connections.py:381
+#: salesforce_object_flow/pages/connections.py:382
 #, python-brace-format
 msgid "{alias}: connection OK."
 msgstr "{alias}: conexión OK."
 
-#: salesforce_object_flow/pages/connections.py:393
+#: salesforce_object_flow/pages/connections.py:394
 #, python-brace-format
 msgid "Remove {alias}?"
 msgstr "¿Eliminar {alias}?"
 
-#: salesforce_object_flow/pages/connections.py:395
+#: salesforce_object_flow/pages/connections.py:396
 msgid ""
 "Salesforce Object Flow will revoke the access token and delete the stored"
 " credentials for this connection. You can add it again later."
@@ -269,30 +381,30 @@ msgstr ""
 "credenciales guardadas de esta conexión. Podrás volver a añadirla más "
 "tarde."
 
-#: salesforce_object_flow/pages/composite.py:797
-#: salesforce_object_flow/pages/connections.py:398
+#: salesforce_object_flow/pages/composite.py:798
+#: salesforce_object_flow/pages/connections.py:399
 msgid "Remove"
 msgstr "Eliminar"
 
-#: salesforce_object_flow/pages/connections.py:413
+#: salesforce_object_flow/pages/connections.py:414
 #, python-brace-format
 msgid "{alias} removed."
 msgstr "{alias} eliminada."
 
-#: salesforce_object_flow/pages/connections.py:423
+#: salesforce_object_flow/pages/connections.py:424
 #, python-brace-format
 msgid "Could not remove {alias} — {error}"
 msgstr "No se pudo eliminar {alias} — {error}"
 
-#: salesforce_object_flow/pages/connections.py:439
+#: salesforce_object_flow/pages/connections.py:440
 msgid "Callback URL copied."
 msgstr "URL de callback copiada."
 
-#: salesforce_object_flow/pages/connections.py:459
+#: salesforce_object_flow/pages/connections.py:460
 msgid "Add Salesforce connection"
 msgstr "Añadir conexión de Salesforce"
 
-#: salesforce_object_flow/pages/connections.py:462
+#: salesforce_object_flow/pages/connections.py:463
 msgid ""
 "Add a Salesforce connection by pointing this app at your External Client "
 "App."
@@ -300,53 +412,53 @@ msgstr ""
 "Añade una conexión de Salesforce indicando a esta aplicación tu External "
 "Client App."
 
-#: salesforce_object_flow/pages/connections.py:470
+#: salesforce_object_flow/pages/connections.py:471
 msgid "Alias"
 msgstr "Alias"
 
-#: salesforce_object_flow/pages/connections.py:473
+#: salesforce_object_flow/pages/connections.py:474
 msgid "My Domain URL"
 msgstr "URL de mi dominio"
 
-#: salesforce_object_flow/pages/connections.py:476
+#: salesforce_object_flow/pages/connections.py:477
 msgid "Client ID"
 msgstr "ID de cliente"
 
-#: salesforce_object_flow/pages/connections.py:481
+#: salesforce_object_flow/pages/connections.py:482
 msgid "Tag this connection as a sandbox in the UI (does not affect routing)."
 msgstr ""
 "Marca esta conexión como sandbox en la interfaz (no afecta al "
 "enrutamiento)."
 
-#: salesforce_object_flow/pages/connections.py:485
+#: salesforce_object_flow/pages/connections.py:486
 msgid "API Version"
 msgstr "Versión de API"
 
-#: salesforce_object_flow/pages/composite.py:420
-#: salesforce_object_flow/pages/composite.py:1479
-#: salesforce_object_flow/pages/composite.py:1714
-#: salesforce_object_flow/pages/composite.py:1781
-#: salesforce_object_flow/pages/connections.py:496
-#: salesforce_object_flow/pages/connections.py:637
-#: salesforce_object_flow/pages/formats.py:779
+#: salesforce_object_flow/pages/composite.py:421
+#: salesforce_object_flow/pages/composite.py:1480
+#: salesforce_object_flow/pages/composite.py:1715
+#: salesforce_object_flow/pages/composite.py:1779
+#: salesforce_object_flow/pages/connections.py:497
+#: salesforce_object_flow/pages/connections.py:638
+#: salesforce_object_flow/pages/formats.py:780
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: salesforce_object_flow/pages/connections.py:497
+#: salesforce_object_flow/pages/connections.py:498
 msgid "Connect"
 msgstr "Conectar"
 
-#: salesforce_object_flow/pages/connections.py:596
+#: salesforce_object_flow/pages/connections.py:597
 #, python-brace-format
 msgid "Connecting to {alias}"
 msgstr "Conectando a {alias}"
 
-#: salesforce_object_flow/pages/connections.py:618
-#: salesforce_object_flow/pages/connections.py:655
+#: salesforce_object_flow/pages/connections.py:619
+#: salesforce_object_flow/pages/connections.py:656
 msgid "Waiting for browser…"
 msgstr "Esperando al navegador…"
 
-#: salesforce_object_flow/pages/connections.py:628
+#: salesforce_object_flow/pages/connections.py:629
 msgid ""
 "Complete the authorization in your browser. This dialog will close "
 "automatically."
@@ -354,795 +466,796 @@ msgstr ""
 "Completa la autorización en tu navegador. Este diálogo se cerrará "
 "automáticamente."
 
-#: salesforce_object_flow/pages/connections.py:657
+#: salesforce_object_flow/pages/connections.py:658
 msgid "Exchanging authorization code…"
 msgstr "Intercambiando código de autorización…"
 
-#: salesforce_object_flow/pages/connections.py:660
+#: salesforce_object_flow/pages/connections.py:661
 msgid "Saving credentials…"
 msgstr "Guardando credenciales…"
 
-#: salesforce_object_flow/pages/connections.py:662
+#: salesforce_object_flow/pages/connections.py:663
 msgid "Done."
 msgstr "Hecho."
 
-#: salesforce_object_flow/pages/connections.py:675
+#: salesforce_object_flow/pages/connections.py:676
 msgid "Cancelling…"
 msgstr "Cancelando…"
 
-#: salesforce_object_flow/pages/objects.py:39
+#: salesforce_object_flow/pages/objects.py:40
 msgid "Object Explorer"
 msgstr "Explorador de objetos"
 
-#: salesforce_object_flow/pages/objects.py:75
+#: salesforce_object_flow/pages/objects.py:76
 msgid "Refresh SObject list from the active connection"
 msgstr "Actualizar la lista de SObjects desde la conexión activa"
 
-#: salesforce_object_flow/pages/composite.py:279
-#: salesforce_object_flow/pages/formats.py:195
-#: salesforce_object_flow/pages/objects.py:121
+#: salesforce_object_flow/pages/composite.py:280
+#: salesforce_object_flow/pages/formats.py:196
+#: salesforce_object_flow/pages/objects.py:122
 msgid "Detail"
 msgstr "Detalle"
 
-#: salesforce_object_flow/pages/objects.py:141
+#: salesforce_object_flow/pages/objects.py:142
 msgid "Search SObjects…"
 msgstr "Buscar SObjects…"
 
-#: salesforce_object_flow/pages/objects.py:161
+#: salesforce_object_flow/pages/objects.py:162
 msgid "Loading SObjects…"
 msgstr "Cargando SObjects…"
 
-#: salesforce_object_flow/pages/objects.py:162
+#: salesforce_object_flow/pages/objects.py:163
 msgid "Fetching metadata from the active connection."
 msgstr "Obteniendo metadatos de la conexión activa."
 
-#: salesforce_object_flow/pages/objects.py:171
+#: salesforce_object_flow/pages/objects.py:172
 msgid "Activate a connection from the sidebar menu, or add one in Connections."
 msgstr "Activa una conexión desde el menú lateral, o añade una en Conexiones."
 
-#: salesforce_object_flow/pages/objects.py:181
+#: salesforce_object_flow/pages/objects.py:182
 msgid "Add a Salesforce connection from the Connections page to begin."
 msgstr "Añade una conexión de Salesforce desde la página Conexiones para empezar."
 
-#: salesforce_object_flow/pages/objects.py:184
+#: salesforce_object_flow/pages/objects.py:185
 msgid "Go to Connections"
 msgstr "Ir a Conexiones"
 
-#: salesforce_object_flow/pages/objects.py:190
+#: salesforce_object_flow/pages/objects.py:191
 msgid "Could not load objects"
 msgstr "No se pudieron cargar los objetos"
 
-#: salesforce_object_flow/pages/objects.py:194
-#: salesforce_object_flow/pages/objects.py:238
+#: salesforce_object_flow/pages/objects.py:195
+#: salesforce_object_flow/pages/objects.py:239
 msgid "Retry"
 msgstr "Reintentar"
 
-#: salesforce_object_flow/pages/objects.py:203
+#: salesforce_object_flow/pages/objects.py:204
 msgid "No matches"
 msgstr "Sin coincidencias"
 
-#: salesforce_object_flow/pages/objects.py:204
+#: salesforce_object_flow/pages/objects.py:205
 msgid "Try a different name or label."
 msgstr "Prueba con otro nombre o etiqueta."
 
-#: salesforce_object_flow/pages/objects.py:218
+#: salesforce_object_flow/pages/objects.py:219
 msgid "Select an SObject"
 msgstr "Selecciona un SObject"
 
-#: salesforce_object_flow/pages/objects.py:219
+#: salesforce_object_flow/pages/objects.py:220
 msgid "Pick an SObject from the list to see its fields."
 msgstr "Elige un SObject de la lista para ver sus campos."
 
-#: salesforce_object_flow/pages/objects.py:226
+#: salesforce_object_flow/pages/objects.py:227
 msgid "Loading fields…"
 msgstr "Cargando campos…"
 
-#: salesforce_object_flow/pages/objects.py:234
+#: salesforce_object_flow/pages/objects.py:235
 msgid "Could not load fields"
 msgstr "No se pudieron cargar los campos"
 
-#: salesforce_object_flow/pages/objects.py:394
+#: salesforce_object_flow/pages/objects.py:395
 #, python-brace-format
 msgid "Could not load objects — {error}"
 msgstr "No se pudieron cargar los objetos — {error}"
 
-#: salesforce_object_flow/pages/objects.py:412
+#: salesforce_object_flow/pages/objects.py:413
 msgid "Custom"
 msgstr "Personalizado"
 
-#: salesforce_object_flow/pages/objects.py:504
+#: salesforce_object_flow/pages/objects.py:505
 #, python-brace-format
 msgid "Could not load fields for “{name}”"
 msgstr "No se pudieron cargar los campos de «{name}»"
 
-#: salesforce_object_flow/pages/objects.py:526
+#: salesforce_object_flow/pages/objects.py:527
 #, python-brace-format
 msgid "Fields ({count})"
 msgstr "Campos ({count})"
 
-#: salesforce_object_flow/pages/objects.py:533
+#: salesforce_object_flow/pages/objects.py:534
 msgid "Capabilities"
 msgstr "Capacidades"
 
-#: salesforce_object_flow/pages/objects.py:547
+#: salesforce_object_flow/pages/objects.py:548
 msgid "none"
 msgstr "ninguna"
 
-#: salesforce_object_flow/pages/objects.py:555
+#: salesforce_object_flow/pages/objects.py:556
 msgid "required"
 msgstr "obligatorio"
 
-#: salesforce_object_flow/pages/objects.py:564
+#: salesforce_object_flow/pages/objects.py:565
 #, python-brace-format
 msgid "reference → {targets}"
 msgstr "referencia → {targets}"
 
-#: salesforce_object_flow/pages/objects.py:568
+#: salesforce_object_flow/pages/objects.py:569
 #, python-brace-format
 msgid "picklist · {count} value"
 msgid_plural "picklist · {count} values"
 msgstr[0] "picklist · {count} valor"
 msgstr[1] "picklist · {count} valores"
 
-#: salesforce_object_flow/pages/formats.py:41
+#: salesforce_object_flow/pages/formats.py:42
 msgid "File Formats"
 msgstr "Formatos de archivo"
 
-#: salesforce_object_flow/pages/formats.py:87
-#: salesforce_object_flow/pages/formats.py:132
+#: salesforce_object_flow/pages/formats.py:88
+#: salesforce_object_flow/pages/formats.py:133
 msgid "Formats"
 msgstr "Formatos"
 
-#: salesforce_object_flow/pages/formats.py:93
+#: salesforce_object_flow/pages/formats.py:94
 msgid "Create a new format"
 msgstr "Crear un nuevo formato"
 
-#: salesforce_object_flow/pages/formats.py:99
+#: salesforce_object_flow/pages/formats.py:100
 msgid "Reload formats from disk"
 msgstr "Recargar formatos desde disco"
 
-#: salesforce_object_flow/pages/formats.py:119
+#: salesforce_object_flow/pages/formats.py:120
 msgid "No formats yet"
 msgstr "Aún no hay formatos"
 
-#: salesforce_object_flow/pages/formats.py:120
+#: salesforce_object_flow/pages/formats.py:121
 msgid "Create your first file format to describe a CSV shape."
 msgstr "Crea tu primer formato de archivo para describir la estructura de un CSV."
 
-#: salesforce_object_flow/pages/formats.py:123
+#: salesforce_object_flow/pages/formats.py:124
 msgid "New format"
 msgstr "Nuevo formato"
 
-#: salesforce_object_flow/pages/formats.py:145
+#: salesforce_object_flow/pages/formats.py:146
 msgid "Test against file…"
 msgstr "Probar contra archivo…"
 
-#: salesforce_object_flow/pages/composite.py:222
-#: salesforce_object_flow/pages/composite.py:1481
-#: salesforce_object_flow/pages/formats.py:153
-#: salesforce_object_flow/pages/formats.py:781
+#: salesforce_object_flow/pages/composite.py:223
+#: salesforce_object_flow/pages/composite.py:1482
+#: salesforce_object_flow/pages/formats.py:154
+#: salesforce_object_flow/pages/formats.py:782
 msgid "Save"
 msgstr "Guardar"
 
-#: salesforce_object_flow/pages/composite.py:228
-#: salesforce_object_flow/pages/composite.py:1463
-#: salesforce_object_flow/pages/formats.py:159
-#: salesforce_object_flow/pages/formats.py:758
+#: salesforce_object_flow/pages/composite.py:229
+#: salesforce_object_flow/pages/composite.py:1464
+#: salesforce_object_flow/pages/formats.py:160
+#: salesforce_object_flow/pages/formats.py:759
 msgid "Delete"
 msgstr "Eliminar"
 
-#: salesforce_object_flow/pages/composite.py:251
-#: salesforce_object_flow/pages/composite.py:1476
-#: salesforce_object_flow/pages/formats.py:167
-#: salesforce_object_flow/pages/formats.py:776
+#: salesforce_object_flow/pages/composite.py:252
+#: salesforce_object_flow/pages/composite.py:1477
+#: salesforce_object_flow/pages/formats.py:168
+#: salesforce_object_flow/pages/formats.py:777
 msgid "Unsaved changes"
 msgstr "Cambios sin guardar"
 
-#: salesforce_object_flow/pages/formats.py:176
+#: salesforce_object_flow/pages/formats.py:177
 msgid "Select or create a format"
 msgstr "Selecciona o crea un formato"
 
-#: salesforce_object_flow/pages/formats.py:177
+#: salesforce_object_flow/pages/formats.py:178
 msgid "Pick a format from the left, or click + to create a new one."
 msgstr "Elige un formato a la izquierda, o pulsa + para crear uno nuevo."
 
-#: salesforce_object_flow/pages/composite.py:292
-#: salesforce_object_flow/pages/formats.py:212
+#: salesforce_object_flow/pages/composite.py:293
+#: salesforce_object_flow/pages/formats.py:213
 msgid "General"
 msgstr "General"
 
-#: salesforce_object_flow/pages/composite.py:294
-#: salesforce_object_flow/pages/formats.py:214
+#: salesforce_object_flow/pages/composite.py:295
+#: salesforce_object_flow/pages/formats.py:215
 msgid "Name"
 msgstr "Nombre"
 
-#: salesforce_object_flow/pages/composite.py:299
-#: salesforce_object_flow/pages/formats.py:219
+#: salesforce_object_flow/pages/composite.py:300
+#: salesforce_object_flow/pages/formats.py:220
 msgid "Description"
 msgstr "Descripción"
 
-#: salesforce_object_flow/pages/formats.py:226
+#: salesforce_object_flow/pages/formats.py:227
 msgid "Parsing"
 msgstr "Parseo"
 
-#: salesforce_object_flow/pages/formats.py:229
+#: salesforce_object_flow/pages/formats.py:230
 msgid "Delimiter"
 msgstr "Delimitador"
 
-#: salesforce_object_flow/pages/formats.py:234
+#: salesforce_object_flow/pages/formats.py:235
 msgid "Quote character"
 msgstr "Carácter de comillas"
 
-#: salesforce_object_flow/pages/formats.py:239
+#: salesforce_object_flow/pages/formats.py:240
 msgid "Has header"
 msgstr "Tiene cabecera"
 
-#: salesforce_object_flow/pages/formats.py:240
+#: salesforce_object_flow/pages/formats.py:241
 msgid "First row contains column names."
 msgstr "La primera fila contiene los nombres de las columnas."
 
-#: salesforce_object_flow/pages/formats.py:245
+#: salesforce_object_flow/pages/formats.py:246
 msgid "Encoding"
 msgstr "Codificación"
 
-#: salesforce_object_flow/pages/formats.py:254
+#: salesforce_object_flow/pages/formats.py:255
 msgid "Columns"
 msgstr "Columnas"
 
-#: salesforce_object_flow/pages/formats.py:255
+#: salesforce_object_flow/pages/formats.py:256
 msgid "Add column"
 msgstr "Añadir columna"
 
-#: salesforce_object_flow/pages/composite.py:215
-#: salesforce_object_flow/pages/composite.py:353
-#: salesforce_object_flow/pages/formats.py:279
+#: salesforce_object_flow/pages/composite.py:216
+#: salesforce_object_flow/pages/composite.py:354
+#: salesforce_object_flow/pages/formats.py:280
 msgid "Back to editor"
 msgstr "Volver al editor"
 
-#: salesforce_object_flow/pages/formats.py:308
+#: salesforce_object_flow/pages/formats.py:309
 #, python-brace-format
 msgid "Could not list formats — {error}"
 msgstr "No se pudieron listar los formatos — {error}"
 
-#: salesforce_object_flow/pages/formats.py:420
+#: salesforce_object_flow/pages/formats.py:421
 msgid "Untitled format"
 msgstr "Formato sin título"
 
-#: salesforce_object_flow/pages/formats.py:492
+#: salesforce_object_flow/pages/formats.py:493
 msgid "Column name"
 msgstr "Nombre de columna"
 
-#: salesforce_object_flow/pages/formats.py:509
+#: salesforce_object_flow/pages/formats.py:510
 msgid "Nullable"
 msgstr "Anulable"
 
-#: salesforce_object_flow/pages/formats.py:524
+#: salesforce_object_flow/pages/formats.py:525
 msgid "Remove column"
 msgstr "Eliminar columna"
 
-#: salesforce_object_flow/pages/formats.py:637
+#: salesforce_object_flow/pages/formats.py:638
 msgid "No format selected."
 msgstr "No hay ningún formato seleccionado."
 
-#: salesforce_object_flow/pages/formats.py:639
+#: salesforce_object_flow/pages/formats.py:640
 msgid "Name is required."
 msgstr "El nombre es obligatorio."
 
-#: salesforce_object_flow/pages/formats.py:641
+#: salesforce_object_flow/pages/formats.py:642
 msgid "Delimiter must be a single character."
 msgstr "El delimitador debe ser un único carácter."
 
-#: salesforce_object_flow/pages/formats.py:643
+#: salesforce_object_flow/pages/formats.py:644
 msgid "Quote character must be a single character."
 msgstr "El carácter de comillas debe ser un único carácter."
 
-#: salesforce_object_flow/pages/formats.py:645
+#: salesforce_object_flow/pages/formats.py:646
 msgid "Delimiter and quote character must differ."
 msgstr "El delimitador y el carácter de comillas deben ser distintos."
 
-#: salesforce_object_flow/pages/formats.py:647
+#: salesforce_object_flow/pages/formats.py:648
 #, python-brace-format
 msgid "Encoding must be one of: {encodings}."
 msgstr "La codificación debe ser una de: {encodings}."
 
-#: salesforce_object_flow/pages/formats.py:651
+#: salesforce_object_flow/pages/formats.py:652
 msgid "At least one column is required."
 msgstr "Se requiere al menos una columna."
 
-#: salesforce_object_flow/pages/formats.py:655
+#: salesforce_object_flow/pages/formats.py:656
 msgid "All columns must have a name."
 msgstr "Todas las columnas deben tener un nombre."
 
-#: salesforce_object_flow/pages/formats.py:657
+#: salesforce_object_flow/pages/formats.py:658
 #, python-brace-format
 msgid "Duplicate column name: {name}."
 msgstr "Nombre de columna duplicado: {name}."
 
-#: salesforce_object_flow/pages/formats.py:666
+#: salesforce_object_flow/pages/formats.py:667
 #, python-brace-format
 msgid "Name conflicts with another format: {name}."
 msgstr "El nombre entra en conflicto con otro formato: {name}."
 
-#: salesforce_object_flow/pages/composite.py:1437
-#: salesforce_object_flow/pages/formats.py:707
+#: salesforce_object_flow/pages/composite.py:1438
+#: salesforce_object_flow/pages/formats.py:708
 #, python-brace-format
 msgid "Saved “{name}”."
 msgstr "«{name}» guardado."
 
-#: salesforce_object_flow/pages/composite.py:1457
-#: salesforce_object_flow/pages/formats.py:750
+#: salesforce_object_flow/pages/composite.py:1458
+#: salesforce_object_flow/pages/formats.py:751
 #, python-brace-format
 msgid "Deleted “{name}”."
 msgstr "«{name}» eliminado."
 
-#: salesforce_object_flow/pages/composite.py:1461
-#: salesforce_object_flow/pages/formats.py:756
+#: salesforce_object_flow/pages/composite.py:1462
+#: salesforce_object_flow/pages/formats.py:757
 #, python-brace-format
 msgid "Delete “{name}”?"
 msgstr "¿Eliminar «{name}»?"
 
-#: salesforce_object_flow/pages/formats.py:757
+#: salesforce_object_flow/pages/formats.py:758
 msgid "The format definition will be removed permanently from disk."
 msgstr "La definición del formato se eliminará permanentemente del disco."
 
-#: salesforce_object_flow/pages/formats.py:777
+#: salesforce_object_flow/pages/formats.py:778
 msgid "The current format has unsaved edits. Save them before continuing?"
 msgstr ""
 "El formato actual tiene cambios sin guardar. ¿Guardarlos antes de "
 "continuar?"
 
-#: salesforce_object_flow/pages/composite.py:1480
-#: salesforce_object_flow/pages/formats.py:780
+#: salesforce_object_flow/pages/composite.py:1481
+#: salesforce_object_flow/pages/formats.py:781
 msgid "Discard"
 msgstr "Descartar"
 
-#: salesforce_object_flow/pages/formats.py:811
+#: salesforce_object_flow/pages/formats.py:812
 msgid "Pick a CSV file to validate"
 msgstr "Elige un archivo CSV para validar"
 
-#: salesforce_object_flow/pages/formats.py:835
+#: salesforce_object_flow/pages/formats.py:836
 #, python-brace-format
 msgid "Validating {filename}…"
 msgstr "Validando {filename}…"
 
-#: salesforce_object_flow/pages/formats.py:870
+#: salesforce_object_flow/pages/formats.py:871
 #, python-brace-format
 msgid "Could not read {filename}"
 msgstr "No se pudo leer {filename}"
 
-#: salesforce_object_flow/pages/formats.py:873
+#: salesforce_object_flow/pages/formats.py:874
 msgid "Fatal error"
 msgstr "Error fatal"
 
-#: salesforce_object_flow/pages/formats.py:883
+#: salesforce_object_flow/pages/formats.py:884
 #, python-brace-format
 msgid "All {rows} row of {filename} valid (capped)."
 msgid_plural "All {rows} rows of {filename} valid (capped)."
 msgstr[0] "{rows} fila de {filename} válida (limitado)."
 msgstr[1] "Las {rows} filas de {filename} son válidas (limitado)."
 
-#: salesforce_object_flow/pages/formats.py:889
+#: salesforce_object_flow/pages/formats.py:890
 #, python-brace-format
 msgid "All {rows} row of {filename} valid."
 msgid_plural "All {rows} rows of {filename} valid."
 msgstr[0] "{rows} fila de {filename} válida."
 msgstr[1] "Las {rows} filas de {filename} son válidas."
 
-#: salesforce_object_flow/pages/formats.py:899
+#: salesforce_object_flow/pages/formats.py:900
 #, python-brace-format
 msgid "{errors} error in first {rows} rows of {filename} (capped)"
 msgid_plural "{errors} errors in first {rows} rows of {filename} (capped)"
 msgstr[0] "{errors} error en las primeras {rows} filas de {filename} (limitado)"
 msgstr[1] "{errors} errores en las primeras {rows} filas de {filename} (limitado)"
 
-#: salesforce_object_flow/pages/formats.py:905
+#: salesforce_object_flow/pages/formats.py:906
 #, python-brace-format
 msgid "{errors} error in first {rows} rows of {filename}"
 msgid_plural "{errors} errors in first {rows} rows of {filename}"
 msgstr[0] "{errors} error en las primeras {rows} filas de {filename}"
 msgstr[1] "{errors} errores en las primeras {rows} filas de {filename}"
 
-#: salesforce_object_flow/pages/formats.py:917
+#: salesforce_object_flow/pages/formats.py:918
 #, python-brace-format
 msgid "Row {row}"
 msgstr "Fila {row}"
 
-#: salesforce_object_flow/pages/formats.py:923
+#: salesforce_object_flow/pages/formats.py:924
 #, python-brace-format
 msgid "Value “{value}” — {message}"
 msgstr "Valor «{value}» — {message}"
 
-#: salesforce_object_flow/pages/composite.py:71
+#: salesforce_object_flow/pages/composite.py:72
 msgid "Composite Requests"
 msgstr "Peticiones compuestas"
 
-#: salesforce_object_flow/pages/composite.py:135
-#: salesforce_object_flow/pages/composite.py:180
+#: salesforce_object_flow/pages/composite.py:136
+#: salesforce_object_flow/pages/composite.py:181
 msgid "Templates"
 msgstr "Plantillas"
 
-#: salesforce_object_flow/pages/composite.py:141
+#: salesforce_object_flow/pages/composite.py:142
 msgid "Create a new template"
 msgstr "Crear una nueva plantilla"
 
-#: salesforce_object_flow/pages/composite.py:147
+#: salesforce_object_flow/pages/composite.py:148
 msgid "Reload templates from disk"
 msgstr "Recargar plantillas desde disco"
 
-#: salesforce_object_flow/pages/composite.py:167
+#: salesforce_object_flow/pages/composite.py:168
 msgid "No templates yet"
 msgstr "Aún no hay plantillas"
 
-#: salesforce_object_flow/pages/composite.py:168
+#: salesforce_object_flow/pages/composite.py:169
 msgid "Create your first Composite template to start composing."
 msgstr "Crea tu primera plantilla Composite para empezar a componer."
 
-#: salesforce_object_flow/pages/composite.py:171
+#: salesforce_object_flow/pages/composite.py:172
 msgid "New template"
 msgstr "Nueva plantilla"
 
-#: salesforce_object_flow/pages/composite.py:194
+#: salesforce_object_flow/pages/composite.py:195
 msgid "Preview payload"
 msgstr "Previsualizar payload"
 
-#: salesforce_object_flow/pages/composite.py:203
+#: salesforce_object_flow/pages/composite.py:204
 msgid "Run…"
 msgstr "Ejecutar…"
 
-#: salesforce_object_flow/pages/composite.py:208
-#: salesforce_object_flow/pages/composite.py:1378
+#: salesforce_object_flow/pages/composite.py:209
+#: salesforce_object_flow/pages/composite.py:1379
 msgid "Execute against active connection"
 msgstr "Ejecutar contra la conexión activa"
 
-#: salesforce_object_flow/pages/composite.py:236
+#: salesforce_object_flow/pages/composite.py:237
 msgid "Export failures CSV…"
 msgstr "Exportar fallos a CSV…"
 
-#: salesforce_object_flow/pages/composite.py:245
+#: salesforce_object_flow/pages/composite.py:246
 msgid "Linked format not found"
 msgstr "Formato enlazado no encontrado"
 
-#: salesforce_object_flow/pages/composite.py:247
+#: salesforce_object_flow/pages/composite.py:248
 msgid "Pick another format"
 msgstr "Elegir otro formato"
 
-#: salesforce_object_flow/pages/composite.py:259
+#: salesforce_object_flow/pages/composite.py:260
 msgid "Select or create a template"
 msgstr "Selecciona o crea una plantilla"
 
-#: salesforce_object_flow/pages/composite.py:260
+#: salesforce_object_flow/pages/composite.py:261
 msgid "Pick a template from the left, or click + to create a new one."
 msgstr "Elige una plantilla a la izquierda, o pulsa + para crear una nueva."
 
-#: salesforce_object_flow/pages/composite.py:305
+#: salesforce_object_flow/pages/composite.py:306
 msgid "Linkage"
 msgstr "Enlace"
 
-#: salesforce_object_flow/pages/composite.py:307
+#: salesforce_object_flow/pages/composite.py:308
 msgid "File format"
 msgstr "Formato de archivo"
 
-#: salesforce_object_flow/pages/composite.py:309
+#: salesforce_object_flow/pages/composite.py:310
 msgid "Columns of this format drive {{placeholder}} substitution."
 msgstr "Las columnas de este formato controlan la sustitución de {{placeholder}}."
 
-#: salesforce_object_flow/pages/composite.py:318
+#: salesforce_object_flow/pages/composite.py:319
 msgid "Behavior"
 msgstr "Comportamiento"
 
-#: salesforce_object_flow/pages/composite.py:320
+#: salesforce_object_flow/pages/composite.py:321
 msgid "All or none"
 msgstr "Todo o nada"
 
-#: salesforce_object_flow/pages/composite.py:321
+#: salesforce_object_flow/pages/composite.py:322
 msgid "Roll back the whole batch if any subrequest fails."
 msgstr "Deshace todo el lote si alguna subpetición falla."
 
-#: salesforce_object_flow/pages/composite.py:326
+#: salesforce_object_flow/pages/composite.py:327
 msgid "Collate subrequests"
 msgstr "Agrupar subpeticiones"
 
-#: salesforce_object_flow/pages/composite.py:328
+#: salesforce_object_flow/pages/composite.py:329
 msgid "Group consecutive same-method subrequests in one round trip."
-msgstr "Agrupa subpeticiones consecutivas con el mismo método en una sola ida y vuelta."
+msgstr ""
+"Agrupa subpeticiones consecutivas con el mismo método en una sola ida y "
+"vuelta."
 
-#: salesforce_object_flow/pages/composite.py:335
+#: salesforce_object_flow/pages/composite.py:336
 msgid "Subrequests"
 msgstr "Subpeticiones"
 
-#: salesforce_object_flow/pages/composite.py:336
+#: salesforce_object_flow/pages/composite.py:337
 msgid "Add subrequest"
 msgstr "Añadir subpetición"
 
-#: salesforce_object_flow/pages/composite.py:358
+#: salesforce_object_flow/pages/composite.py:359
 msgid "Sample row:"
 msgstr "Fila de muestra:"
 
-#: salesforce_object_flow/pages/composite.py:363
+#: salesforce_object_flow/pages/composite.py:364
 msgid "Synthetic"
 msgstr "Sintética"
 
-#: salesforce_object_flow/pages/composite.py:363
+#: salesforce_object_flow/pages/composite.py:364
 msgid "From CSV…"
 msgstr "Desde CSV…"
 
-#: salesforce_object_flow/pages/composite.py:460
+#: salesforce_object_flow/pages/composite.py:461
 #, python-brace-format
 msgid "Could not list templates — {error}"
 msgstr "No se pudieron listar las plantillas — {error}"
 
-#: salesforce_object_flow/pages/composite.py:538
+#: salesforce_object_flow/pages/composite.py:539
 msgid "A run is in progress — cancel it before switching templates."
 msgstr "Hay una ejecución en curso — cancélala antes de cambiar de plantilla."
 
-#: salesforce_object_flow/pages/composite.py:587
+#: salesforce_object_flow/pages/composite.py:588
 msgid "Untitled template"
 msgstr "Plantilla sin título"
 
-#: salesforce_object_flow/pages/composite.py:697
+#: salesforce_object_flow/pages/composite.py:698
 #, python-brace-format
 msgid "⚠ Missing: {filename}"
 msgstr "⚠ No encontrado: {filename}"
 
-#: salesforce_object_flow/pages/composite.py:760
+#: salesforce_object_flow/pages/composite.py:761
 #, python-brace-format
 msgid "{count} of {max} subrequests."
 msgstr "{count} de {max} subpeticiones."
 
-#: salesforce_object_flow/pages/composite.py:785
+#: salesforce_object_flow/pages/composite.py:786
 msgid "Move up"
 msgstr "Mover arriba"
 
-#: salesforce_object_flow/pages/composite.py:789
+#: salesforce_object_flow/pages/composite.py:790
 msgid "Move down"
 msgstr "Mover abajo"
 
-#: salesforce_object_flow/pages/composite.py:793
+#: salesforce_object_flow/pages/composite.py:794
 msgid "Duplicate"
 msgstr "Duplicar"
 
-#: salesforce_object_flow/pages/composite.py:804
-#, python-brace-format
+#: salesforce_object_flow/pages/composite.py:805
 msgid "Reference id"
 msgstr "ID de referencia"
 
-#: salesforce_object_flow/pages/composite.py:815
+#: salesforce_object_flow/pages/composite.py:816
 msgid "Method"
 msgstr "Método"
 
-#: salesforce_object_flow/pages/composite.py:828
+#: salesforce_object_flow/pages/composite.py:829
 msgid "URL"
 msgstr "URL"
 
-#: salesforce_object_flow/pages/composite.py:852
+#: salesforce_object_flow/pages/composite.py:853
 msgid "(unnamed)"
 msgstr "(sin nombre)"
 
-#: salesforce_object_flow/pages/composite.py:867
+#: salesforce_object_flow/pages/composite.py:868
 msgid "Body"
 msgstr "Cuerpo"
 
-#: salesforce_object_flow/pages/composite.py:872
+#: salesforce_object_flow/pages/composite.py:873
 msgid "Field/value pairs. Leave empty for no body."
 msgstr "Pares campo/valor. Déjalo vacío para no enviar cuerpo."
 
-#: salesforce_object_flow/pages/composite.py:890
+#: salesforce_object_flow/pages/composite.py:891
 msgid "Add field"
 msgstr "Añadir campo"
 
-#: salesforce_object_flow/pages/composite.py:919
+#: salesforce_object_flow/pages/composite.py:920
 msgid "Field"
 msgstr "Campo"
 
-#: salesforce_object_flow/pages/composite.py:925
+#: salesforce_object_flow/pages/composite.py:926
 msgid "Literal or {{column}}"
 msgstr "Literal o {{column}}"
 
-#: salesforce_object_flow/pages/composite.py:970
+#: salesforce_object_flow/pages/composite.py:971
 msgid "Headers"
 msgstr "Cabeceras"
 
-#: salesforce_object_flow/pages/composite.py:982
+#: salesforce_object_flow/pages/composite.py:983
 msgid "Add header"
 msgstr "Añadir cabecera"
 
-#: salesforce_object_flow/pages/composite.py:1018
+#: salesforce_object_flow/pages/composite.py:1019
 msgid "Header name"
 msgstr "Nombre de la cabecera"
 
-#: salesforce_object_flow/pages/composite.py:1026
+#: salesforce_object_flow/pages/composite.py:1027
 msgid "Header value"
 msgstr "Valor de la cabecera"
 
-#: salesforce_object_flow/pages/composite.py:1337
+#: salesforce_object_flow/pages/composite.py:1338
 msgid "No template selected."
 msgstr "No hay ninguna plantilla seleccionada."
 
-#: salesforce_object_flow/pages/composite.py:1351
+#: salesforce_object_flow/pages/composite.py:1352
 #, python-brace-format
 msgid "Name conflicts with another template: {name}."
 msgstr "El nombre entra en conflicto con otra plantilla: {name}."
 
-#: salesforce_object_flow/pages/composite.py:1394
+#: salesforce_object_flow/pages/composite.py:1395
 msgid "Linked format is missing — pick one first."
 msgstr "Falta el formato enlazado — elige uno primero."
 
-#: salesforce_object_flow/pages/composite.py:1396
+#: salesforce_object_flow/pages/composite.py:1397
 msgid "Fix validation errors first."
 msgstr "Corrige antes los errores de validación."
 
-#: salesforce_object_flow/pages/composite.py:1398
+#: salesforce_object_flow/pages/composite.py:1399
 msgid "Save the template before running."
 msgstr "Guarda la plantilla antes de ejecutar."
 
-#: salesforce_object_flow/pages/composite.py:1400
+#: salesforce_object_flow/pages/composite.py:1401
 msgid "No active connection — pick one in the sidebar."
 msgstr "Sin conexión activa — elige una en el menú lateral."
 
-#: salesforce_object_flow/pages/composite.py:1402
+#: salesforce_object_flow/pages/composite.py:1403
 msgid "A run is in progress."
 msgstr "Hay una ejecución en curso."
 
-#: salesforce_object_flow/pages/composite.py:1414
-#: salesforce_object_flow/pages/composite.py:1491
+#: salesforce_object_flow/pages/composite.py:1415
+#: salesforce_object_flow/pages/composite.py:1492
 msgid "Invalid template."
 msgstr "Plantilla no válida."
 
-#: salesforce_object_flow/pages/composite.py:1462
+#: salesforce_object_flow/pages/composite.py:1463
 msgid "The template will be removed permanently from disk."
 msgstr "La plantilla se eliminará permanentemente del disco."
 
-#: salesforce_object_flow/pages/composite.py:1477
+#: salesforce_object_flow/pages/composite.py:1478
 msgid "The current template has unsaved edits. Save them before continuing?"
 msgstr ""
 "La plantilla actual tiene cambios sin guardar. ¿Guardarlos antes de "
 "continuar?"
 
-#: salesforce_object_flow/pages/composite.py:1527
+#: salesforce_object_flow/pages/composite.py:1528
 msgid "Pick a CSV file for the sample row"
 msgstr "Elige un archivo CSV para la fila de muestra"
 
-#: salesforce_object_flow/pages/composite.py:1548
+#: salesforce_object_flow/pages/composite.py:1549
 msgid "Linked format missing — pick a format first."
 msgstr "Falta el formato enlazado — elige un formato primero."
 
-#: salesforce_object_flow/pages/composite.py:1554
+#: salesforce_object_flow/pages/composite.py:1555
 msgid "synthetic sample row"
 msgstr "fila de muestra sintética"
 
-#: salesforce_object_flow/pages/composite.py:1559
+#: salesforce_object_flow/pages/composite.py:1560
 #, python-brace-format
 msgid "Could not read sample row from {filename}"
 msgstr "No se pudo leer la fila de muestra de {filename}"
 
-#: salesforce_object_flow/pages/composite.py:1565
+#: salesforce_object_flow/pages/composite.py:1566
 msgid "synthetic sample row (CSV unreadable)"
 msgstr "fila de muestra sintética (CSV ilegible)"
 
-#: salesforce_object_flow/pages/composite.py:1567
+#: salesforce_object_flow/pages/composite.py:1568
 #, python-brace-format
 msgid "first data row of {filename}"
 msgstr "primera fila de datos de {filename}"
 
-#: salesforce_object_flow/pages/composite.py:1576
+#: salesforce_object_flow/pages/composite.py:1577
 #, python-brace-format
 msgid "Rendered with {source} — {count} subrequest."
 msgid_plural "Rendered with {source} — {count} subrequests."
 msgstr[0] "Renderizado con {source} — {count} subpetición."
 msgstr[1] "Renderizado con {source} — {count} subpeticiones."
 
-#: salesforce_object_flow/pages/composite.py:1634
+#: salesforce_object_flow/pages/composite.py:1635
 msgid "Cannot run — pick an active connection and a linked format."
 msgstr "No se puede ejecutar — elige una conexión activa y un formato enlazado."
 
-#: salesforce_object_flow/pages/composite.py:1640
+#: salesforce_object_flow/pages/composite.py:1641
 msgid "Pick the CSV file to run against"
 msgstr "Elige el archivo CSV sobre el que ejecutar"
 
-#: salesforce_object_flow/pages/composite.py:1675
+#: salesforce_object_flow/pages/composite.py:1676
 #, python-brace-format
 msgid "Could not read CSV with the linked format settings — {error}"
 msgstr "No se pudo leer el CSV con la configuración del formato enlazado — {error}"
 
-#: salesforce_object_flow/pages/composite.py:1689
+#: salesforce_object_flow/pages/composite.py:1690
 msgid "CSV has no data rows."
 msgstr "El CSV no tiene filas de datos."
 
-#: salesforce_object_flow/pages/composite.py:1692
+#: salesforce_object_flow/pages/composite.py:1693
 msgid "on"
 msgstr "activado"
 
-#: salesforce_object_flow/pages/composite.py:1693
+#: salesforce_object_flow/pages/composite.py:1694
 msgid "off"
 msgstr "desactivado"
 
-#: salesforce_object_flow/pages/composite.py:1695
+#: salesforce_object_flow/pages/composite.py:1696
 #, python-brace-format
 msgid "This will write data to “{alias}” using {count} CSV row."
 msgid_plural "This will write data to “{alias}” using {count} CSV rows."
 msgstr[0] "Esto escribirá datos en «{alias}» usando {count} fila del CSV."
 msgstr[1] "Esto escribirá datos en «{alias}» usando {count} filas del CSV."
 
-#: salesforce_object_flow/pages/composite.py:1701
+#: salesforce_object_flow/pages/composite.py:1702
 #, python-brace-format
 msgid "All-or-none: {value}"
 msgstr "Todo o nada: {value}"
 
-#: salesforce_object_flow/pages/composite.py:1705
+#: salesforce_object_flow/pages/composite.py:1706
 #, python-brace-format
 msgid "Collate: {value}"
 msgstr "Agrupar: {value}"
 
-#: salesforce_object_flow/pages/composite.py:1709
+#: salesforce_object_flow/pages/composite.py:1710
 #, python-brace-format
 msgid "Source: {filename}"
 msgstr "Origen: {filename}"
 
-#: salesforce_object_flow/pages/composite.py:1712
+#: salesforce_object_flow/pages/composite.py:1713
 #, python-brace-format
 msgid "Run “{name}”?"
 msgstr "¿Ejecutar «{name}»?"
 
-#: salesforce_object_flow/pages/composite.py:1762
-#, python-brace-format
-msgid "Connection error: {error}"
-msgstr "Error de conexión: {error}"
-
-#: salesforce_object_flow/pages/composite.py:1775
+#: salesforce_object_flow/pages/composite.py:1773
 #, python-brace-format
 msgid "Running “{name}” on {alias}"
 msgstr "Ejecutando «{name}» en {alias}"
 
-#: salesforce_object_flow/pages/composite.py:1777
+#: salesforce_object_flow/pages/composite.py:1775
 msgid "Preparing…"
 msgstr "Preparando…"
 
-#: salesforce_object_flow/pages/composite.py:1815
+#: salesforce_object_flow/pages/composite.py:1813
 #, python-brace-format
 msgid "Processing row {processed} of {total}…"
 msgstr "Procesando fila {processed} de {total}…"
 
-#: salesforce_object_flow/pages/composite.py:1822
+#: salesforce_object_flow/pages/composite.py:1820
 msgid "Failure"
 msgstr "Fallo"
 
-#: salesforce_object_flow/pages/composite.py:1824
+#: salesforce_object_flow/pages/composite.py:1822
 #, python-brace-format
 msgid "Last error: {summary}"
 msgstr "Último error: {summary}"
 
-#: salesforce_object_flow/pages/composite.py:1834
+#: salesforce_object_flow/pages/composite.py:1832
 msgid "Cancelling — finishing current row…"
 msgstr "Cancelando — terminando la fila actual…"
 
-#: salesforce_object_flow/pages/composite.py:1868
+#: salesforce_object_flow/pages/composite.py:1866
 #, python-brace-format
 msgid "Run completed: {succeeded}/{total} succeeded, {failed} failed, cancelled."
-msgstr "Ejecución completada: {succeeded}/{total} con éxito, {failed} con fallo, cancelada."
+msgstr ""
+"Ejecución completada: {succeeded}/{total} con éxito, {failed} con fallo, "
+"cancelada."
 
-#: salesforce_object_flow/pages/composite.py:1874
+#: salesforce_object_flow/pages/composite.py:1872
 #, python-brace-format
 msgid "Run completed: {succeeded}/{total} succeeded, {failed} failed."
 msgstr "Ejecución completada: {succeeded}/{total} con éxito, {failed} con fallo."
 
-#: salesforce_object_flow/pages/composite.py:1910
+#: salesforce_object_flow/pages/composite.py:1908
 #, python-brace-format
 msgid "Row #{number} — {status}"
 msgstr "Fila #{number} — {status}"
 
-#: salesforce_object_flow/pages/composite.py:1949
+#: salesforce_object_flow/pages/composite.py:1947
 msgid "Export failures CSV"
 msgstr "Exportar fallos a CSV"
 
-#: salesforce_object_flow/pages/composite.py:1964
+#: salesforce_object_flow/pages/composite.py:1962
 #, python-brace-format
 msgid "Could not export — {error}"
 msgstr "No se pudo exportar — {error}"
 
-#: salesforce_object_flow/pages/composite.py:1969
+#: salesforce_object_flow/pages/composite.py:1967
 #, python-brace-format
 msgid "Exported {count} failed row to {filename}."
 msgid_plural "Exported {count} failed rows to {filename}."
 msgstr[0] "Exportada {count} fila con fallo a {filename}."
 msgstr[1] "Exportadas {count} filas con fallo a {filename}."
+
+#~ msgid "Connection error: {error}"
+#~ msgstr "Error de conexión: {error}"
 

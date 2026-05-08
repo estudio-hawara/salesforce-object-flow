@@ -19,6 +19,7 @@ from salesforce_object_flow.core.formats import (
     slugify,
 )
 from salesforce_object_flow.i18n import N_, _, ngettext
+from salesforce_object_flow.i18n_errors import format_error
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.formats import (
     CellError,
@@ -697,7 +698,7 @@ class FileFormatsPage:
         try:
             new_filename = self._store.save(self._editing, previous_filename=previous_on_disk)
         except FileFormatError as exc:
-            self._window.show_toast(str(exc), timeout=6)
+            self._window.show_toast(format_error(exc), timeout=6)
             return
 
         self._selected_filename = new_filename
@@ -740,7 +741,7 @@ class FileFormatsPage:
             try:
                 self._store.delete(filename)
             except FileFormatError as exc:
-                self._window.show_toast(str(exc), timeout=6)
+                self._window.show_toast(format_error(exc), timeout=6)
                 return
             self._selected_filename = None
             self._editing = None

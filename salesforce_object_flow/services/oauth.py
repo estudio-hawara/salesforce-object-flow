@@ -18,6 +18,8 @@ from typing import Any, cast
 
 import httpx
 
+from salesforce_object_flow.services.errors import CodedError, ErrorCode
+
 log = logging.getLogger(__name__)
 
 DEFAULT_SCOPES: tuple[str, ...] = ("api", "refresh_token", "offline_access")
@@ -37,11 +39,18 @@ _TOKEN_PATH = "/services/oauth2/token"
 _REVOKE_PATH = "/services/oauth2/revoke"
 
 
-class OAuthError(RuntimeError):
+class OAuthError(CodedError):
     """Salesforce OAuth endpoint returned an error envelope."""
 
-    def __init__(self, message: str, error_code: str | None = None) -> None:
-        super().__init__(message)
+    def __init__(
+        self,
+        message: str,
+        error_code: str | None = None,
+        *,
+        code: ErrorCode | None = None,
+        params: dict[str, object] | None = None,
+    ) -> None:
+        super().__init__(message, code=code, params=params)
         self.error_code = error_code
 
 
@@ -118,7 +127,11 @@ def _parse_token_bundle(payload: dict[str, Any]) -> TokenBundle:
         access_token = str(payload["access_token"])
         instance_url = str(payload["instance_url"])
     except KeyError as exc:
-        raise OAuthError(f"Token response missing required field: {exc.args[0]}") from exc
+        raise OAuthError(
+            f"Token response missing required field: {exc.args[0]}",
+            code=ErrorCode.TOKEN_RESPONSE_INVALID,
+            params={"field": str(exc.args[0])},
+        ) from exc
     raw_refresh = payload.get("refresh_token")
     return TokenBundle(
         access_token=access_token,
@@ -182,7 +195,10 @@ def _post_token_following_redirects(
             response.status_code,
             current,
         )
-    raise OAuthError("Too many redirects from the Salesforce token endpoint.")
+    raise OAuthError(
+        "Too many redirects from the Salesforce token endpoint.",
+        code=ErrorCode.OAUTH_TOO_MANY_REDIRECTS,
+    )
 
 
 def _extract_error(payload: Any, status_code: int) -> tuple[str, str | None]:

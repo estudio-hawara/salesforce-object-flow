@@ -2,6 +2,7 @@
 # Add files here as they get strings wrapped in _() / N_().
 salesforce_object_flow/main.py
 salesforce_object_flow/window.py
+salesforce_object_flow/i18n_errors.py
 salesforce_object_flow/pages/groups.py
 salesforce_object_flow/pages/welcome.py
 salesforce_object_flow/pages/connections.py

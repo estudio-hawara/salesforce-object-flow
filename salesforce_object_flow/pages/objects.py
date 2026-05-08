@@ -17,6 +17,7 @@ from gi.repository import Adw, GLib, Gtk
 
 from salesforce_object_flow.core.config import OrgEntry
 from salesforce_object_flow.i18n import N_, _, ngettext
+from salesforce_object_flow.i18n_errors import format_error
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.sobjects import (
     SObjectDescribe,
@@ -352,7 +353,7 @@ class ObjectExplorerPage:
                 GLib.idle_add(self._on_list_loaded, token, summaries)
             except Exception as exc:
                 log.debug("list_sobjects failed", exc_info=True)
-                GLib.idle_add(self._on_list_error, token, str(exc))
+                GLib.idle_add(self._on_list_error, token, format_error(exc))
 
         threading.Thread(target=worker, daemon=True, name=f"sobj-list-{alias}").start()
 
@@ -369,7 +370,7 @@ class ObjectExplorerPage:
                 GLib.idle_add(self._on_list_loaded, token, summaries)
             except Exception as exc:
                 log.debug("refresh_list failed", exc_info=True)
-                GLib.idle_add(self._on_list_error, token, str(exc))
+                GLib.idle_add(self._on_list_error, token, format_error(exc))
 
         threading.Thread(target=worker, daemon=True, name=f"sobj-refresh-{alias}").start()
 
@@ -457,7 +458,7 @@ class ObjectExplorerPage:
                 GLib.idle_add(self._on_describe_loaded, token, describe, summary)
             except Exception as exc:
                 log.debug("describe failed", exc_info=True)
-                GLib.idle_add(self._on_describe_error, token, name, str(exc))
+                GLib.idle_add(self._on_describe_error, token, name, format_error(exc))
 
         threading.Thread(target=worker, daemon=True, name=f"sobj-describe-{name}").start()
 

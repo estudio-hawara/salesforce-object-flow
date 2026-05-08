@@ -50,6 +50,7 @@ from salesforce_object_flow.core.composite import (
 )
 from salesforce_object_flow.core.formats import Column, ColumnType, FileFormat, slugify
 from salesforce_object_flow.services.api import ApiError, SalesforceClient
+from salesforce_object_flow.services.errors import CodedError, ErrorCode
 
 log = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ _BOOLEAN_TRUE: Final[frozenset[str]] = frozenset({"true", "1", "yes"})
 _BOOLEAN_FALSE: Final[frozenset[str]] = frozenset({"false", "0", "no"})
 
 
-class CompositeTemplateError(RuntimeError):
+class CompositeTemplateError(CodedError):
     """Save / Delete failures that must surface to the user."""
 
 
@@ -139,7 +140,11 @@ class CompositeTemplateStore:
                 path.with_suffix(path.suffix + ".tmp").unlink(missing_ok=True)
             except OSError:
                 pass
-            raise CompositeTemplateError(f"Could not save template: {exc}") from exc
+            raise CompositeTemplateError(
+                f"Could not save template: {exc}",
+                code=ErrorCode.TEMPLATE_SAVE_FAILED,
+                params={"error": str(exc)},
+            ) from exc
 
         if previous_filename and previous_filename != target_filename:
             previous = self._root / previous_filename
@@ -157,7 +162,11 @@ class CompositeTemplateStore:
         try:
             path.unlink()
         except OSError as exc:
-            raise CompositeTemplateError(f"Could not delete template: {exc}") from exc
+            raise CompositeTemplateError(
+                f"Could not delete template: {exc}",
+                code=ErrorCode.TEMPLATE_DELETE_FAILED,
+                params={"error": str(exc)},
+            ) from exc
         return True
 
     def unique_filename_for(self, name: str, *, existing: Iterable[str]) -> str:
@@ -563,7 +572,7 @@ class ProgressEvent:
     last_result: RowResult | None
 
 
-class ExecutionError(RuntimeError):
+class ExecutionError(CodedError):
     """Fatal: aborts the whole run. The message is safe to show to the user."""
 
 
@@ -655,7 +664,8 @@ class CompositeExecutor:
             except ApiError as exc:
                 if exc.status_code == 401:
                     raise ExecutionError(
-                        "Authentication failed during execution; re-authenticate and retry."
+                        "Authentication failed during execution; re-authenticate and retry.",
+                        code=ErrorCode.AUTH_FAILED,
                     ) from exc
                 summary = (
                     f"HTTP {exc.status_code}: {exc}"
@@ -696,9 +706,17 @@ class CompositeExecutor:
         try:
             text = csv_path.read_text(encoding=fmt.encoding)
         except OSError as exc:
-            raise ExecutionError(f"CSV unreadable: {exc}") from exc
+            raise ExecutionError(
+                f"CSV unreadable: {exc}",
+                code=ErrorCode.CSV_UNREADABLE,
+                params={"error": str(exc)},
+            ) from exc
         except UnicodeDecodeError as exc:
-            raise ExecutionError(f"Could not decode {csv_path} as {fmt.encoding}: {exc}") from exc
+            raise ExecutionError(
+                f"Could not decode {csv_path} as {fmt.encoding}: {exc}",
+                code=ErrorCode.CSV_DECODE_ERROR,
+                params={"path": str(csv_path), "encoding": fmt.encoding, "error": str(exc)},
+            ) from exc
 
         reader = csv.reader(
             text.splitlines(),

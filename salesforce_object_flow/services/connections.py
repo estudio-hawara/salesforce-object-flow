@@ -29,6 +29,7 @@ from salesforce_object_flow.core.credentials import (
     OrgCredentials,
 )
 from salesforce_object_flow.services.api import SalesforceClient, update_creds_after_refresh
+from salesforce_object_flow.services.errors import CodedError, ErrorCode
 from salesforce_object_flow.services.loopback import (
     CallbackResult,
     LoopbackError,
@@ -56,8 +57,12 @@ ProgressEvent = Literal[
 ProgressCallback = Callable[[ProgressEvent], None]
 
 
-class ConnectionsError(RuntimeError):
-    """Top-level orchestrator failure. Message is safe to toast verbatim."""
+class ConnectionsError(CodedError):
+    """Top-level orchestrator failure.
+
+    The ``str(exc)`` message stays English (logs/bug reports).
+    UI surfaces translate via ``code`` + ``params`` through ``format_error``.
+    """
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,7 +130,11 @@ class ConnectionsService:
         is not modified.
         """
         if self._config.find_org(request.alias) is not None:
-            raise ConnectionsError(f"A connection with alias '{request.alias}' already exists.")
+            raise ConnectionsError(
+                f"A connection with alias '{request.alias}' already exists.",
+                code=ErrorCode.ALIAS_ALREADY_EXISTS,
+                params={"alias": request.alias},
+            )
 
         challenge = generate_pkce()
         server = self._loopback_factory(challenge.state)
@@ -134,7 +143,11 @@ class ConnectionsService:
             try:
                 server.start()
             except LoopbackError as exc:
-                raise ConnectionsError(str(exc)) from exc
+                raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
 
             authorize_url = build_authorize_url(request.my_domain_url, request.client_id, challenge)
             self._browser_open(authorize_url)
@@ -153,9 +166,17 @@ class ConnectionsService:
                         verifier=challenge.verifier,
                     )
                 except OAuthError as exc:
-                    raise ConnectionsError(str(exc)) from exc
+                    raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
                 except httpx.RequestError as exc:
-                    raise ConnectionsError(f"Could not exchange authorization code: {exc}") from exc
+                    raise ConnectionsError(
+                        f"Could not exchange authorization code: {exc}",
+                        code=ErrorCode.OAUTH_EXCHANGE_FAILED,
+                        params={"error": str(exc)},
+                    ) from exc
 
             progress("persisting")
             entry = self._persist_new_org(request, bundle)
@@ -168,17 +189,22 @@ class ConnectionsService:
         deadline = time.monotonic() + self.AUTHORIZE_TIMEOUT_SECONDS
         while True:
             if cancelled.is_set():
-                raise ConnectionsError("Cancelled.")
+                raise ConnectionsError("Cancelled.", code=ErrorCode.OAUTH_CANCELLED)
             if time.monotonic() >= deadline:
                 raise ConnectionsError(
-                    "Authorization timed out. Did you complete the login in your browser?"
+                    "Authorization timed out. Did you complete the login in your browser?",
+                    code=ErrorCode.OAUTH_TIMEOUT,
                 )
             try:
                 return server.wait(timeout=1.0)
             except LoopbackError as exc:
                 if "timed out" in str(exc).lower():
                     continue
-                raise ConnectionsError(str(exc)) from exc
+                raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
 
     def _persist_new_org(self, request: AddOrgRequest, bundle: TokenBundle) -> OrgEntry:
         # Write the keyring entry first; if that fails, the config remains
@@ -191,7 +217,11 @@ class ConnectionsService:
         try:
             credentials.set(request.alias, creds)
         except CredentialsError as exc:
-            raise ConnectionsError(str(exc)) from exc
+            raise ConnectionsError(
+                str(exc),
+                code=getattr(exc, "code", None),
+                params=getattr(exc, "params", None) or {},
+            ) from exc
 
         entry = OrgEntry(
             alias=request.alias,
@@ -227,7 +257,11 @@ class ConnectionsService:
             try:
                 server.start()
             except LoopbackError as exc:
-                raise ConnectionsError(str(exc)) from exc
+                raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
 
             authorize_url = build_authorize_url(
                 entry.my_domain_url, entry.client_id, challenge, force_login=True
@@ -248,9 +282,17 @@ class ConnectionsService:
                         verifier=challenge.verifier,
                     )
                 except OAuthError as exc:
-                    raise ConnectionsError(str(exc)) from exc
+                    raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
                 except httpx.RequestError as exc:
-                    raise ConnectionsError(f"Could not exchange authorization code: {exc}") from exc
+                    raise ConnectionsError(
+                        f"Could not exchange authorization code: {exc}",
+                        code=ErrorCode.OAUTH_EXCHANGE_FAILED,
+                        params={"error": str(exc)},
+                    ) from exc
 
             progress("persisting")
             creds = OrgCredentials(
@@ -261,7 +303,11 @@ class ConnectionsService:
             try:
                 credentials.set(alias, creds)
             except CredentialsError as exc:
-                raise ConnectionsError(str(exc)) from exc
+                raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
 
             if bundle.instance_url and bundle.instance_url != entry.instance_url:
                 entry.instance_url = bundle.instance_url
@@ -278,7 +324,9 @@ class ConnectionsService:
         existing = credentials.get(alias)
         if existing is None or existing.refresh_token is None:
             raise ConnectionsError(
-                f"No refresh token stored for '{alias}'. Re-authenticate to continue."
+                f"No refresh token stored for '{alias}'. Re-authenticate to continue.",
+                code=ErrorCode.NO_REFRESH_TOKEN,
+                params={"alias": alias},
             )
 
         with self._client_factory() as client:
@@ -287,9 +335,17 @@ class ConnectionsService:
                     client, entry.my_domain_url, entry.client_id, existing.refresh_token
                 )
             except OAuthError as exc:
-                raise ConnectionsError(str(exc)) from exc
+                raise ConnectionsError(
+                    str(exc),
+                    code=getattr(exc, "code", None),
+                    params=getattr(exc, "params", None) or {},
+                ) from exc
             except httpx.RequestError as exc:
-                raise ConnectionsError(f"Could not refresh token: {exc}") from exc
+                raise ConnectionsError(
+                    f"Could not refresh token: {exc}",
+                    code=ErrorCode.TOKEN_REFRESH_FAILED,
+                    params={"error": str(exc)},
+                ) from exc
 
         new_creds = update_creds_after_refresh(existing, bundle.access_token, bundle.refresh_token)
         # Salesforce sometimes returns a fresh instance_url; honour it.
@@ -354,7 +410,9 @@ class ConnectionsService:
         creds = credentials.get(alias)
         if creds is None:
             raise ConnectionsError(
-                f"No stored credentials for '{alias}'. Re-authenticate to continue."
+                f"No stored credentials for '{alias}'. Re-authenticate to continue.",
+                code=ErrorCode.NO_STORED_CREDENTIALS,
+                params={"alias": alias},
             )
 
         with self._client_factory() as http_client:
@@ -370,5 +428,9 @@ class ConnectionsService:
     def _require_entry(self, alias: str) -> OrgEntry:
         entry = self._config.find_org(alias)
         if entry is None:
-            raise ConnectionsError(f"No connection with alias '{alias}' is registered.")
+            raise ConnectionsError(
+                f"No connection with alias '{alias}' is registered.",
+                code=ErrorCode.UNKNOWN_ALIAS,
+                params={"alias": alias},
+            )
         return entry

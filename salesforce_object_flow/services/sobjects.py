@@ -19,6 +19,7 @@ from typing import Any, ClassVar, cast
 from salesforce_object_flow.core.cache import CacheKey, JsonCache
 from salesforce_object_flow.core.config import OrgEntry
 from salesforce_object_flow.services.connections import ConnectionsError, ConnectionsService
+from salesforce_object_flow.services.errors import ErrorCode
 
 log = logging.getLogger(__name__)
 
@@ -104,7 +105,10 @@ class SObjectService:
         with self._connections.get_authenticated_client(alias) as client:
             payload = client.get(path)
         if not isinstance(payload, dict):
-            raise ConnectionsError("Unexpected /sobjects response shape")
+            raise ConnectionsError(
+                "Unexpected /sobjects response shape",
+                code=ErrorCode.API_UNEXPECTED_RESPONSE,
+            )
         envelope = cast(dict[str, Any], payload)
         self._cache.set(key, envelope)
         return _parse_summaries(envelope)
@@ -121,7 +125,10 @@ class SObjectService:
         with self._connections.get_authenticated_client(alias) as client:
             payload = client.get(path)
         if not isinstance(payload, dict):
-            raise ConnectionsError(f"Unexpected /sobjects/{sobject_name}/describe response shape")
+            raise ConnectionsError(
+                f"Unexpected /sobjects/{sobject_name}/describe response shape",
+                code=ErrorCode.API_UNEXPECTED_RESPONSE,
+            )
         envelope = cast(dict[str, Any], payload)
         self._cache.set(key, envelope)
         return _parse_describe(envelope)
@@ -135,7 +142,11 @@ class SObjectService:
         for entry in self._connections.list_orgs():
             if entry.alias == alias:
                 return entry
-        raise ConnectionsError(f"No connection with alias '{alias}' is registered.")
+        raise ConnectionsError(
+            f"No connection with alias '{alias}' is registered.",
+            code=ErrorCode.UNKNOWN_ALIAS,
+            params={"alias": alias},
+        )
 
     def _key_list(self, entry: OrgEntry) -> CacheKey:
         return CacheKey(

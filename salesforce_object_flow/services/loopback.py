@@ -27,6 +27,7 @@ from concurrent.futures import TimeoutError as FutureTimeoutError
 from dataclasses import dataclass
 from typing import Any, Final
 
+from salesforce_object_flow.services.errors import CodedError, ErrorCode
 from salesforce_object_flow.services.oauth import CALLBACK_PATH
 
 log = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ class CallbackResult:
     state: str
 
 
-class LoopbackError(RuntimeError):
+class LoopbackError(CodedError):
     """Bind failure, state mismatch, provider error, or timeout."""
 
 
@@ -242,9 +243,15 @@ class LoopbackServer:
             if exc.errno == errno.EADDRINUSE:
                 raise LoopbackError(
                     f"Port {self._port} is already in use. Close any other "
-                    f"Salesforce Object Flow instance and try again."
+                    f"Salesforce Object Flow instance and try again.",
+                    code=ErrorCode.PORT_IN_USE,
+                    params={"port": self._port},
                 ) from exc
-            raise LoopbackError(f"Could not bind loopback server: {exc}") from exc
+            raise LoopbackError(
+                f"Could not bind loopback server: {exc}",
+                code=ErrorCode.LOOPBACK_BIND_FAILED,
+                params={"error": str(exc)},
+            ) from exc
 
         self._server = server
         thread = threading.Thread(
@@ -258,11 +265,17 @@ class LoopbackServer:
     def wait(self, timeout: float) -> CallbackResult:
         """Block up to *timeout* seconds for a callback. Raises on error/timeout."""
         if self._server is None:
-            raise LoopbackError("Loopback server is not running.")
+            raise LoopbackError(
+                "Loopback server is not running.",
+                code=ErrorCode.LOOPBACK_NOT_RUNNING,
+            )
         try:
             return self._server.future.result(timeout=timeout)
         except FutureTimeoutError as exc:
-            raise LoopbackError("Authorization timed out before the callback arrived.") from exc
+            raise LoopbackError(
+                "Authorization timed out before the callback arrived.",
+                code=ErrorCode.OAUTH_TIMEOUT,
+            ) from exc
 
     def stop(self) -> None:
         """Stop serving and free the socket. Safe to call multiple times."""
