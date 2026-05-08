@@ -1,5 +1,6 @@
-"""Placeholder welcome page shown until the Composite API form lands."""
+"""Welcome page — first thing the user sees when no connections exist."""
 
+from importlib.metadata import PackageNotFoundError, version
 from typing import ClassVar
 
 from gi.repository import Adw, Gtk
@@ -9,8 +10,15 @@ from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.ui.layout import make_page_layout
 
 
+def _app_version() -> str:
+    try:
+        return version("salesforce-object-flow")
+    except PackageNotFoundError:
+        return "dev"
+
+
 class WelcomePage:
-    """Trivial first page: explain what the app is and what's coming."""
+    """Landing page: brand, current alpha status, and a pointer to Connections."""
 
     NAME: ClassVar[str] = "welcome"
     TITLE: ClassVar[str] = N_("Welcome")
@@ -33,15 +41,18 @@ class WelcomePage:
         status = Adw.PreferencesGroup()
         status.set_title(_("Status"))
         status.set_description(
-            _("Version {version} — project scaffolding only.").format(version="0.0.1")
+            _("Version {version} — alpha. Feedback and bug reports welcome.").format(
+                version=_app_version()
+            )
         )
 
         next_row = Adw.ActionRow()
-        next_row.set_title(_("What's next"))
+        next_row.set_title(_("Get started"))
         next_row.set_subtitle(
             _(
-                "The Composite API form lands in a follow-up release. For now, this "
-                "window confirms that the GTK4 + libadwaita stack is wired up correctly."
+                "Open Connections to register your first Salesforce org. Then build a "
+                "File Format that describes your CSV and a Composite Request template "
+                "that maps each row to one or more API calls."
             )
         )
         status.add(next_row)

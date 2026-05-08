@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: salesforce-object-flow 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 12:26+0100\n"
+"POT-Creation-Date: 2026-05-08 12:41+0100\n"
 "PO-Revision-Date: 2026-05-08 00:00+0000\n"
 "Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
 "Language: es\n"
@@ -158,11 +158,11 @@ msgstr "Modelo de datos"
 msgid "Run"
 msgstr "Ejecución"
 
-#: salesforce_object_flow/pages/welcome.py:16
+#: salesforce_object_flow/pages/welcome.py:24
 msgid "Welcome"
 msgstr "Bienvenida"
 
-#: salesforce_object_flow/pages/welcome.py:27
+#: salesforce_object_flow/pages/welcome.py:35
 msgid ""
 "Compose multi-object, transactional creates against the Salesforce REST "
 "Composite API."
@@ -170,27 +170,29 @@ msgstr ""
 "Compón creaciones multiobjeto y transaccionales contra la API REST "
 "Composite de Salesforce."
 
-#: salesforce_object_flow/pages/welcome.py:34
+#: salesforce_object_flow/pages/welcome.py:42
 msgid "Status"
 msgstr "Estado"
 
-#: salesforce_object_flow/pages/welcome.py:36
+#: salesforce_object_flow/pages/welcome.py:44
 #, python-brace-format
-msgid "Version {version} — project scaffolding only."
-msgstr "Versión {version} — solo andamiaje del proyecto."
+msgid "Version {version} — alpha. Feedback and bug reports welcome."
+msgstr "Versión {version} — alpha. Se agradecen sugerencias e informes de errores."
 
-#: salesforce_object_flow/pages/welcome.py:40
-msgid "What's next"
-msgstr "Próximos pasos"
+#: salesforce_object_flow/pages/welcome.py:50
+msgid "Get started"
+msgstr "Empezar"
 
-#: salesforce_object_flow/pages/welcome.py:43
+#: salesforce_object_flow/pages/welcome.py:53
 msgid ""
-"The Composite API form lands in a follow-up release. For now, this window"
-" confirms that the GTK4 + libadwaita stack is wired up correctly."
+"Open Connections to register your first Salesforce org. Then build a File"
+" Format that describes your CSV and a Composite Request template that "
+"maps each row to one or more API calls."
 msgstr ""
-"El formulario de la API Composite llegará en una próxima versión. Por "
-"ahora, esta ventana confirma que el stack GTK4 + libadwaita está "
-"correctamente cableado."
+"Abre Conexiones para registrar tu primera organización de Salesforce. "
+"Después crea un Formato de archivo que describa tu CSV y una plantilla "
+"de Peticiones Compuestas que mapee cada fila a una o varias llamadas "
+"al API."
 
 #: salesforce_object_flow/pages/connections.py:44
 msgid ""
@@ -1258,4 +1260,22 @@ msgstr[1] "Exportadas {count} filas con fallo a {filename}."
 
 #~ msgid "Connection error: {error}"
 #~ msgstr "Error de conexión: {error}"
+
+#~ msgid "Version {version} — project scaffolding only."
+#~ msgstr "Versión {version} — solo andamiaje del proyecto."
+
+#~ msgid "What's next"
+#~ msgstr "Próximos pasos"
+
+#~ msgid ""
+#~ "The Composite API form lands in a"
+#~ " follow-up release. For now, this "
+#~ "window confirms that the GTK4 + "
+#~ "libadwaita stack is wired up correctly."
+#~ msgstr ""
+#~ "El formulario de la API Composite "
+#~ "llegará en una próxima versión. Por "
+#~ "ahora, esta ventana confirma que el "
+#~ "stack GTK4 + libadwaita está "
+#~ "correctamente cableado."
 
