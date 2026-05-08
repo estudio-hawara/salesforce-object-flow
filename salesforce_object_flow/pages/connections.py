@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, ClassVar, Final
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from salesforce_object_flow.core.config import DEFAULT_API_VERSION, OrgEntry
-from salesforce_object_flow.i18n import N_
+from salesforce_object_flow.i18n import N_, _
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.connections import (
     AddOrgRequest,
@@ -36,25 +36,38 @@ _API_VERSION_RE: Final = re.compile(r"^v\d{2,3}\.\d$")
 _ALIAS_FORBIDDEN: Final = "::"
 
 
-_INSTRUCTIONS: Final[tuple[str, ...]] = (
-    "In Setup, go to Apps → External Client Apps → External Client App Manager, "
-    "then click New External Client App.",
-    "External Client App Name: anything (e.g. “Salesforce Object Flow”).",
-    "Contact Email: your address.",
-    "Enable OAuth Settings.",
-    f"Callback URL — paste exactly: {CALLBACK_URL}",
-    "Selected OAuth Scopes:\n"
-    "  • Manage user data via APIs (api)\n"
-    "  • Perform requests on your behalf at any time "
-    "(refresh_token, offline_access)",
-    "Enable “Require Proof Key for Code Exchange (PKCE) Extension for "
-    "Supported Authorization Flows”.",
-    "Disable “Require Secret for Web Server Flow”.",
-    "Disable “Require Secret for Refresh Token Flow” (it is enabled by default — turn it off).",
-    "Save. Wait 2–10 minutes for activation.",
-    "Open the app's Settings → Consumer Key and Secret. Copy the Consumer Key "
-    "— that is your Client ID. The secret is not used by this app (PKCE).",
-)
+def _instruction_steps() -> tuple[str, ...]:
+    """Translated instruction list. Built lazily so msgids resolve at call time."""
+    return (
+        _(
+            "In Setup, go to Apps → External Client Apps → External Client App Manager, "
+            "then click New External Client App."
+        ),
+        _("External Client App Name: anything (e.g. “Salesforce Object Flow”)."),
+        _("Contact Email: your address."),
+        _("Enable OAuth Settings."),
+        _("Callback URL — paste exactly: {callback_url}").format(callback_url=CALLBACK_URL),
+        _(
+            "Selected OAuth Scopes:\n"
+            "  • Manage user data via APIs (api)\n"
+            "  • Perform requests on your behalf at any time "
+            "(refresh_token, offline_access)"
+        ),
+        _(
+            "Enable “Require Proof Key for Code Exchange (PKCE) Extension for "
+            "Supported Authorization Flows”."
+        ),
+        _("Disable “Require Secret for Web Server Flow”."),
+        _(
+            "Disable “Require Secret for Refresh Token Flow” (it is enabled by default — "
+            "turn it off)."
+        ),
+        _("Save. Wait 2–10 minutes for activation."),
+        _(
+            "Open the app's Settings → Consumer Key and Secret. Copy the Consumer Key "
+            "— that is your Client ID. The secret is not used by this app (PKCE)."
+        ),
+    )
 
 
 class ConnectionsPage:
@@ -81,9 +94,9 @@ class ConnectionsPage:
     # ----------------------------------------------------------- Page build
     def build(self, header: Adw.HeaderBar | None = None) -> Adw.ToolbarView:
         actual_header = header or Adw.HeaderBar()
-        add_button = Gtk.Button(label="Add connection", icon_name="list-add-symbolic")
+        add_button = Gtk.Button(label=_("Add connection"), icon_name="list-add-symbolic")
         add_button.add_css_class("suggested-action")
-        add_button.set_tooltip_text("Add a new Salesforce connection")
+        add_button.set_tooltip_text(_("Add a new Salesforce connection"))
 
         def _on_add_clicked(_button: Gtk.Button) -> None:
             self._open_add_dialog()
@@ -101,13 +114,15 @@ class ConnectionsPage:
 
     def _build_instructions_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup()
-        group.set_title("Set up an External Client App")
+        group.set_title(_("Set up an External Client App"))
         group.set_description(
-            "Salesforce Object Flow uses your own External Client App so tokens stay "
-            "scoped to your connection. Follow these one-time steps in Salesforce Setup."
+            _(
+                "Salesforce Object Flow uses your own External Client App so tokens stay "
+                "scoped to your connection. Follow these one-time steps in Salesforce Setup."
+            )
         )
 
-        expander = Gtk.Expander(label="Show step-by-step instructions")
+        expander = Gtk.Expander(label=_("Show step-by-step instructions"))
         expander.set_margin_top(6)
         expander.set_margin_bottom(6)
         expander.set_margin_start(12)
@@ -117,7 +132,7 @@ class ConnectionsPage:
         body.set_margin_top(8)
         body.set_margin_start(12)
 
-        for i, step in enumerate(_INSTRUCTIONS, start=1):
+        for i, step in enumerate(_instruction_steps(), start=1):
             row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
             number = Gtk.Label(label=f"{i:>2}.", xalign=0)
             number.add_css_class("dim-label")
@@ -135,7 +150,7 @@ class ConnectionsPage:
         callback_label.set_selectable(True)
         copy_row.append(callback_label)
         copy_button = Gtk.Button(icon_name="edit-copy-symbolic")
-        copy_button.set_tooltip_text("Copy callback URL")
+        copy_button.set_tooltip_text(_("Copy callback URL"))
         copy_button.add_css_class("flat")
         copy_button.connect("clicked", self._on_copy_callback)
         copy_row.append(copy_button)
@@ -147,7 +162,7 @@ class ConnectionsPage:
 
     def _build_orgs_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup()
-        group.set_title("Connections")
+        group.set_title(_("Connections"))
         self._populate_orgs_group(group)
         return group
 
@@ -169,15 +184,17 @@ class ConnectionsPage:
 
     def _build_empty_state(self) -> Adw.ActionRow:
         row = Adw.ActionRow()
-        row.set_title("No connections yet")
-        row.set_subtitle("Click “Add connection” above to add your first Salesforce connection.")
+        row.set_title(_("No connections yet"))
+        row.set_subtitle(
+            _("Click “Add connection” above to add your first Salesforce connection.")
+        )
         return row
 
     def _build_org_row(self, entry: OrgEntry, *, is_active: bool) -> Adw.ActionRow:
         row = Adw.ActionRow()
         title = f"▶  {entry.alias}" if is_active else entry.alias
         row.set_title(title)
-        sandbox_label = "Sandbox" if entry.is_sandbox else "Production"
+        sandbox_label = _("Sandbox") if entry.is_sandbox else _("Production")
         row.set_subtitle(f"{entry.instance_url} — {sandbox_label} · {entry.api_version}")
         if is_active:
             row.add_css_class("option-managed")
@@ -193,22 +210,22 @@ class ConnectionsPage:
         def _on_reauth_clicked(_button: Gtk.Button) -> None:
             self._on_reauth(alias)
 
-        test_btn = Gtk.Button(label="Test")
+        test_btn = Gtk.Button(label=_("Test"))
         test_btn.add_css_class("flat")
-        test_btn.set_tooltip_text("Verify the connection by calling /limits")
+        test_btn.set_tooltip_text(_("Verify the connection by calling /limits"))
         test_btn.connect("clicked", _on_test_clicked)
         suffix.append(test_btn)
 
-        reauth_btn = Gtk.Button(label="Re-auth")
+        reauth_btn = Gtk.Button(label=_("Re-auth"))
         reauth_btn.add_css_class("flat")
-        reauth_btn.set_tooltip_text("Run the OAuth flow again with prompt=login")
+        reauth_btn.set_tooltip_text(_("Run the OAuth flow again with prompt=login"))
         reauth_btn.connect("clicked", _on_reauth_clicked)
         suffix.append(reauth_btn)
 
         menu = Gio.Menu()
         if not is_active:
-            menu.append("Activate", f"win.activate-org::{entry.alias}")
-        menu.append("Remove…", f"win.remove-org::{entry.alias}")
+            menu.append(_("Activate"), f"win.activate-org::{entry.alias}")
+        menu.append(_("Remove…"), f"win.remove-org::{entry.alias}")
 
         menu_btn = Gtk.MenuButton()
         menu_btn.set_icon_name("view-more-symbolic")
@@ -225,7 +242,7 @@ class ConnectionsPage:
         if self._orgs_group is None:
             return
         new_group = Adw.PreferencesGroup()
-        new_group.set_title("Connections")
+        new_group.set_title(_("Connections"))
         self._populate_orgs_group(new_group)
 
         parent = self._orgs_group.get_parent()
@@ -256,7 +273,7 @@ class ConnectionsPage:
             box.prepend(widget)
             return
         sibling = box.get_first_child()
-        for _ in range(index - 1):
+        for _i in range(index - 1):
             if sibling is None:
                 break
             sibling = sibling.get_next_sibling()
@@ -289,13 +306,17 @@ class ConnectionsPage:
                 GLib.idle_add(self._on_oauth_error, str(exc), progress)
             except Exception as exc:  # pragma: no cover - defensive
                 log.exception("Unexpected OAuth failure")
-                GLib.idle_add(self._on_oauth_error, f"Unexpected error: {exc}", progress)
+                GLib.idle_add(
+                    self._on_oauth_error,
+                    _("Unexpected error: {error}").format(error=exc),
+                    progress,
+                )
 
         threading.Thread(target=worker, daemon=True, name=f"oauth-add-{request.alias}").start()
 
     def _on_oauth_success(self, entry: OrgEntry, progress: OAuthProgressDialog) -> bool:
         progress.dismiss()
-        self._window.show_toast(f"Connected as “{entry.alias}”.")
+        self._window.show_toast(_("Connected as “{alias}”.").format(alias=entry.alias))
         self.refresh_org_list()
         self._on_orgs_changed()
         # First org auto-becomes the active one in ConnectionsService.add_org;
@@ -310,7 +331,9 @@ class ConnectionsPage:
 
     # ---------------------------------------------------------- Re-auth
     def _on_reauth(self, alias: str) -> None:
-        progress = OAuthProgressDialog(alias=alias, heading=f"Re-authenticating {alias}")
+        progress = OAuthProgressDialog(
+            alias=alias, heading=_("Re-authenticating {alias}").format(alias=alias)
+        )
         progress.present(self._window)
         cancelled = threading.Event()
         progress.connect_cancel(lambda: cancelled.set())
@@ -326,13 +349,17 @@ class ConnectionsPage:
                 GLib.idle_add(self._on_oauth_error, str(exc), progress)
             except Exception as exc:  # pragma: no cover
                 log.exception("Unexpected re-auth failure")
-                GLib.idle_add(self._on_oauth_error, f"Unexpected error: {exc}", progress)
+                GLib.idle_add(
+                    self._on_oauth_error,
+                    _("Unexpected error: {error}").format(error=exc),
+                    progress,
+                )
 
         threading.Thread(target=worker, daemon=True, name=f"oauth-reauth-{alias}").start()
 
     def _on_reauth_success(self, alias: str, progress: OAuthProgressDialog) -> bool:
         progress.dismiss()
-        self._window.show_toast(f"Re-authenticated {alias}.")
+        self._window.show_toast(_("Re-authenticated {alias}.").format(alias=alias))
         self.refresh_org_list()
         self._on_orgs_changed()
         # Re-auth may have rotated the access token; let listeners react.
@@ -351,7 +378,7 @@ class ConnectionsPage:
         threading.Thread(target=worker, daemon=True, name=f"oauth-test-{alias}").start()
 
     def _on_test_success(self, alias: str, _limits: dict[str, object]) -> bool:
-        self._window.show_toast(f"{alias}: connection OK.")
+        self._window.show_toast(_("{alias}: connection OK.").format(alias=alias))
         return False
 
     def _on_test_error(self, alias: str, message: str) -> bool:
@@ -363,12 +390,12 @@ class ConnectionsPage:
         """Public entry called from the window-scoped ``remove-org`` action."""
         confirm(
             self._window,
-            heading=f"Remove {alias}?",
-            body=(
+            heading=_("Remove {alias}?").format(alias=alias),
+            body=_(
                 "Salesforce Object Flow will revoke the access token and delete the "
                 "stored credentials for this connection. You can add it again later."
             ),
-            label="Remove",
+            label=_("Remove"),
             on_confirm=lambda: self._do_remove(alias),
         )
 
@@ -383,7 +410,7 @@ class ConnectionsPage:
         threading.Thread(target=worker, daemon=True, name=f"oauth-remove-{alias}").start()
 
     def _on_remove_success(self, alias: str) -> bool:
-        self._window.show_toast(f"{alias} removed.")
+        self._window.show_toast(_("{alias} removed.").format(alias=alias))
         self.refresh_org_list()
         self._on_orgs_changed()
         # If the removed org was active, downstream pages need to re-render
@@ -392,7 +419,10 @@ class ConnectionsPage:
         return False
 
     def _on_remove_error(self, alias: str, message: str) -> bool:
-        self._window.show_toast(f"Could not remove {alias} — {message}", timeout=6)
+        self._window.show_toast(
+            _("Could not remove {alias} — {error}").format(alias=alias, error=message),
+            timeout=6,
+        )
         # Refresh anyway in case the local cleanup partially succeeded.
         self.refresh_org_list()
         self._on_orgs_changed()
@@ -406,7 +436,7 @@ class ConnectionsPage:
             return
         clipboard = display.get_clipboard()
         clipboard.set(CALLBACK_URL)
-        self._window.show_toast("Callback URL copied.")
+        self._window.show_toast(_("Callback URL copied."))
 
 
 # ====================================================================
@@ -426,30 +456,33 @@ class AddOrgDialog(Adw.AlertDialog):
         on_submit: Callable[[AddOrgRequest], None],
     ) -> None:
         super().__init__()
-        self.set_heading("Add Salesforce connection")
+        self.set_heading(_("Add Salesforce connection"))
         self.set_body(
-            "Add a Salesforce connection by pointing this app at your External Client App."
+            _(
+                "Add a Salesforce connection by pointing this app at your External "
+                "Client App."
+            )
         )
         self._existing_aliases = existing_aliases
         self._on_submit = on_submit
 
         self._alias_row = Adw.EntryRow()
-        self._alias_row.set_title("Alias")
+        self._alias_row.set_title(_("Alias"))
 
         self._domain_row = Adw.EntryRow()
-        self._domain_row.set_title("My Domain URL")
+        self._domain_row.set_title(_("My Domain URL"))
 
         self._client_id_row = Adw.EntryRow()
-        self._client_id_row.set_title("Client ID")
+        self._client_id_row.set_title(_("Client ID"))
 
         self._sandbox_row = Adw.SwitchRow()
-        self._sandbox_row.set_title("Sandbox")
+        self._sandbox_row.set_title(_("Sandbox"))
         self._sandbox_row.set_subtitle(
-            "Tag this connection as a sandbox in the UI (does not affect routing)."
+            _("Tag this connection as a sandbox in the UI (does not affect routing).")
         )
 
         self._api_row = Adw.EntryRow()
-        self._api_row.set_title("API Version")
+        self._api_row.set_title(_("API Version"))
         self._api_row.set_text(DEFAULT_API_VERSION)
 
         group = Adw.PreferencesGroup()
@@ -460,8 +493,8 @@ class AddOrgDialog(Adw.AlertDialog):
         group.add(self._api_row)
         self.set_extra_child(group)
 
-        self.add_response("cancel", "Cancel")
-        self.add_response("connect", "Connect")
+        self.add_response("cancel", _("Cancel"))
+        self.add_response("connect", _("Connect"))
         self.set_response_appearance("connect", Adw.ResponseAppearance.SUGGESTED)
         self.set_default_response("connect")
         self.set_close_response("cancel")
@@ -560,7 +593,8 @@ class OAuthProgressDialog(Adw.Dialog):
 
     def __init__(self, *, alias: str, heading: str | None = None) -> None:
         super().__init__()
-        self.set_title(heading or f"Connecting to {alias}")
+        title = heading or _("Connecting to {alias}").format(alias=alias)
+        self.set_title(title)
         self.set_can_close(False)
         self.set_content_width(420)
 
@@ -573,7 +607,7 @@ class OAuthProgressDialog(Adw.Dialog):
         header_bar = Adw.HeaderBar()
         header_bar.set_show_start_title_buttons(False)
         header_bar.set_show_end_title_buttons(False)
-        header_bar.set_title_widget(Adw.WindowTitle(title=heading or f"Connecting to {alias}"))
+        header_bar.set_title_widget(Adw.WindowTitle(title=title))
 
         spinner_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         self._spinner = Gtk.Spinner()
@@ -581,7 +615,7 @@ class OAuthProgressDialog(Adw.Dialog):
         self._spinner.start()
         spinner_row.append(self._spinner)
         self._status_label = Gtk.Label(
-            label="Waiting for browser…",
+            label=_("Waiting for browser…"),
             xalign=0,
             wrap=True,
             hexpand=True,
@@ -590,8 +624,9 @@ class OAuthProgressDialog(Adw.Dialog):
         outer.append(spinner_row)
 
         body_label = Gtk.Label(
-            label=(
-                "Complete the authorization in your browser. This dialog will close automatically."
+            label=_(
+                "Complete the authorization in your browser. This dialog will close "
+                "automatically."
             ),
             xalign=0,
             wrap=True,
@@ -599,7 +634,7 @@ class OAuthProgressDialog(Adw.Dialog):
         body_label.add_css_class("dim-label")
         outer.append(body_label)
 
-        self._cancel_btn = Gtk.Button(label="Cancel")
+        self._cancel_btn = Gtk.Button(label=_("Cancel"))
         self._cancel_btn.set_halign(Gtk.Align.END)
         self._cancel_btn.connect("clicked", self._on_cancel_clicked)
         outer.append(self._cancel_btn)
@@ -617,14 +652,14 @@ class OAuthProgressDialog(Adw.Dialog):
 
     def update_progress(self, event: ProgressEvent) -> bool:
         if event == "waiting_for_browser":
-            self._status_label.set_label("Waiting for browser…")
+            self._status_label.set_label(_("Waiting for browser…"))
         elif event == "exchanging_code":
-            self._status_label.set_label("Exchanging authorization code…")
+            self._status_label.set_label(_("Exchanging authorization code…"))
             self._cancel_btn.set_sensitive(False)
         elif event == "persisting":
-            self._status_label.set_label("Saving credentials…")
+            self._status_label.set_label(_("Saving credentials…"))
         elif event == "done":
-            self._status_label.set_label("Done.")
+            self._status_label.set_label(_("Done."))
         return False
 
     def dismiss(self) -> None:
@@ -637,6 +672,6 @@ class OAuthProgressDialog(Adw.Dialog):
 
     def _on_cancel_clicked(self, _button: Gtk.Button) -> None:
         self._cancel_btn.set_sensitive(False)
-        self._status_label.set_label("Cancelling…")
+        self._status_label.set_label(_("Cancelling…"))
         if self._cancel_callback is not None:
             self._cancel_callback()

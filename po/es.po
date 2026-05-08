@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: salesforce-object-flow 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 10:52+0100\n"
+"POT-Creation-Date: 2026-05-08 11:02+0100\n"
 "PO-Revision-Date: 2026-05-08 00:00+0000\n"
 "Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
 "Language: es\n"
@@ -23,6 +23,7 @@ msgstr "Conexión activa"
 msgid "Active connection: “{alias}”."
 msgstr "Conexión activa: «{alias}»."
 
+#: salesforce_object_flow/pages/connections.py:97
 #: salesforce_object_flow/window.py:330
 msgid "Add connection"
 msgstr "Añadir conexión"
@@ -52,34 +53,311 @@ msgid ""
 "Compose multi-object, transactional creates against the Salesforce REST "
 "Composite API."
 msgstr ""
-"Compón creaciones multiobjeto y transaccionales contra la API REST Composite "
-"de Salesforce."
+"Compón creaciones multiobjeto y transaccionales contra la API REST "
+"Composite de Salesforce."
 
-#: salesforce_object_flow/pages/welcome.py:33
+#: salesforce_object_flow/pages/welcome.py:34
 msgid "Status"
 msgstr "Estado"
 
-#: salesforce_object_flow/pages/welcome.py:35
+#: salesforce_object_flow/pages/welcome.py:36
 #, python-brace-format
 msgid "Version {version} — project scaffolding only."
 msgstr "Versión {version} — solo andamiaje del proyecto."
 
-#: salesforce_object_flow/pages/welcome.py:39
+#: salesforce_object_flow/pages/welcome.py:40
 msgid "What's next"
 msgstr "Próximos pasos"
 
-#: salesforce_object_flow/pages/welcome.py:42
+#: salesforce_object_flow/pages/welcome.py:43
 msgid ""
 "The Composite API form lands in a follow-up release. For now, this window"
 " confirms that the GTK4 + libadwaita stack is wired up correctly."
 msgstr ""
-"El formulario de la API Composite llegará en una próxima versión. Por ahora, "
-"esta ventana confirma que el stack GTK4 + libadwaita está correctamente "
-"cableado."
+"El formulario de la API Composite llegará en una próxima versión. Por "
+"ahora, esta ventana confirma que el stack GTK4 + libadwaita está "
+"correctamente cableado."
 
-#: salesforce_object_flow/pages/connections.py:64
+#: salesforce_object_flow/pages/connections.py:43
+msgid ""
+"In Setup, go to Apps → External Client Apps → External Client App "
+"Manager, then click New External Client App."
+msgstr ""
+"En Setup, ve a Apps → External Client Apps → External Client App Manager "
+"y haz clic en New External Client App."
+
+#: salesforce_object_flow/pages/connections.py:46
+msgid "External Client App Name: anything (e.g. “Salesforce Object Flow”)."
+msgstr ""
+"External Client App Name: cualquier valor (por ejemplo, «Salesforce "
+"Object Flow»)."
+
+#: salesforce_object_flow/pages/connections.py:47
+msgid "Contact Email: your address."
+msgstr "Contact Email: tu dirección de correo."
+
+#: salesforce_object_flow/pages/connections.py:48
+msgid "Enable OAuth Settings."
+msgstr "Activa OAuth Settings."
+
+#: salesforce_object_flow/pages/connections.py:49
+#, python-brace-format
+msgid "Callback URL — paste exactly: {callback_url}"
+msgstr "Callback URL — pega exactamente: {callback_url}"
+
+#: salesforce_object_flow/pages/connections.py:51
+msgid ""
+"Selected OAuth Scopes:\n"
+"  • Manage user data via APIs (api)\n"
+"  • Perform requests on your behalf at any time (refresh_token, "
+"offline_access)"
+msgstr ""
+"Selected OAuth Scopes:\n"
+"  • Manage user data via APIs (api)\n"
+"  • Perform requests on your behalf at any time (refresh_token, "
+"offline_access)"
+
+#: salesforce_object_flow/pages/connections.py:57
+msgid ""
+"Enable “Require Proof Key for Code Exchange (PKCE) Extension for "
+"Supported Authorization Flows”."
+msgstr ""
+"Activa «Require Proof Key for Code Exchange (PKCE) Extension for "
+"Supported Authorization Flows»."
+
+#: salesforce_object_flow/pages/connections.py:60
+msgid "Disable “Require Secret for Web Server Flow”."
+msgstr "Desactiva «Require Secret for Web Server Flow»."
+
+#: salesforce_object_flow/pages/connections.py:62
+msgid ""
+"Disable “Require Secret for Refresh Token Flow” (it is enabled by default"
+" — turn it off)."
+msgstr ""
+"Desactiva «Require Secret for Refresh Token Flow» (está activado por "
+"defecto — desactívalo)."
+
+#: salesforce_object_flow/pages/connections.py:65
+msgid "Save. Wait 2–10 minutes for activation."
+msgstr "Guarda. Espera de 2 a 10 minutos a que se active."
+
+#: salesforce_object_flow/pages/connections.py:67
+msgid ""
+"Open the app's Settings → Consumer Key and Secret. Copy the Consumer Key "
+"— that is your Client ID. The secret is not used by this app (PKCE)."
+msgstr ""
+"Abre los ajustes de la app → Consumer Key and Secret. Copia el Consumer "
+"Key — ese es tu Client ID. El secret no lo usa esta aplicación (PKCE)."
+
+#: salesforce_object_flow/pages/connections.py:77
+#: salesforce_object_flow/pages/connections.py:165
+#: salesforce_object_flow/pages/connections.py:245
 msgid "Connections"
 msgstr "Conexiones"
+
+#: salesforce_object_flow/pages/connections.py:99
+msgid "Add a new Salesforce connection"
+msgstr "Añadir una nueva conexión de Salesforce"
+
+#: salesforce_object_flow/pages/connections.py:117
+msgid "Set up an External Client App"
+msgstr "Configurar una External Client App"
+
+#: salesforce_object_flow/pages/connections.py:120
+msgid ""
+"Salesforce Object Flow uses your own External Client App so tokens stay "
+"scoped to your connection. Follow these one-time steps in Salesforce "
+"Setup."
+msgstr ""
+"Salesforce Object Flow usa tu propia External Client App para que los "
+"tokens queden ligados a tu conexión. Sigue estos pasos una sola vez en "
+"Salesforce Setup."
+
+#: salesforce_object_flow/pages/connections.py:125
+msgid "Show step-by-step instructions"
+msgstr "Mostrar instrucciones paso a paso"
+
+#: salesforce_object_flow/pages/connections.py:153
+msgid "Copy callback URL"
+msgstr "Copiar URL de callback"
+
+#: salesforce_object_flow/pages/connections.py:187
+msgid "No connections yet"
+msgstr "Aún no hay conexiones"
+
+#: salesforce_object_flow/pages/connections.py:189
+msgid "Click “Add connection” above to add your first Salesforce connection."
+msgstr ""
+"Pulsa «Añadir conexión» arriba para añadir tu primera conexión de "
+"Salesforce."
+
+#: salesforce_object_flow/pages/connections.py:197
+#: salesforce_object_flow/pages/connections.py:479
+msgid "Sandbox"
+msgstr "Sandbox"
+
+#: salesforce_object_flow/pages/connections.py:197
+msgid "Production"
+msgstr "Producción"
+
+#: salesforce_object_flow/pages/connections.py:213
+msgid "Test"
+msgstr "Probar"
+
+#: salesforce_object_flow/pages/connections.py:215
+msgid "Verify the connection by calling /limits"
+msgstr "Verifica la conexión llamando a /limits"
+
+#: salesforce_object_flow/pages/connections.py:219
+msgid "Re-auth"
+msgstr "Re-autenticar"
+
+#: salesforce_object_flow/pages/connections.py:221
+msgid "Run the OAuth flow again with prompt=login"
+msgstr "Vuelve a ejecutar el flujo OAuth con prompt=login"
+
+#: salesforce_object_flow/pages/connections.py:227
+msgid "Activate"
+msgstr "Activar"
+
+#: salesforce_object_flow/pages/connections.py:228
+msgid "Remove…"
+msgstr "Eliminar…"
+
+#: salesforce_object_flow/pages/connections.py:311
+#: salesforce_object_flow/pages/connections.py:354
+#, python-brace-format
+msgid "Unexpected error: {error}"
+msgstr "Error inesperado: {error}"
+
+#: salesforce_object_flow/pages/connections.py:319
+#, python-brace-format
+msgid "Connected as “{alias}”."
+msgstr "Conectado como «{alias}»."
+
+#: salesforce_object_flow/pages/connections.py:335
+#, python-brace-format
+msgid "Re-authenticating {alias}"
+msgstr "Re-autenticando {alias}"
+
+#: salesforce_object_flow/pages/connections.py:362
+#, python-brace-format
+msgid "Re-authenticated {alias}."
+msgstr "{alias} re-autenticada."
+
+#: salesforce_object_flow/pages/connections.py:381
+#, python-brace-format
+msgid "{alias}: connection OK."
+msgstr "{alias}: conexión OK."
+
+#: salesforce_object_flow/pages/connections.py:393
+#, python-brace-format
+msgid "Remove {alias}?"
+msgstr "¿Eliminar {alias}?"
+
+#: salesforce_object_flow/pages/connections.py:395
+msgid ""
+"Salesforce Object Flow will revoke the access token and delete the stored"
+" credentials for this connection. You can add it again later."
+msgstr ""
+"Salesforce Object Flow revocará el token de acceso y eliminará las "
+"credenciales guardadas de esta conexión. Podrás volver a añadirla más "
+"tarde."
+
+#: salesforce_object_flow/pages/connections.py:398
+msgid "Remove"
+msgstr "Eliminar"
+
+#: salesforce_object_flow/pages/connections.py:413
+#, python-brace-format
+msgid "{alias} removed."
+msgstr "{alias} eliminada."
+
+#: salesforce_object_flow/pages/connections.py:423
+#, python-brace-format
+msgid "Could not remove {alias} — {error}"
+msgstr "No se pudo eliminar {alias} — {error}"
+
+#: salesforce_object_flow/pages/connections.py:439
+msgid "Callback URL copied."
+msgstr "URL de callback copiada."
+
+#: salesforce_object_flow/pages/connections.py:459
+msgid "Add Salesforce connection"
+msgstr "Añadir conexión de Salesforce"
+
+#: salesforce_object_flow/pages/connections.py:462
+msgid ""
+"Add a Salesforce connection by pointing this app at your External Client "
+"App."
+msgstr ""
+"Añade una conexión de Salesforce indicando a esta aplicación tu External "
+"Client App."
+
+#: salesforce_object_flow/pages/connections.py:470
+msgid "Alias"
+msgstr "Alias"
+
+#: salesforce_object_flow/pages/connections.py:473
+msgid "My Domain URL"
+msgstr "URL de mi dominio"
+
+#: salesforce_object_flow/pages/connections.py:476
+msgid "Client ID"
+msgstr "ID de cliente"
+
+#: salesforce_object_flow/pages/connections.py:481
+msgid "Tag this connection as a sandbox in the UI (does not affect routing)."
+msgstr ""
+"Marca esta conexión como sandbox en la interfaz (no afecta al "
+"enrutamiento)."
+
+#: salesforce_object_flow/pages/connections.py:485
+msgid "API Version"
+msgstr "Versión de API"
+
+#: salesforce_object_flow/pages/connections.py:496
+#: salesforce_object_flow/pages/connections.py:637
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: salesforce_object_flow/pages/connections.py:497
+msgid "Connect"
+msgstr "Conectar"
+
+#: salesforce_object_flow/pages/connections.py:596
+#, python-brace-format
+msgid "Connecting to {alias}"
+msgstr "Conectando a {alias}"
+
+#: salesforce_object_flow/pages/connections.py:618
+#: salesforce_object_flow/pages/connections.py:655
+msgid "Waiting for browser…"
+msgstr "Esperando al navegador…"
+
+#: salesforce_object_flow/pages/connections.py:628
+msgid ""
+"Complete the authorization in your browser. This dialog will close "
+"automatically."
+msgstr ""
+"Completa la autorización en tu navegador. Este diálogo se cerrará "
+"automáticamente."
+
+#: salesforce_object_flow/pages/connections.py:657
+msgid "Exchanging authorization code…"
+msgstr "Intercambiando código de autorización…"
+
+#: salesforce_object_flow/pages/connections.py:660
+msgid "Saving credentials…"
+msgstr "Guardando credenciales…"
+
+#: salesforce_object_flow/pages/connections.py:662
+msgid "Done."
+msgstr "Hecho."
+
+#: salesforce_object_flow/pages/connections.py:675
+msgid "Cancelling…"
+msgstr "Cancelando…"
 
 #: salesforce_object_flow/pages/objects.py:39
 msgid "Object Explorer"
