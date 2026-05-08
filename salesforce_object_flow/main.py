@@ -8,6 +8,7 @@ from pathlib import Path
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
+from salesforce_object_flow import i18n
 from salesforce_object_flow.core.logging_setup import setup_logging
 from salesforce_object_flow.window import MainWindow
 
@@ -53,6 +54,7 @@ class SalesforceObjectFlowApp(Adw.Application):
 
 
 def main() -> int:
+    i18n.init()
     setup_logging()
     app = SalesforceObjectFlowApp()
 

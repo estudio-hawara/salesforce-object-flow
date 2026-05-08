@@ -12,6 +12,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 from salesforce_object_flow.core.cache import default_cache
 from salesforce_object_flow.core.config import Config, OrgEntry
 from salesforce_object_flow.core.state import AppState
+from salesforce_object_flow.i18n import _
 from salesforce_object_flow.pages.composite import CompositeTemplatesPage
 from salesforce_object_flow.pages.connections import ConnectionsPage
 from salesforce_object_flow.pages.formats import FileFormatsPage
@@ -173,7 +174,7 @@ class MainWindow(Adw.ApplicationWindow):
         active_org_bar.set_margin_end(8)
         self._active_org_button = Gtk.MenuButton()
         self._active_org_button.set_icon_name("network-server-symbolic")
-        self._active_org_button.set_tooltip_text("Active connection")
+        self._active_org_button.set_tooltip_text(_("Active connection"))
         self._active_org_button.add_css_class("flat")
         self._active_org_button.set_hexpand(True)
         active_org_bar.append(self._active_org_button)
@@ -290,7 +291,7 @@ class MainWindow(Adw.ApplicationWindow):
         except Exception as exc:
             self.show_toast(str(exc), timeout=5)
             return
-        self.show_toast(f"Active connection: “{alias}”.")
+        self.show_toast(_("Active connection: “{alias}”.").format(alias=alias))
         self._refresh_active_org_menu()
         if self._connections_page is not None:
             self._connections_page.refresh_org_list()
@@ -323,12 +324,12 @@ class MainWindow(Adw.ApplicationWindow):
                 orgs_section.append_item(item)
             menu.append_section(None, orgs_section)
         actions_section = Gio.Menu()
-        actions_section.append("Add connection", "win.go-to-connections")
+        actions_section.append(_("Add connection"), "win.go-to-connections")
         menu.append_section(None, actions_section)
         self._active_org_button.set_menu_model(menu)
 
         active = self._config.active_org_alias
-        self._active_org_button.set_label(active or "No active connection")
+        self._active_org_button.set_label(active or _("No active connection"))
         self._active_org_button.set_always_show_arrow(True)
 
     def _get_active_alias(self) -> str | None:

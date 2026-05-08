@@ -31,6 +31,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "babel>=2.14",
     "pytest>=9.0",
     "pyright>=1.1",
     "ruff>=0.15.11",
@@ -53,6 +54,7 @@ packages = ["salesforce_object_flow"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "data/icons" = "salesforce_object_flow/_data/icons"
+"locale" = "salesforce_object_flow/_locale"
 
 [tool.pyright]
 include = ["salesforce_object_flow", "tests"]

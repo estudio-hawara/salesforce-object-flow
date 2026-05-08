@@ -20,3 +20,10 @@ wheels/
 
 # Local development files
 /local/
+
+# Compiled translations (regenerated via scripts/i18n.py compile).
+# Keep the directory tracked (so hatch force-include resolves) but
+# ignore everything inside except the placeholder.
+/locale/*
+!/locale/.gitkeep
+/po/*.pot

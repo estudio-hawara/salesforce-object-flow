@@ -1,0 +1,32 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: salesforce-object-flow 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-08 10:44+0100\n"
+"PO-Revision-Date: 2026-05-08 00:00+0000\n"
+"Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
+"Language: es\n"
+"Language-Team: Spanish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: salesforce_object_flow/window.py:177
+msgid "Active connection"
+msgstr "Conexión activa"
+
+#: salesforce_object_flow/window.py:294
+#, python-brace-format
+msgid "Active connection: “{alias}”."
+msgstr "Conexión activa: «{alias}»."
+
+#: salesforce_object_flow/window.py:327
+msgid "Add connection"
+msgstr "Añadir conexión"
+
+#: salesforce_object_flow/window.py:332
+msgid "No active connection"
+msgstr "Sin conexión activa"
