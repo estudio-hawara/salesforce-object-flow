@@ -193,10 +193,11 @@ class MainWindow(Adw.ApplicationWindow):
         split_view.set_content(content_page)
 
     def _add_page(self, page: _Page) -> None:
+        title = _(page.TITLE)
         header = Adw.HeaderBar()
-        header.set_title_widget(Adw.WindowTitle(title=page.TITLE))
+        header.set_title_widget(Adw.WindowTitle(title=title))
         toolbar_view = page.build(header)
-        self._stack.add_titled(toolbar_view, page.NAME, page.TITLE)
+        self._stack.add_titled(toolbar_view, page.NAME, title)
 
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         box.set_margin_top(8)
@@ -208,7 +209,7 @@ class MainWindow(Adw.ApplicationWindow):
         icon.set_valign(Gtk.Align.CENTER)
         box.append(icon)
 
-        label = Gtk.Label(label=page.TITLE, xalign=0)
+        label = Gtk.Label(label=title, xalign=0)
         label.set_hexpand(True)
         box.append(label)
 
@@ -232,7 +233,7 @@ class MainWindow(Adw.ApplicationWindow):
         spacer.set_size_request(-1, 4 if before is None else 12)
         header_box.append(spacer)
 
-        label = Gtk.Label(label=group.value, xalign=0)
+        label = Gtk.Label(label=_(group.value), xalign=0)
         label.add_css_class("heading")
         label.add_css_class("dim-label")
         label.set_margin_start(12)

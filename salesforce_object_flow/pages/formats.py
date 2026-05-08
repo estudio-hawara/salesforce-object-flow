@@ -18,6 +18,7 @@ from salesforce_object_flow.core.formats import (
     FileFormat,
     slugify,
 )
+from salesforce_object_flow.i18n import N_
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.formats import (
     CellError,
@@ -37,7 +38,7 @@ log = logging.getLogger(__name__)
 
 class FileFormatsPage:
     NAME: ClassVar[str] = "formats"
-    TITLE: ClassVar[str] = "File Formats"
+    TITLE: ClassVar[str] = N_("File Formats")
     ICON_NAME: ClassVar[str] = "document-text-symbolic"
     GROUP: ClassVar[PageGroup] = PageGroup.DATA_MODEL
 

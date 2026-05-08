@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from gi.repository import Adw, Gtk
 
+from salesforce_object_flow.i18n import N_, _
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.ui.layout import make_page_layout
 
@@ -12,7 +13,7 @@ class WelcomePage:
     """Trivial first page: explain what the app is and what's coming."""
 
     NAME: ClassVar[str] = "welcome"
-    TITLE: ClassVar[str] = "Welcome"
+    TITLE: ClassVar[str] = N_("Welcome")
     ICON_NAME: ClassVar[str] = "hand-openyay-symbolic"
     GROUP: ClassVar[PageGroup] = PageGroup.SETUP
 
@@ -22,19 +23,26 @@ class WelcomePage:
         intro = Adw.PreferencesGroup()
         intro.set_title("Salesforce Object Flow")
         intro.set_description(
-            "Compose multi-object, transactional creates against the Salesforce REST Composite API."
+            _(
+                "Compose multi-object, transactional creates against the Salesforce REST"
+                " Composite API."
+            )
         )
         content_box.append(intro)
 
         status = Adw.PreferencesGroup()
-        status.set_title("Status")
-        status.set_description("Version 0.0.1 — project scaffolding only.")
+        status.set_title(_("Status"))
+        status.set_description(
+            _("Version {version} — project scaffolding only.").format(version="0.0.1")
+        )
 
         next_row = Adw.ActionRow()
-        next_row.set_title("What's next")
+        next_row.set_title(_("What's next"))
         next_row.set_subtitle(
-            "The Composite API form lands in a follow-up release. For now, this "
-            "window confirms that the GTK4 + libadwaita stack is wired up correctly."
+            _(
+                "The Composite API form lands in a follow-up release. For now, this "
+                "window confirms that the GTK4 + libadwaita stack is wired up correctly."
+            )
         )
         status.add(next_row)
         content_box.append(status)

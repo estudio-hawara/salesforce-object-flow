@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 from gi.repository import Adw, GLib, Gtk
 
 from salesforce_object_flow.core.config import OrgEntry
+from salesforce_object_flow.i18n import N_
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.sobjects import (
     SObjectDescribe,
@@ -35,7 +36,7 @@ _SEARCH_DEBOUNCE_MS = 150
 
 class ObjectExplorerPage:
     NAME: ClassVar[str] = "objects"
-    TITLE: ClassVar[str] = "Object Explorer"
+    TITLE: ClassVar[str] = N_("Object Explorer")
     ICON_NAME: ClassVar[str] = "loupe-large-symbolic"
     GROUP: ClassVar[PageGroup] = PageGroup.DATA_MODEL
 

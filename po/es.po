@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: salesforce-object-flow 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 10:44+0100\n"
+"POT-Creation-Date: 2026-05-08 10:52+0100\n"
 "PO-Revision-Date: 2026-05-08 00:00+0000\n"
 "Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
 "Language: es\n"
@@ -14,19 +14,81 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: salesforce_object_flow/window.py:177
+#: salesforce_object_flow/window.py:179
 msgid "Active connection"
 msgstr "Conexión activa"
 
-#: salesforce_object_flow/window.py:294
+#: salesforce_object_flow/window.py:297
 #, python-brace-format
 msgid "Active connection: “{alias}”."
 msgstr "Conexión activa: «{alias}»."
 
-#: salesforce_object_flow/window.py:327
+#: salesforce_object_flow/window.py:330
 msgid "Add connection"
 msgstr "Añadir conexión"
 
-#: salesforce_object_flow/window.py:332
+#: salesforce_object_flow/window.py:335
 msgid "No active connection"
 msgstr "Sin conexión activa"
+
+#: salesforce_object_flow/pages/groups.py:19
+msgid "Setup"
+msgstr "Configuración"
+
+#: salesforce_object_flow/pages/groups.py:20
+msgid "Data model"
+msgstr "Modelo de datos"
+
+#: salesforce_object_flow/pages/groups.py:21
+msgid "Run"
+msgstr "Ejecución"
+
+#: salesforce_object_flow/pages/welcome.py:16
+msgid "Welcome"
+msgstr "Bienvenida"
+
+#: salesforce_object_flow/pages/welcome.py:27
+msgid ""
+"Compose multi-object, transactional creates against the Salesforce REST "
+"Composite API."
+msgstr ""
+"Compón creaciones multiobjeto y transaccionales contra la API REST Composite "
+"de Salesforce."
+
+#: salesforce_object_flow/pages/welcome.py:33
+msgid "Status"
+msgstr "Estado"
+
+#: salesforce_object_flow/pages/welcome.py:35
+#, python-brace-format
+msgid "Version {version} — project scaffolding only."
+msgstr "Versión {version} — solo andamiaje del proyecto."
+
+#: salesforce_object_flow/pages/welcome.py:39
+msgid "What's next"
+msgstr "Próximos pasos"
+
+#: salesforce_object_flow/pages/welcome.py:42
+msgid ""
+"The Composite API form lands in a follow-up release. For now, this window"
+" confirms that the GTK4 + libadwaita stack is wired up correctly."
+msgstr ""
+"El formulario de la API Composite llegará en una próxima versión. Por ahora, "
+"esta ventana confirma que el stack GTK4 + libadwaita está correctamente "
+"cableado."
+
+#: salesforce_object_flow/pages/connections.py:64
+msgid "Connections"
+msgstr "Conexiones"
+
+#: salesforce_object_flow/pages/objects.py:39
+msgid "Object Explorer"
+msgstr "Explorador de objetos"
+
+#: salesforce_object_flow/pages/formats.py:41
+msgid "File Formats"
+msgstr "Formatos de archivo"
+
+#: salesforce_object_flow/pages/composite.py:71
+msgid "Composite Requests"
+msgstr "Peticiones compuestas"
