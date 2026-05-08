@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: salesforce-object-flow 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 11:02+0100\n"
+"POT-Creation-Date: 2026-05-08 11:15+0100\n"
 "PO-Revision-Date: 2026-05-08 00:00+0000\n"
 "Last-Translator: Carlos Capote <carlos.capote@hawara.es>\n"
 "Language: es\n"
@@ -28,6 +28,7 @@ msgstr "Conexión activa: «{alias}»."
 msgid "Add connection"
 msgstr "Añadir conexión"
 
+#: salesforce_object_flow/pages/objects.py:169
 #: salesforce_object_flow/window.py:335
 msgid "No active connection"
 msgstr "Sin conexión activa"
@@ -182,6 +183,7 @@ msgid "Copy callback URL"
 msgstr "Copiar URL de callback"
 
 #: salesforce_object_flow/pages/connections.py:187
+#: salesforce_object_flow/pages/objects.py:179
 msgid "No connections yet"
 msgstr "Aún no hay conexiones"
 
@@ -193,6 +195,7 @@ msgstr ""
 
 #: salesforce_object_flow/pages/connections.py:197
 #: salesforce_object_flow/pages/connections.py:479
+#: salesforce_object_flow/pages/objects.py:67
 msgid "Sandbox"
 msgstr "Sandbox"
 
@@ -363,6 +366,114 @@ msgstr "Cancelando…"
 msgid "Object Explorer"
 msgstr "Explorador de objetos"
 
+#: salesforce_object_flow/pages/objects.py:75
+msgid "Refresh SObject list from the active connection"
+msgstr "Actualizar la lista de SObjects desde la conexión activa"
+
+#: salesforce_object_flow/pages/objects.py:121
+msgid "Detail"
+msgstr "Detalle"
+
+#: salesforce_object_flow/pages/objects.py:141
+msgid "Search SObjects…"
+msgstr "Buscar SObjects…"
+
+#: salesforce_object_flow/pages/objects.py:161
+msgid "Loading SObjects…"
+msgstr "Cargando SObjects…"
+
+#: salesforce_object_flow/pages/objects.py:162
+msgid "Fetching metadata from the active connection."
+msgstr "Obteniendo metadatos de la conexión activa."
+
+#: salesforce_object_flow/pages/objects.py:171
+msgid "Activate a connection from the sidebar menu, or add one in Connections."
+msgstr "Activa una conexión desde el menú lateral, o añade una en Conexiones."
+
+#: salesforce_object_flow/pages/objects.py:181
+msgid "Add a Salesforce connection from the Connections page to begin."
+msgstr "Añade una conexión de Salesforce desde la página Conexiones para empezar."
+
+#: salesforce_object_flow/pages/objects.py:184
+msgid "Go to Connections"
+msgstr "Ir a Conexiones"
+
+#: salesforce_object_flow/pages/objects.py:190
+msgid "Could not load objects"
+msgstr "No se pudieron cargar los objetos"
+
+#: salesforce_object_flow/pages/objects.py:194
+#: salesforce_object_flow/pages/objects.py:238
+msgid "Retry"
+msgstr "Reintentar"
+
+#: salesforce_object_flow/pages/objects.py:203
+msgid "No matches"
+msgstr "Sin coincidencias"
+
+#: salesforce_object_flow/pages/objects.py:204
+msgid "Try a different name or label."
+msgstr "Prueba con otro nombre o etiqueta."
+
+#: salesforce_object_flow/pages/objects.py:218
+msgid "Select an SObject"
+msgstr "Selecciona un SObject"
+
+#: salesforce_object_flow/pages/objects.py:219
+msgid "Pick an SObject from the list to see its fields."
+msgstr "Elige un SObject de la lista para ver sus campos."
+
+#: salesforce_object_flow/pages/objects.py:226
+msgid "Loading fields…"
+msgstr "Cargando campos…"
+
+#: salesforce_object_flow/pages/objects.py:234
+msgid "Could not load fields"
+msgstr "No se pudieron cargar los campos"
+
+#: salesforce_object_flow/pages/objects.py:394
+#, python-brace-format
+msgid "Could not load objects — {error}"
+msgstr "No se pudieron cargar los objetos — {error}"
+
+#: salesforce_object_flow/pages/objects.py:412
+msgid "Custom"
+msgstr "Personalizado"
+
+#: salesforce_object_flow/pages/objects.py:504
+#, python-brace-format
+msgid "Could not load fields for “{name}”"
+msgstr "No se pudieron cargar los campos de «{name}»"
+
+#: salesforce_object_flow/pages/objects.py:526
+#, python-brace-format
+msgid "Fields ({count})"
+msgstr "Campos ({count})"
+
+#: salesforce_object_flow/pages/objects.py:533
+msgid "Capabilities"
+msgstr "Capacidades"
+
+#: salesforce_object_flow/pages/objects.py:547
+msgid "none"
+msgstr "ninguna"
+
+#: salesforce_object_flow/pages/objects.py:555
+msgid "required"
+msgstr "obligatorio"
+
+#: salesforce_object_flow/pages/objects.py:564
+#, python-brace-format
+msgid "reference → {targets}"
+msgstr "referencia → {targets}"
+
+#: salesforce_object_flow/pages/objects.py:568
+#, python-brace-format
+msgid "picklist · {count} value"
+msgid_plural "picklist · {count} values"
+msgstr[0] "picklist · {count} valor"
+msgstr[1] "picklist · {count} valores"
+
 #: salesforce_object_flow/pages/formats.py:41
 msgid "File Formats"
 msgstr "Formatos de archivo"
@@ -370,3 +481,4 @@ msgstr "Formatos de archivo"
 #: salesforce_object_flow/pages/composite.py:71
 msgid "Composite Requests"
 msgstr "Peticiones compuestas"
+

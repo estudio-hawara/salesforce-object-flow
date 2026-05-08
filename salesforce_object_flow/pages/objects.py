@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 from gi.repository import Adw, GLib, Gtk
 
 from salesforce_object_flow.core.config import OrgEntry
-from salesforce_object_flow.i18n import N_
+from salesforce_object_flow.i18n import N_, _, ngettext
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.services.sobjects import (
     SObjectDescribe,
@@ -64,7 +64,7 @@ class ObjectExplorerPage:
         actual_header = header or Adw.HeaderBar()
 
         # Sandbox badge — visibility toggled in _update_sandbox_badge.
-        self._sandbox_badge = Gtk.Label(label="Sandbox")
+        self._sandbox_badge = Gtk.Label(label=_("Sandbox"))
         self._sandbox_badge.add_css_class("option-managed")
         self._sandbox_badge.set_visible(False)
         actual_header.pack_start(self._sandbox_badge)
@@ -72,7 +72,7 @@ class ObjectExplorerPage:
         # Refresh button on the right of the header.
         self._refresh_btn = Gtk.Button(icon_name="view-refresh-symbolic")
         self._refresh_btn.add_css_class("flat")
-        self._refresh_btn.set_tooltip_text("Refresh SObject list from the active connection")
+        self._refresh_btn.set_tooltip_text(_("Refresh SObject list from the active connection"))
         self._refresh_btn.connect("clicked", self._on_refresh_clicked)
         actual_header.pack_end(self._refresh_btn)
 
@@ -118,7 +118,7 @@ class ObjectExplorerPage:
         sidebar.set_child(self._build_sidebar_pane())
         self._split.set_sidebar(sidebar)
 
-        content = Adw.NavigationPage(title="Detail")
+        content = Adw.NavigationPage(title=_("Detail"))
         content.set_child(self._build_content_pane())
         self._split.set_content(content)
 
@@ -138,7 +138,7 @@ class ObjectExplorerPage:
         list_box_outer.set_margin_end(12)
 
         self._search_entry = Gtk.SearchEntry()
-        self._search_entry.set_placeholder_text("Search SObjects…")
+        self._search_entry.set_placeholder_text(_("Search SObjects…"))
         self._search_entry.connect("search-changed", self._on_search_changed)
         list_box_outer.append(self._search_entry)
 
@@ -158,16 +158,16 @@ class ObjectExplorerPage:
         # State: empty placeholders, including loading and errors.
         self._sidebar_stack.add_named(
             self._make_status_page(
-                title="Loading SObjects…",
-                description="Fetching metadata from the active connection.",
+                title=_("Loading SObjects…"),
+                description=_("Fetching metadata from the active connection."),
                 icon_name="view-refresh-symbolic",
             ),
             "loading",
         )
         self._sidebar_stack.add_named(
             self._make_status_page(
-                title="No active connection",
-                description=(
+                title=_("No active connection"),
+                description=_(
                     "Activate a connection from the sidebar menu, or add one in Connections."
                 ),
                 icon_name="network-offline-symbolic",
@@ -176,20 +176,22 @@ class ObjectExplorerPage:
         )
         self._sidebar_stack.add_named(
             self._make_status_page(
-                title="No connections yet",
-                description="Add a Salesforce connection from the Connections page to begin.",
+                title=_("No connections yet"),
+                description=_(
+                    "Add a Salesforce connection from the Connections page to begin."
+                ),
                 icon_name="network-offline-symbolic",
-                action_label="Go to Connections",
+                action_label=_("Go to Connections"),
                 action_name="win.go-to-connections",
             ),
             "no_connections",
         )
         self._list_error_status = self._make_status_page(
-            title="Could not load objects",
+            title=_("Could not load objects"),
             description="",
             icon_name="dialog-warning-symbolic",
         )
-        self._list_error_retry_btn = Gtk.Button(label="Retry")
+        self._list_error_retry_btn = Gtk.Button(label=_("Retry"))
         self._list_error_retry_btn.add_css_class("pill")
         self._list_error_retry_btn.add_css_class("suggested-action")
         self._list_error_retry_btn.set_halign(Gtk.Align.CENTER)
@@ -198,8 +200,8 @@ class ObjectExplorerPage:
         self._sidebar_stack.add_named(self._list_error_status, "error")
         self._sidebar_stack.add_named(
             self._make_status_page(
-                title="No matches",
-                description="Try a different name or label.",
+                title=_("No matches"),
+                description=_("Try a different name or label."),
                 icon_name="system-search-symbolic",
             ),
             "no_matches",
@@ -213,15 +215,15 @@ class ObjectExplorerPage:
 
         self._detail_stack.add_named(
             self._make_status_page(
-                title="Select an SObject",
-                description="Pick an SObject from the list to see its fields.",
+                title=_("Select an SObject"),
+                description=_("Pick an SObject from the list to see its fields."),
                 icon_name="document-properties-symbolic",
             ),
             "empty",
         )
         self._detail_stack.add_named(
             self._make_status_page(
-                title="Loading fields…",
+                title=_("Loading fields…"),
                 description="",
                 icon_name="view-refresh-symbolic",
             ),
@@ -229,11 +231,11 @@ class ObjectExplorerPage:
         )
 
         self._detail_error_status = self._make_status_page(
-            title="Could not load fields",
+            title=_("Could not load fields"),
             description="",
             icon_name="dialog-warning-symbolic",
         )
-        self._detail_error_retry_btn = Gtk.Button(label="Retry")
+        self._detail_error_retry_btn = Gtk.Button(label=_("Retry"))
         self._detail_error_retry_btn.add_css_class("pill")
         self._detail_error_retry_btn.add_css_class("suggested-action")
         self._detail_error_retry_btn.set_halign(Gtk.Align.CENTER)
@@ -388,7 +390,9 @@ class ObjectExplorerPage:
             return False
         self._list_error_status.set_description(message)
         self._sidebar_stack.set_visible_child_name("error")
-        self._window.show_toast(f"Could not load objects — {message}", timeout=6)
+        self._window.show_toast(
+            _("Could not load objects — {error}").format(error=message), timeout=6
+        )
         return False
 
     def _populate_list_box(self) -> None:
@@ -405,7 +409,7 @@ class ObjectExplorerPage:
             row.set_subtitle(summary.name)
             row.set_activatable(True)
             if summary.custom:
-                badge = Gtk.Label(label="Custom")
+                badge = Gtk.Label(label=_("Custom"))
                 badge.add_css_class("option-managed")
                 badge.set_valign(Gtk.Align.CENTER)
                 row.add_suffix(badge)
@@ -496,7 +500,9 @@ class ObjectExplorerPage:
     def _on_describe_error(self, token: int, name: str, message: str) -> bool:
         if token != self._describe_request_token:
             return False
-        self._detail_error_status.set_title(f"Could not load fields for “{name}”")
+        self._detail_error_status.set_title(
+            _("Could not load fields for “{name}”").format(name=name)
+        )
         self._detail_error_status.set_description(message)
         self._detail_stack.set_visible_child_name("error")
         self._window.show_toast(f"“{name}”: {message}", timeout=6)
@@ -517,14 +523,16 @@ class ObjectExplorerPage:
         self._detail_body.append(summary_group)
 
         fields_group = Adw.PreferencesGroup()
-        fields_group.set_title(f"Fields ({len(describe.fields)})")
+        fields_group.set_title(_("Fields ({count})").format(count=len(describe.fields)))
         for field in describe.fields:
             fields_group.add(self._build_field_row(field))
         self._detail_body.append(fields_group)
 
     def _build_summary_row(self, summary: SObjectSummary) -> Adw.ActionRow:
         row = Adw.ActionRow()
-        row.set_title("Capabilities")
+        row.set_title(_("Capabilities"))
+        # Salesforce API capability flags — kept in English so they line up
+        # with what the SObject Describe API returns.
         flags: list[str] = []
         if summary.queryable:
             flags.append("queryable")
@@ -536,7 +544,7 @@ class ObjectExplorerPage:
             flags.append("deletable")
         if summary.custom:
             flags.append("custom")
-        row.set_subtitle(" · ".join(flags) if flags else "none")
+        row.set_subtitle(" · ".join(flags) if flags else _("none"))
         return row
 
     def _build_field_row(self, field: SObjectField) -> Adw.ActionRow:
@@ -544,7 +552,7 @@ class ObjectExplorerPage:
         row.set_title(field.label)
         row.set_subtitle(f"{field.name} · {self._format_field_type(field)}")
         if not field.nillable and field.createable:
-            badge = Gtk.Label(label="required")
+            badge = Gtk.Label(label=_("required"))
             badge.add_css_class("option-dirty")
             badge.set_valign(Gtk.Align.CENTER)
             row.add_suffix(badge)
@@ -553,10 +561,12 @@ class ObjectExplorerPage:
     @staticmethod
     def _format_field_type(field: SObjectField) -> str:
         if field.type == "reference" and field.reference_to:
-            return f"reference → {', '.join(field.reference_to)}"
+            return _("reference → {targets}").format(targets=", ".join(field.reference_to))
         if field.type == "picklist":
             count = len(field.picklist_values)
-            return f"picklist · {count} values"
+            return ngettext(
+                "picklist · {count} value", "picklist · {count} values", count
+            ).format(count=count)
         if field.length and field.length > 0 and field.type in {"string", "textarea"}:
             return f"{field.type}({field.length})"
         return field.type
