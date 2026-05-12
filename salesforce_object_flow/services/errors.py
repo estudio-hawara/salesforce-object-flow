@@ -28,6 +28,10 @@ class ErrorCode(Enum):
     TEMPLATE_SAVE_FAILED = auto()
     TEMPLATE_DELETE_FAILED = auto()
 
+    # ----- Serial definitions
+    SERIAL_SAVE_FAILED = auto()
+    SERIAL_DELETE_FAILED = auto()
+
     # ----- File formats
     FORMAT_SAVE_FAILED = auto()
     FORMAT_DELETE_FAILED = auto()

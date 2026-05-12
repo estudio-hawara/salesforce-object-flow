@@ -49,6 +49,14 @@ def _template_delete_failed(p: dict[str, object]) -> str:
     return _("Could not delete template: {error}").format(**p)
 
 
+def _serial_save_failed(p: dict[str, object]) -> str:
+    return _("Could not save serial definition: {error}").format(**p)
+
+
+def _serial_delete_failed(p: dict[str, object]) -> str:
+    return _("Could not delete serial definition: {error}").format(**p)
+
+
 def _format_save_failed(p: dict[str, object]) -> str:
     return _("Could not save format: {error}").format(**p)
 
@@ -117,6 +125,8 @@ _TEMPLATES: dict[ErrorCode, Callable[[dict[str, object]], str]] = {
     ErrorCode.UNKNOWN_ALIAS: _unknown_alias,
     ErrorCode.TEMPLATE_SAVE_FAILED: _template_save_failed,
     ErrorCode.TEMPLATE_DELETE_FAILED: _template_delete_failed,
+    ErrorCode.SERIAL_SAVE_FAILED: _serial_save_failed,
+    ErrorCode.SERIAL_DELETE_FAILED: _serial_delete_failed,
     ErrorCode.FORMAT_SAVE_FAILED: _format_save_failed,
     ErrorCode.FORMAT_DELETE_FAILED: _format_delete_failed,
     ErrorCode.CSV_UNREADABLE: _csv_unreadable,

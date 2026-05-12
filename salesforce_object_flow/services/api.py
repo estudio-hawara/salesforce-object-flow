@@ -75,6 +75,34 @@ class SalesforceClient:
     def post(self, path: str, json: object) -> Any:
         return self._request("POST", path, json=json).json()
 
+    def patch(self, path: str, json: object) -> Any:
+        response = self._request("PATCH", path, json=json)
+        if response.status_code == 204 or not response.content:
+            return None
+        return response.json()
+
+    def put(self, path: str, json: object) -> Any:
+        response = self._request("PUT", path, json=json)
+        if response.status_code == 204 or not response.content:
+            return None
+        return response.json()
+
+    def delete(self, path: str) -> Any:
+        response = self._request("DELETE", path)
+        if response.status_code == 204 or not response.content:
+            return None
+        return response.json()
+
+    def request(self, method: str, path: str, *, json: object = None) -> Any:
+        """Dispatch by method name. Used by serial executor to keep verb-agnostic code."""
+        response = self._request(method.upper(), path, json=json)
+        if response.status_code == 204 or not response.content:
+            return None
+        try:
+            return response.json()
+        except ValueError:
+            return None
+
     def limits(self) -> dict[str, Any]:
         payload = self.get(f"/services/data/{self._api_version}/limits")
         if not isinstance(payload, dict):

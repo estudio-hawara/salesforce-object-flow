@@ -31,7 +31,6 @@ from __future__ import annotations
 import csv
 import json
 import logging
-import re
 import threading
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping
@@ -48,19 +47,19 @@ from salesforce_object_flow.core.composite import (
     CompositeTemplate,
     Subrequest,
 )
-from salesforce_object_flow.core.formats import Column, ColumnType, FileFormat, slugify
+from salesforce_object_flow.core.formats import FileFormat, slugify
+from salesforce_object_flow.core.placeholders import (
+    PLACEHOLDER_RE,
+    REFERENCE_RE,
+    render_csv_string,
+    synthetic_row,
+)
 from salesforce_object_flow.services.api import ApiError, SalesforceClient
 from salesforce_object_flow.services.errors import CodedError, ErrorCode
 
 log = logging.getLogger(__name__)
 
 _DIRS = PlatformDirs(appname="salesforce-object-flow", appauthor="hawara", roaming=True)
-
-PLACEHOLDER_RE: Final[re.Pattern[str]] = re.compile(r"\{\{\s*([^{}]+?)\s*\}\}")
-REFERENCE_RE: Final[re.Pattern[str]] = re.compile(r"@\{\s*([A-Za-z][A-Za-z0-9_]*)\.[^}]+?\s*\}")
-_PLACEHOLDER_ONLY_RE: Final[re.Pattern[str]] = re.compile(r"^\s*\{\{\s*([^{}]+?)\s*\}\}\s*$")
-_BOOLEAN_TRUE: Final[frozenset[str]] = frozenset({"true", "1", "yes"})
-_BOOLEAN_FALSE: Final[frozenset[str]] = frozenset({"false", "0", "no"})
 
 
 class CompositeTemplateError(CodedError):
@@ -427,7 +426,7 @@ class CompositePayloadRenderer:
         for sub in tpl.subrequests:
             entry: dict[str, Any] = {
                 "method": sub.method.value,
-                "url": _render_string(sub.url, column_by_name, row),
+                "url": render_csv_string(sub.url, column_by_name, row.values),
                 "referenceId": sub.reference_id,
             }
             if sub.body:
@@ -436,11 +435,11 @@ class CompositePayloadRenderer:
                     name = body_entry.field.strip()
                     if not name:
                         continue
-                    body_obj[name] = _render_string(body_entry.value, column_by_name, row)
+                    body_obj[name] = render_csv_string(body_entry.value, column_by_name, row.values)
                 entry["body"] = body_obj
             if sub.headers:
                 entry["httpHeaders"] = {
-                    key: _render_string(value, column_by_name, row)
+                    key: render_csv_string(value, column_by_name, row.values)
                     for key, value in sub.headers.items()
                 }
             composite_request.append(entry)
@@ -452,61 +451,7 @@ class CompositePayloadRenderer:
 
     @staticmethod
     def synthetic_row(fmt: FileFormat) -> RenderRow:
-        values: dict[str, str] = {}
-        for col in fmt.columns:
-            values[col.name] = _synthetic_value(col)
-        return RenderRow(values=values)
-
-
-def _synthetic_value(column: Column) -> str:
-    match column.type:
-        case ColumnType.STRING:
-            return "<string>"
-        case ColumnType.INTEGER:
-            return "0"
-        case ColumnType.DECIMAL:
-            return "0.0"
-        case ColumnType.BOOLEAN:
-            return "false"
-        case ColumnType.DATE:
-            return "2026-01-01"
-        case ColumnType.DATETIME:
-            return "2026-01-01T00:00:00"
-        case ColumnType.EMAIL:
-            return "user@example.com"
-
-
-def _render_string(value: str, column_by_name: Mapping[str, Column], row: RenderRow) -> object:
-    only = _PLACEHOLDER_ONLY_RE.match(value)
-    if only is not None:
-        token = only.group(1).strip()
-        column = column_by_name.get(token)
-        if column is None:
-            return value
-        raw = row.values.get(token, "")
-        return _coerce(raw, column)
-    # Mixed-content string: every {{col}} becomes its raw cell value (string).
-    return PLACEHOLDER_RE.sub(lambda m: row.values.get(m.group(1).strip(), m.group(0)), value)
-
-
-def _coerce(raw: str, column: Column) -> object:
-    try:
-        match column.type:
-            case ColumnType.STRING | ColumnType.EMAIL | ColumnType.DATE | ColumnType.DATETIME:
-                return raw
-            case ColumnType.INTEGER:
-                return int(raw)
-            case ColumnType.DECIMAL:
-                return float(raw)
-            case ColumnType.BOOLEAN:
-                folded = raw.casefold()
-                if folded in _BOOLEAN_TRUE:
-                    return True
-                if folded in _BOOLEAN_FALSE:
-                    return False
-                return raw
-    except (ValueError, TypeError):
-        return raw
+        return RenderRow(values=synthetic_row(fmt))
 
 
 # ====================================================================

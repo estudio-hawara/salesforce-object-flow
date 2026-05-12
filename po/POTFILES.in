@@ -9,3 +9,4 @@ salesforce_object_flow/pages/connections.py
 salesforce_object_flow/pages/objects.py
 salesforce_object_flow/pages/formats.py
 salesforce_object_flow/pages/composite.py
+salesforce_object_flow/pages/serial.py

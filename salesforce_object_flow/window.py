@@ -18,6 +18,7 @@ from salesforce_object_flow.pages.connections import ConnectionsPage
 from salesforce_object_flow.pages.formats import FileFormatsPage
 from salesforce_object_flow.pages.groups import PageGroup
 from salesforce_object_flow.pages.objects import ObjectExplorerPage
+from salesforce_object_flow.pages.serial import SerialRequestsPage
 from salesforce_object_flow.pages.welcome import WelcomePage
 from salesforce_object_flow.services.composite import (
     CompositePayloadRenderer,
@@ -26,6 +27,11 @@ from salesforce_object_flow.services.composite import (
 )
 from salesforce_object_flow.services.connections import ConnectionsService
 from salesforce_object_flow.services.formats import FileFormatStore, FileFormatValidator
+from salesforce_object_flow.services.serial import (
+    SerialDefinitionStore,
+    SerialDefinitionValidator,
+    SerialStepRenderer,
+)
 from salesforce_object_flow.services.sobjects import SObjectService
 
 log = logging.getLogger(__name__)
@@ -64,10 +70,14 @@ class MainWindow(Adw.ApplicationWindow):
         self._templates_store = CompositeTemplateStore()
         self._templates_validator = CompositeTemplateValidator()
         self._templates_renderer = CompositePayloadRenderer()
+        self._serials_store = SerialDefinitionStore()
+        self._serials_validator = SerialDefinitionValidator()
+        self._serials_renderer = SerialStepRenderer()
         self._connections_page: ConnectionsPage | None = None
         self._formats_page: FileFormatsPage | None = None
         self._objects_page: ObjectExplorerPage | None = None
         self._composite_page: CompositeTemplatesPage | None = None
+        self._serial_page: SerialRequestsPage | None = None
         self._active_org_button: Gtk.MenuButton | None = None
         self._active_org_subscribers: list[Callable[[], None]] = []
 
@@ -156,6 +166,18 @@ class MainWindow(Adw.ApplicationWindow):
         )
         self._add_page(self._composite_page)
         self._active_org_subscribers.append(self._composite_page.on_active_org_changed)
+
+        self._serial_page = SerialRequestsPage(
+            window=self,
+            store=self._serials_store,
+            validator=self._serials_validator,
+            renderer=self._serials_renderer,
+            formats_store=self._formats_store,
+            service=self._service,
+            get_active_alias=self._get_active_alias,
+        )
+        self._add_page(self._serial_page)
+        self._active_org_subscribers.append(self._serial_page.on_active_org_changed)
 
         sidebar_scroll = Gtk.ScrolledWindow()
         sidebar_scroll.set_child(self._sidebar_list)
@@ -357,3 +379,8 @@ class MainWindow(Adw.ApplicationWindow):
                 self._composite_page.on_formats_changed()
             except Exception:
                 log.exception("Composite page raised on_formats_changed")
+        if self._serial_page is not None:
+            try:
+                self._serial_page.on_formats_changed()
+            except Exception:
+                log.exception("Serial page raised on_formats_changed")
