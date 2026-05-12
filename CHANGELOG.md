@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0a3] - 2026-05-12
+## [0.1.0a4] - 2026-05-12
 
 ### Added
 
@@ -52,16 +52,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking:** Composite request templates are now stored in
-  `user_data_dir/composites/` instead of `user_data_dir/templates/`. Existing
-  `0.1.0a2` users must move their JSON files manually to keep their saved
-  templates available.
 - Placeholder / reference parsing moved to a shared `core/placeholders.py`
   module so the Composite and Serial pages stay byte-for-byte consistent on
   `{{column}}` substitution and `@{ref.path}` recognition.
 - `services/composite.py` and `services/api.py` got minor extension points
   needed by the Serial executor (single-request dispatch, shared CSV reader
   helpers) — the public Composite behaviour is unchanged.
+
+## [0.1.0a3] - 2026-05-08
+
+### Changed
+
+- **Breaking:** Composite request templates are now stored in
+  `user_data_dir/composites/` instead of `user_data_dir/templates/`. Existing
+  `0.1.0a2` users must move their JSON files manually to keep their saved
+  templates available.
 
 ## [0.1.0a2] - 2026-05-08
 

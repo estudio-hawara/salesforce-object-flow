@@ -40,7 +40,7 @@ When a flow can't fit into a single Composite payload — too many steps, branch
 
 ## Status
 
-`0.1.0a3` — third alpha. The five panes shown above are wired end-to-end: connections persist with secrets stored in the OS keyring, the Object Explorer reads the live SObject catalogue, and File Format, Composite Request and Serial Request definitions are saved locally and can be previewed and executed against the selected org. Expect rough edges around error reporting, partial-success handling on the Composite response, and template import/export — feedback and bug reports are very welcome.
+`0.1.0a4` — fourth alpha. The five panes shown above are wired end-to-end: connections persist with secrets stored in the OS keyring, the Object Explorer reads the live SObject catalogue, and File Format, Composite Request and Serial Request definitions are saved locally and can be previewed and executed against the selected org. Expect rough edges around error reporting, partial-success handling on the Composite response, and template import/export — feedback and bug reports are very welcome.
 
 ## Languages
 
