@@ -811,9 +811,7 @@ class SerialRequestsPage:
 
         cof_row = Adw.SwitchRow()
         cof_row.set_title(_("Continue on failure"))
-        cof_row.set_subtitle(
-            _("Keep running later steps even if this one fails (HTTP ≥ 400).")
-        )
+        cof_row.set_subtitle(_("Keep running later steps even if this one fails (HTTP ≥ 400)."))
         cof_row.set_active(step.continue_on_failure)
 
         def _on_cof_changed(row: Adw.SwitchRow, _spec: object) -> None:
@@ -1037,9 +1035,7 @@ class SerialRequestsPage:
 
         combinator_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         combinator_box.append(Gtk.Label(label=_("Combine with:"), xalign=0))
-        combo = Gtk.DropDown.new_from_strings(
-            [_("All of (AND)"), _("Any of (OR)")]
-        )
+        combo = Gtk.DropDown.new_from_strings([_("All of (AND)"), _("Any of (OR)")])
         condition = step.condition
         if condition is None or condition.combinator is ConditionCombinator.ALL_OF:
             combo.set_selected(0)
@@ -1061,9 +1057,7 @@ class SerialRequestsPage:
         checks = condition.checks if condition is not None else []
         prev_refs = self._refs_before(step_index)
         for check_index, check in enumerate(checks):
-            checks_list.append(
-                self._build_check_row(step_index, check_index, check, prev_refs)
-            )
+            checks_list.append(self._build_check_row(step_index, check_index, check, prev_refs))
         outer.append(checks_list)
 
         add_check_btn = Gtk.Button(label=_("Add condition"), icon_name="list-add-symbolic")
@@ -1474,9 +1468,7 @@ class SerialRequestsPage:
         step = self._editing.steps[step_index]
         if step.condition is None:
             step.condition = StepCondition()
-        step.condition.checks.append(
-            ConditionCheck(op=CheckOp.STATUS_OK, ref=prev_refs[0])
-        )
+        step.condition.checks.append(ConditionCheck(op=CheckOp.STATUS_OK, ref=prev_refs[0]))
         self._refresh_checks_list(step_index)
         self._update_dirty_state()
 
@@ -1518,9 +1510,7 @@ class SerialRequestsPage:
                 add_btn.set_sensitive(bool(prev_refs))
             checks = step.condition.checks if step.condition is not None else []
             for check_index, check in enumerate(checks):
-                checks_list.append(
-                    self._build_check_row(step_index, check_index, check, prev_refs)
-                )
+                checks_list.append(self._build_check_row(step_index, check_index, check, prev_refs))
         finally:
             self._suppress_dirty = False
 
@@ -1733,10 +1723,7 @@ class SerialRequestsPage:
                 self._on_save_clicked(self._save_btn)
                 proceed()
             elif response == "discard":
-                if (
-                    self._selected_filename is not None
-                    and not self._delete_btn.get_sensitive()
-                ):
+                if self._selected_filename is not None and not self._delete_btn.get_sensitive():
                     self._loaded = [
                         ld for ld in self._loaded if ld.filename != self._selected_filename
                     ]
@@ -1805,9 +1792,7 @@ class SerialRequestsPage:
                 row = SerialStepRenderer.synthetic_row(fmt)
                 source_label = _("synthetic sample row (CSV unreadable)")
             else:
-                source_label = _("first data row of {filename}").format(
-                    filename=use_csv_path.name
-                )
+                source_label = _("first data row of {filename}").format(filename=use_csv_path.name)
 
         # Build a descriptive preview: each step shown with its condition
         # and the rendered request body. Conditions are not actually
@@ -1819,9 +1804,7 @@ class SerialRequestsPage:
                 rendered = self._renderer.render_step(step, fmt, row, prior_empty)
             except Exception as exc:  # defensive: render of preview should not crash UI
                 log.exception("Preview render failed for step %s", step.reference_id)
-                chunks.append(
-                    f"# Step #{index + 1} {step.reference_id} — render error: {exc}"
-                )
+                chunks.append(f"# Step #{index + 1} {step.reference_id} — render error: {exc}")
                 continue
             condition_line = self._describe_condition(step)
             request_block = {
@@ -1856,16 +1839,14 @@ class SerialRequestsPage:
         if condition is None or not condition.checks:
             return _("Run when: always.")
         joiner = _(" AND ") if condition.combinator is ConditionCombinator.ALL_OF else _(" OR ")
-        parts = []
+        parts: list[str] = []
         for check in condition.checks:
             if check.op in (CheckOp.STATUS_OK, CheckOp.STATUS_FAILED):
                 parts.append(f"{check.op.value}({check.ref})")
             elif check.op in (CheckOp.EXISTS, CheckOp.NOT_EXISTS):
                 parts.append(f"{check.op.value}(@{{{check.ref}.{check.path}}})")
             else:
-                parts.append(
-                    f"@{{{check.ref}.{check.path}}} {check.op.value} {check.value}"
-                )
+                parts.append(f"@{{{check.ref}.{check.path}}} {check.op.value} {check.value}")
         return _("Run when: ") + joiner.join(parts)
 
     @staticmethod
@@ -1955,9 +1936,7 @@ class SerialRequestsPage:
             text = csv_path.read_text(encoding=fmt.encoding)
         except (OSError, UnicodeDecodeError) as exc:
             self._window.show_toast(
-                _("Could not read CSV with the linked format settings — {error}").format(
-                    error=exc
-                ),
+                _("Could not read CSV with the linked format settings — {error}").format(error=exc),
                 timeout=6,
             )
             return
@@ -1983,9 +1962,7 @@ class SerialRequestsPage:
             + "\n"
             + _("Source: {filename}").format(filename=csv_path.name)
         )
-        dialog = Adw.AlertDialog(
-            heading=_("Run “{name}”?").format(name=definition.name), body=body
-        )
+        dialog = Adw.AlertDialog(heading=_("Run “{name}”?").format(name=definition.name), body=body)
         dialog.add_response("cancel", _("Cancel"))
         dialog.add_response("run", _("Run"))
         dialog.set_response_appearance("run", Adw.ResponseAppearance.DESTRUCTIVE)
@@ -1995,9 +1972,7 @@ class SerialRequestsPage:
         def on_response(_d: Adw.AlertDialog, response: str) -> None:
             if response != "run":
                 return
-            self._start_execution(
-                definition=definition, fmt=fmt, csv_path=csv_path, alias=alias
-            )
+            self._start_execution(definition=definition, fmt=fmt, csv_path=csv_path, alias=alias)
 
         dialog.connect("response", on_response)
         dialog.present(self._window)

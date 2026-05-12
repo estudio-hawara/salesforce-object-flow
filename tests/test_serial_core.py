@@ -52,11 +52,7 @@ def _full_definition() -> SerialDefinition:
                 reference_id="MemberCreate",
                 method=HttpMethod.POST,
                 url="/services/data/v63.0/sobjects/CampaignMember",
-                body=[
-                    BodyField(
-                        field="ContactId", value="@{ContactCreate.id}"
-                    )
-                ],
+                body=[BodyField(field="ContactId", value="@{ContactCreate.id}")],
                 condition=StepCondition(
                     combinator=ConditionCombinator.ANY_OF,
                     checks=[

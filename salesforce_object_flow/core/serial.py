@@ -148,7 +148,7 @@ class StepCondition:
     """
 
     combinator: ConditionCombinator = ConditionCombinator.ALL_OF
-    checks: list[ConditionCheck] = field(default_factory=list)
+    checks: list[ConditionCheck] = field(default_factory=list[ConditionCheck])
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> StepCondition | None:

@@ -296,9 +296,7 @@ def test_contact_missing_campaign_missing(tmp_path: Path) -> None:
 def test_failure_aborts_row_when_continue_on_failure_is_false(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         # First step (Contact query) fails hard.
-        return httpx.Response(
-            500, json=[{"errorCode": "INTERNAL_ERROR", "message": "boom"}]
-        )
+        return httpx.Response(500, json=[{"errorCode": "INTERNAL_ERROR", "message": "boom"}])
 
     report, _ = _run(handler, tmp_path)
     assert report.failed == 1

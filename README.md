@@ -34,9 +34,13 @@ Compose multi-step Composite API templates. A template binds to a File Format (i
 
 ![Composite Requests](./resources/composite-requests.png)
 
+### Serial Requests
+
+When a flow can't fit into a single Composite payload — too many steps, branching that depends on a prior response, or steps that should be allowed to fail individually — assemble it as a Serial Request instead. A definition is an ordered list of independent REST calls; each step can carry a per-step condition (`exists`, `status_ok`, `records_count_gt`, `eq`, …) evaluated against earlier responses, references resolved client-side via `@{ref.path}`, and an `allowsFailure`-style `continue_on_failure` toggle. The executor runs the sequence once per CSV row and can export failed rows back to a CSV for cleanup and re-import. See [`readme-0.1.0a3.md`](./readme-0.1.0a3.md) for the full walk-through.
+
 ## Status
 
-`0.1.0a3` — third alpha. The four panes shown above are wired end-to-end: connections persist with secrets stored in the OS keyring, the Object Explorer reads the live SObject catalogue, and File Format and Composite Request templates are saved locally and can be previewed and executed against the selected org. Expect rough edges around error reporting, partial-success handling on the Composite response, and template import/export — feedback and bug reports are very welcome.
+`0.1.0a3` — third alpha. The five panes shown above are wired end-to-end: connections persist with secrets stored in the OS keyring, the Object Explorer reads the live SObject catalogue, and File Format, Composite Request and Serial Request definitions are saved locally and can be previewed and executed against the selected org. Expect rough edges around error reporting, partial-success handling on the Composite response, and template import/export — feedback and bug reports are very welcome.
 
 ## Languages
 

@@ -547,13 +547,13 @@ def evaluate_check(check: ConditionCheck, prior: Mapping[str, StepResult]) -> bo
                 target = int(check.value)
             except (TypeError, ValueError):
                 return False
-            return isinstance(value, list) and len(value) == target
+            return isinstance(value, list) and len(cast(list[Any], value)) == target
         case CheckOp.RECORDS_COUNT_GT:
             try:
                 target = int(check.value)
             except (TypeError, ValueError):
                 return False
-            return isinstance(value, list) and len(value) > target
+            return isinstance(value, list) and len(cast(list[Any], value)) > target
         case _:
             return False
 
@@ -603,8 +603,7 @@ class SerialStepRenderer:
 
         def render_value(text: str) -> object:
             resolved = _resolve_references(text, prior)
-            csv_input = resolved if isinstance(resolved, str) else str(resolved)
-            return render_csv_string(csv_input, column_by_name, row.values)
+            return render_csv_string(resolved, column_by_name, row.values)
 
         def render_str(text: str) -> str:
             value = render_value(text)
@@ -619,9 +618,9 @@ class SerialStepRenderer:
                 if not name:
                     continue
                 rendered_body[name] = render_value(entry.value)
-        rendered_headers = {
-            key: render_str(value) for key, value in step.headers.items()
-        } if step.headers else {}
+        rendered_headers = (
+            {key: render_str(value) for key, value in step.headers.items()} if step.headers else {}
+        )
 
         return RenderedRequest(
             method=step.method,
@@ -645,7 +644,7 @@ def _resolve_references(text: str, prior: Mapping[str, StepResult]) -> str:
 
     def repl(match: re.Match[str]) -> str:
         inner = match.group(0)[2:-1].strip()  # strip the surrounding @{ }
-        head, dot, tail = inner.partition(".")
+        head, _dot, tail = inner.partition(".")
         ref = head.strip()
         path = tail.strip()
         result = prior.get(ref)
@@ -767,9 +766,7 @@ class SerialExecutor:
                 on_progress(ProgressEvent(row_index + 1, total, row_result))
                 continue
 
-            row_result = self._run_row(
-                row_index, csv_row, definition, fmt, sf_client
-            )
+            row_result = self._run_row(row_index, csv_row, definition, fmt, sf_client)
             if row_result.status == "success":
                 succeeded += 1
             else:

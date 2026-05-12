@@ -137,14 +137,8 @@ def test_evaluate_check_status_ok_on_skipped_is_false() -> None:
     }
     from salesforce_object_flow.core.serial import CheckOp, ConditionCheck
 
-    assert (
-        evaluate_check(ConditionCheck(op=CheckOp.STATUS_OK, ref="A"), prior)
-        is False
-    )
-    assert (
-        evaluate_check(ConditionCheck(op=CheckOp.STATUS_FAILED, ref="A"), prior)
-        is False
-    )
+    assert evaluate_check(ConditionCheck(op=CheckOp.STATUS_OK, ref="A"), prior) is False
+    assert evaluate_check(ConditionCheck(op=CheckOp.STATUS_FAILED, ref="A"), prior) is False
 
 
 def test_records_count_ops_consume_int_value() -> None:

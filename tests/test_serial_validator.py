@@ -114,9 +114,7 @@ def test_condition_check_must_reference_previous_step() -> None:
         steps=[
             _step(
                 reference_id="A",
-                condition=StepCondition(
-                    checks=[ConditionCheck(op=CheckOp.STATUS_OK, ref="B")]
-                ),
+                condition=StepCondition(checks=[ConditionCheck(op=CheckOp.STATUS_OK, ref="B")]),
             ),
             _step(reference_id="B"),
         ],

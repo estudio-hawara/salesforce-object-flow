@@ -7,7 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0a3] - 2026-05-08
+## [0.1.0a3] - 2026-05-12
+
+### Added
+
+- **Serial Requests**: a new top-level page (under the *Run* group, next to
+  *Composite Requests*) that executes a client-driven sequence of REST calls
+  per CSV row. Unlike a Composite template — which produces a single
+  transactional `/composite` payload — a serial definition fires *N*
+  independent HTTP requests per row, with each step's response resolved
+  client-side so later steps can branch on it.
+- Per-step **conditions**: each step can carry a `StepCondition` that
+  combines one or more `ConditionCheck` predicates with `all_of` / `any_of`.
+  The predicate language covers `exists`, `not_exists`, `status_ok`,
+  `status_failed`, `eq`, `ne`, `records_count_eq` and `records_count_gt`,
+  evaluated against a dotted JSON path inside a prior step's response
+  (`records[0].Id`, `id`, …). Steps whose condition does not hold are
+  recorded as `skipped`.
+- **Client-side `@{ref.path}` resolution**: references in URL, headers, and
+  body fields are resolved against prior step results (`@{step.id}`,
+  `@{lookup.records[0].Id}`, plus the synthetic `status` / `ok` / `skipped`
+  paths). `{{column}}` placeholders keep working alongside references and
+  share the same typed coercion (`core.placeholders`) with the Composite
+  page.
+- **`continue_on_failure`** per step (mirrors Salesforce Composite's
+  `allowsFailure`): a failed step records the failure and lets the row
+  continue instead of aborting.
+- **`SerialDefinitionStore`**, **`SerialDefinitionValidator`**,
+  **`SerialStepRenderer`** and **`SerialExecutor`** in
+  `services/serial.py`. Definitions are persisted as one JSON file per
+  definition under `user_data_dir/serials/`, with the same atomic
+  write-then-rename discipline as Composite templates.
+- **Failure CSV export** (`export_failures_csv`): after a run, failed rows
+  can be re-emitted to a CSV that preserves the original columns plus an
+  `_error` column, ready to be cleaned up and re-imported.
+- New error codes `SERIAL_SAVE_FAILED` and `SERIAL_DELETE_FAILED`, plus
+  localized templates in `i18n_errors.py`.
+- Spanish (`es`) translations for the full Serial Requests UI and its
+  service-layer error messages.
+- Test suite for the new module:
+  `tests/test_serial_core.py`, `tests/test_serial_store.py`,
+  `tests/test_serial_validator.py`, `tests/test_serial_renderer.py`,
+  `tests/test_serial_executor.py`.
 
 ### Changed
 
@@ -15,6 +56,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `user_data_dir/composites/` instead of `user_data_dir/templates/`. Existing
   `0.1.0a2` users must move their JSON files manually to keep their saved
   templates available.
+- Placeholder / reference parsing moved to a shared `core/placeholders.py`
+  module so the Composite and Serial pages stay byte-for-byte consistent on
+  `{{column}}` substitution and `@{ref.path}` recognition.
+- `services/composite.py` and `services/api.py` got minor extension points
+  needed by the Serial executor (single-request dispatch, shared CSV reader
+  helpers) — the public Composite behaviour is unchanged.
 
 ## [0.1.0a2] - 2026-05-08
 
