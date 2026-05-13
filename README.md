@@ -1,6 +1,6 @@
 # Salesforce Object Flow
 
-A native GTK4/libadwaita desktop GUI for Salesforce — compose multi-object, transactional creates against the Salesforce REST **Composite API** without leaving your desktop.
+A native desktop GUI to import objects in Salesforce. Supports transactional imports via composite API requests and more complex behaviors by creating series of standard API requests that are triggered in series of steps that can be skipped depending on the results of the previous calls.
 
 [![CI](https://github.com/estudio-hawara/salesforce-object-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/estudio-hawara/salesforce-object-flow/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -56,69 +56,12 @@ Translations cover the whole UI plus service-layer error messages. Adding a new 
 
 ## Install
 
-Salesforce Object Flow is cross-platform. The polished daily-driver target is **Linux**; macOS and Windows are supported via Homebrew and MSYS2 respectively and may exhibit minor libadwaita theming quirks.
-
-### Linux (Debian / Ubuntu)
-
-```bash
-sudo apt install libcairo2-dev libgirepository-2.0-dev libgtk-4-dev libadwaita-1-dev
-git clone https://github.com/estudio-hawara/salesforce-object-flow.git
-cd salesforce-object-flow
-uv sync
-uv run salesforce-object-flow
-```
-
-On Fedora / Arch / openSUSE, install the equivalent `gtk4`, `libadwaita`,
-`gobject-introspection`, and `cairo` development packages.
-
-### macOS
-
-```bash
-brew install gtk4 libadwaita gobject-introspection pygobject3
-git clone https://github.com/estudio-hawara/salesforce-object-flow.git
-cd salesforce-object-flow
-uv sync
-uv run salesforce-object-flow
-```
-
-### Windows
-
-Install [MSYS2](https://www.msys2.org/) and open the **UCRT64** shell:
-
-```bash
-pacman -S mingw-w64-ucrt-x86_64-gtk4 \
-          mingw-w64-ucrt-x86_64-libadwaita \
-          mingw-w64-ucrt-x86_64-python \
-          mingw-w64-ucrt-x86_64-python-gobject \
-          mingw-w64-ucrt-x86_64-python-pip \
-          git
-git clone https://github.com/estudio-hawara/salesforce-object-flow.git
-cd salesforce-object-flow
-python -m venv --system-site-packages .venv
-source .venv/bin/activate
-pip install httpx keyring platformdirs pygobject-stubs
-pip install --no-deps -e .
-salesforce-object-flow
-```
-
-uv is not used on Windows: the MSYS2 Python reports its platform as `mingw_x86_64_ucrt_gnu`, which uv does not recognize. The pure-Python deps are installed explicitly and the project itself is installed with `--no-deps` so pip does not try to rebuild PyGObject (and its pycairo / gobject-introspection build chain) from PyPI — the venv reuses the PyGObject that `pacman` already installed, linked against the MSYS2-shipped GTK4 DLLs.
-
-The app must be launched from the UCRT64 shell so that GTK4 typelibs and libadwaita are visible to PyGObject.
+The installation instructions for Linux, macOS and Windows are available at [INSTALL.md](INSTALL.md).
 
 ## Development
 
-```bash
-uv sync
-uv run salesforce-object-flow
-
-uv run pytest tests/ -v
-uv run ruff check salesforce_object_flow/ tests/
-uv run ruff format --check salesforce_object_flow/ tests/
-uv run pyright salesforce_object_flow/ tests/
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow.
+The full development workflow is described at [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Salesforce Object Flow is licensed under an MIT license, available at [LICENSE](LICENSE).
